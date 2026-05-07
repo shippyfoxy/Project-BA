@@ -1,0 +1,6554 @@
+{
+  "generatedAt": "2026-05-07T01:48:48.352Z",
+  "generatedAtMs": 1778118528352,
+  "source": "explore-api+games-api",
+  "games": [
+    {
+      "universeId": 9792947201,
+      "rootPlaceId": 92416421522960,
+      "name": "Slime RNG",
+      "creatorName": "Stouts Studio",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 42983968,
+      "favoritedCount": 504054,
+      "upVotes": 174970,
+      "downVotes": 2211,
+      "playing": 116421,
+      "created": "2026-02-25T04:41:48.19Z",
+      "updated": "2026-05-06T15:12:02.6683418Z",
+      "canonicalUrlPath": "/games/92416421522960/Slime-RNG",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 116173,
+          "visits": 42957710
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 116421,
+          "visits": 42983968
+        }
+      ]
+    },
+    {
+      "universeId": 5569032992,
+      "rootPlaceId": 16116270224,
+      "name": "🍓 Dandy's World [ALPHA]",
+      "creatorName": "BlushCrunch Studio",
+      "genreL1": "Survival",
+      "genreL2": "Escape",
+      "visits": 6734494970,
+      "favoritedCount": 4208097,
+      "upVotes": 1636882,
+      "downVotes": 131911,
+      "playing": 70566,
+      "created": "2024-01-26T03:52:09.063Z",
+      "updated": "2026-05-06T20:57:43.485337Z",
+      "canonicalUrlPath": "/games/16116270224/Dandys-World",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 70971,
+          "visits": 6734469312
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 70566,
+          "visits": 6734494970
+        }
+      ]
+    },
+    {
+      "universeId": 10004244222,
+      "rootPlaceId": 89469502395769,
+      "name": "Kick a Lucky Block",
+      "creatorName": "No More Flops",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 251527084,
+      "favoritedCount": 8633449,
+      "upVotes": 441489,
+      "downVotes": 16273,
+      "playing": 211390,
+      "created": "2026-04-07T17:46:03.203Z",
+      "updated": "2026-05-06T21:03:52.7959792Z",
+      "canonicalUrlPath": "/games/89469502395769/Kick-a-Lucky-Block",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 210269,
+          "visits": 251446703
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 211390,
+          "visits": 251527084
+        }
+      ]
+    },
+    {
+      "universeId": 4658598196,
+      "rootPlaceId": 13379208636,
+      "name": "[💥 UPDATE 4] Attack on Titan Revolution",
+      "creatorName": "AoTR [PI]",
+      "genreL1": "RPG",
+      "genreL2": "Action RPG",
+      "visits": 840354431,
+      "favoritedCount": 1218688,
+      "upVotes": 1199868,
+      "downVotes": 50572,
+      "playing": 68011,
+      "created": "2023-05-07T20:08:19.05Z",
+      "updated": "2026-05-06T15:10:59.61563Z",
+      "canonicalUrlPath": "/games/13379208636/Attack-on-Titan-Revolution",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 68192,
+          "visits": 840339235
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 68011,
+          "visits": 840354431
+        }
+      ]
+    },
+    {
+      "universeId": 5750914919,
+      "rootPlaceId": 16732694052,
+      "name": "Fisch 🎸 [VENUE TAKEOVER]",
+      "creatorName": "Fisching",
+      "genreL1": "Simulation",
+      "genreL2": "",
+      "visits": 4422046502,
+      "favoritedCount": 3325949,
+      "upVotes": 2824307,
+      "downVotes": 300943,
+      "playing": 53565,
+      "created": "2024-03-13T15:03:39.63Z",
+      "updated": "2026-05-06T23:08:39.9403315Z",
+      "canonicalUrlPath": "/games/16732694052/Fisch",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 53604,
+          "visits": 4422036648
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 53565,
+          "visits": 4422046502
+        }
+      ]
+    },
+    {
+      "universeId": 578392296,
+      "rootPlaceId": 1458767429,
+      "name": "ABA",
+      "creatorName": "Dogs Studios: South",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 1241835661,
+      "favoritedCount": 979410,
+      "upVotes": 490775,
+      "downVotes": 115601,
+      "playing": 11697,
+      "created": "2018-02-25T17:09:21.81Z",
+      "updated": "2026-05-06T19:57:26.0823499Z",
+      "canonicalUrlPath": "/games/1458767429/ABA",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 11671,
+          "visits": 1241831376
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 11697,
+          "visits": 1241835661
+        }
+      ]
+    },
+    {
+      "universeId": 7488190691,
+      "rootPlaceId": 133410800847665,
+      "name": "[👿UPD 2.75🔥] Universal Tower Defense X",
+      "creatorName": "Universal Tower Defense [UTD]",
+      "genreL1": "Strategy",
+      "genreL2": "Tower Defense",
+      "visits": 118405033,
+      "favoritedCount": 124457,
+      "upVotes": 282001,
+      "downVotes": 6183,
+      "playing": 42825,
+      "created": "2025-04-04T22:46:35.037Z",
+      "updated": "2026-05-05T23:31:02.6121005Z",
+      "canonicalUrlPath": "/games/133410800847665/Universal-Tower-Defense-X",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 42650,
+          "visits": 118397011
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 42825,
+          "visits": 118405033
+        }
+      ]
+    },
+    {
+      "universeId": 1831550657,
+      "rootPlaceId": 5233782396,
+      "name": "✨ Creatures of Sonaria 🔥 Survive Kaiju Animals",
+      "creatorName": "Sonar Studios",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Animal Sim",
+      "visits": 1951377766,
+      "favoritedCount": 9853742,
+      "upVotes": 1312239,
+      "downVotes": 108142,
+      "playing": 25840,
+      "created": "2020-06-25T17:33:51.58Z",
+      "updated": "2026-05-07T01:33:20.9276809Z",
+      "canonicalUrlPath": "/games/5233782396/Creatures-of-Sonaria-Survive-Kaiju-Animals",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 26104,
+          "visits": 1951370629
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 25840,
+          "visits": 1951377766
+        }
+      ]
+    },
+    {
+      "universeId": 7872343282,
+      "rootPlaceId": 74996816424339,
+      "name": "OVERKILL ",
+      "creatorName": "Repotted",
+      "genreL1": "Shooter",
+      "genreL2": "Deathmatch Shooter",
+      "visits": 40833847,
+      "favoritedCount": 859989,
+      "upVotes": 135724,
+      "downVotes": 14622,
+      "playing": 2767,
+      "created": "2025-06-08T18:52:04.643Z",
+      "updated": "2026-04-04T07:32:59.039Z",
+      "canonicalUrlPath": "/games/74996816424339/OVERKILL",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2684,
+          "visits": 40832620
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2767,
+          "visits": 40833847
+        }
+      ]
+    },
+    {
+      "universeId": 9564673841,
+      "rootPlaceId": 108843562394237,
+      "name": "Monkey Bomb Tag",
+      "creatorName": "Crazay Art",
+      "genreL1": "Party & Casual",
+      "genreL2": "Childhood Game",
+      "visits": 12192304,
+      "favoritedCount": 30316,
+      "upVotes": 19914,
+      "downVotes": 4032,
+      "playing": 23401,
+      "created": "2026-01-15T14:16:17.207Z",
+      "updated": "2026-05-04T21:42:03.88Z",
+      "canonicalUrlPath": "/games/108843562394237/Monkey-Bomb-Tag",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 23508,
+          "visits": 12178756
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 23401,
+          "visits": 12192304
+        }
+      ]
+    },
+    {
+      "universeId": 7372152033,
+      "rootPlaceId": 84956402848349,
+      "name": "Realistic Golf ⛳",
+      "creatorName": "Sharkie212",
+      "genreL1": "Sports & Racing",
+      "genreL2": "Sports",
+      "visits": 14569300,
+      "favoritedCount": 29060,
+      "upVotes": 8421,
+      "downVotes": 3491,
+      "playing": 4203,
+      "created": "2025-03-13T18:51:09.347Z",
+      "updated": "2026-05-01T17:19:11.237Z",
+      "canonicalUrlPath": "/games/84956402848349/Realistic-Golf",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 4188,
+          "visits": 14568083
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 4203,
+          "visits": 14569300
+        }
+      ]
+    },
+    {
+      "universeId": 9584852943,
+      "rootPlaceId": 95082159892680,
+      "name": "[UPD] +1 Speed Keyboard Escape | Candy & Chocolate",
+      "creatorName": "SecretVerse Studio",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 210679990,
+      "favoritedCount": 493254,
+      "upVotes": 1102414,
+      "downVotes": 22639,
+      "playing": 39536,
+      "created": "2026-01-18T17:49:45.993Z",
+      "updated": "2026-05-06T17:58:53.9891714Z",
+      "canonicalUrlPath": "/games/95082159892680/1-Speed-Keyboard-Escape-Candy-Chocolate",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 40175,
+          "visits": 210658961
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 39536,
+          "visits": 210679990
+        }
+      ]
+    },
+    {
+      "universeId": 8944906740,
+      "rootPlaceId": 131756752872026,
+      "name": "Dive Down 🦈",
+      "creatorName": "Dive Down Games",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 59567204,
+      "favoritedCount": 1199958,
+      "upVotes": 361157,
+      "downVotes": 10464,
+      "playing": 6410,
+      "created": "2025-10-14T10:47:44.18Z",
+      "updated": "2026-05-05T04:03:37.114Z",
+      "canonicalUrlPath": "/games/131756752872026/Dive-Down",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 6424,
+          "visits": 59564206
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 6410,
+          "visits": 59567204
+        }
+      ]
+    },
+    {
+      "universeId": 9949028705,
+      "rootPlaceId": 120323018058265,
+      "name": "Squishy Dumpling Unboxing",
+      "creatorName": "Zero Robux Studios",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 33357966,
+      "favoritedCount": 91460,
+      "upVotes": 82442,
+      "downVotes": 3270,
+      "playing": 10045,
+      "created": "2026-03-27T19:41:14.751Z",
+      "updated": "2026-05-06T21:49:31.9077433Z",
+      "canonicalUrlPath": "/games/120323018058265/Squishy-Dumpling-Unboxing",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 10141,
+          "visits": 33353026
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 10045,
+          "visits": 33357966
+        }
+      ]
+    },
+    {
+      "universeId": 321778215,
+      "rootPlaceId": 735030788,
+      "name": "Royale🌼High",
+      "creatorName": "callmehbob",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Dress Up",
+      "visits": 10389316886,
+      "favoritedCount": 13273348,
+      "upVotes": 3238727,
+      "downVotes": 532112,
+      "playing": 5151,
+      "created": "2017-04-10T13:16:49.493Z",
+      "updated": "2026-05-07T01:18:04.6192403Z",
+      "canonicalUrlPath": "/games/735030788/Royale-High",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 5135,
+          "visits": 10389315416
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 5151,
+          "visits": 10389316886
+        }
+      ]
+    },
+    {
+      "universeId": 7094518649,
+      "rootPlaceId": 119048529960596,
+      "name": "Restaurant Tycoon 3",
+      "creatorName": "Ultraw",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 265811715,
+      "favoritedCount": 661275,
+      "upVotes": 300086,
+      "downVotes": 14837,
+      "playing": 10348,
+      "created": "2025-01-16T11:24:38.103Z",
+      "updated": "2026-05-06T08:10:54.6043613Z",
+      "canonicalUrlPath": "/games/119048529960596/Restaurant-Tycoon-3",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 10292,
+          "visits": 265809997
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 10348,
+          "visits": 265811715
+        }
+      ]
+    },
+    {
+      "universeId": 2783797267,
+      "rootPlaceId": 7171174521,
+      "name": "[💥OFFSET/SCALING] American Plains Mudding",
+      "creatorName": "American Plains Mudding",
+      "genreL1": "Simulation",
+      "genreL2": "Vehicle Sim",
+      "visits": 521258844,
+      "favoritedCount": 5121059,
+      "upVotes": 287314,
+      "downVotes": 34806,
+      "playing": 13627,
+      "created": "2021-07-29T15:11:10.903Z",
+      "updated": "2026-05-03T14:30:36.704Z",
+      "canonicalUrlPath": "/games/7171174521/American-Plains-Mudding",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 13766,
+          "visits": 521255174
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 13627,
+          "visits": 521258844
+        }
+      ]
+    },
+    {
+      "universeId": 4931927012,
+      "rootPlaceId": 14259168147,
+      "name": "[UPD] 🏀Basketball Legends🏀",
+      "creatorName": "InfinitySports",
+      "genreL1": "Sports & Racing",
+      "genreL2": "Sports",
+      "visits": 688346385,
+      "favoritedCount": 589374,
+      "upVotes": 531216,
+      "downVotes": 94338,
+      "playing": 6212,
+      "created": "2023-07-31T07:11:02.877Z",
+      "updated": "2026-05-05T22:14:08.0956571Z",
+      "canonicalUrlPath": "/games/14259168147/Basketball-Legends",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 6235,
+          "visits": 688344260
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 6212,
+          "visits": 688346385
+        }
+      ]
+    },
+    {
+      "universeId": 9837612476,
+      "rootPlaceId": 131346454575416,
+      "name": "[💥] Mini War",
+      "creatorName": "M&M Community",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 8753432,
+      "favoritedCount": 127364,
+      "upVotes": 80703,
+      "downVotes": 1825,
+      "playing": 14499,
+      "created": "2026-03-05T12:37:02.853Z",
+      "updated": "2026-05-06T23:37:10.5570587Z",
+      "canonicalUrlPath": "/games/131346454575416/Mini-War",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 14476,
+          "visits": 8748693
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 14499,
+          "visits": 8753432
+        }
+      ]
+    },
+    {
+      "universeId": 9534705677,
+      "rootPlaceId": 122446657157717,
+      "name": "[🕹GAMEMODE] Sniper Arena",
+      "creatorName": "9D GAME CLUB",
+      "genreL1": "Shooter",
+      "genreL2": "Deathmatch Shooter",
+      "visits": 129274308,
+      "favoritedCount": 1029654,
+      "upVotes": 90270,
+      "downVotes": 10473,
+      "playing": 5741,
+      "created": "2026-01-10T05:55:56.67Z",
+      "updated": "2026-05-06T17:38:16.5193206Z",
+      "canonicalUrlPath": "/games/122446657157717/Sniper-Arena",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 5720,
+          "visits": 129271635
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 5741,
+          "visits": 129274308
+        }
+      ]
+    },
+    {
+      "universeId": 6749060816,
+      "rootPlaceId": 132352755769957,
+      "name": "[UPD] Asylum Life 🔊",
+      "creatorName": "Stone-Haven County Asylum",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "",
+      "visits": 187842984,
+      "favoritedCount": 1322464,
+      "upVotes": 234983,
+      "downVotes": 46129,
+      "playing": 6328,
+      "created": "2024-11-02T07:31:07.557Z",
+      "updated": "2026-05-06T10:38:55.9031712Z",
+      "canonicalUrlPath": "/games/132352755769957/Asylum-Life",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 6315,
+          "visits": 187840940
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 6328,
+          "visits": 187842984
+        }
+      ]
+    },
+    {
+      "universeId": 4981761600,
+      "rootPlaceId": 14418473444,
+      "name": "Abyssal 🌕",
+      "creatorName": "nextReality Games",
+      "genreL1": "Adventure",
+      "genreL2": "Exploration",
+      "visits": 27452129,
+      "favoritedCount": 381716,
+      "upVotes": 96369,
+      "downVotes": 4327,
+      "playing": 1424,
+      "created": "2023-08-13T08:43:16.81Z",
+      "updated": "2026-05-05T06:56:34.671Z",
+      "canonicalUrlPath": "/games/14418473444/Abyssal",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1444,
+          "visits": 27451385
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1424,
+          "visits": 27452129
+        }
+      ]
+    },
+    {
+      "universeId": 9294074907,
+      "rootPlaceId": 90568084448279,
+      "name": "[FPS] One Tap",
+      "creatorName": "Stringless Banjo",
+      "genreL1": "Shooter",
+      "genreL2": "Deathmatch Shooter",
+      "visits": 177074784,
+      "favoritedCount": 182823,
+      "upVotes": 83484,
+      "downVotes": 11704,
+      "playing": 14887,
+      "created": "2025-12-04T00:44:19.27Z",
+      "updated": "2026-05-07T01:37:25.4647998Z",
+      "canonicalUrlPath": "/games/90568084448279/One-Tap",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 14470,
+          "visits": 177067064
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 14887,
+          "visits": 177074784
+        }
+      ]
+    },
+    {
+      "universeId": 6325068386,
+      "rootPlaceId": 18668065416,
+      "name": "[NEL + MVPS] Blue Lock: Rivals",
+      "creatorName": "Blue Lock Rivals Unofficial Fans",
+      "genreL1": "Sports & Racing",
+      "genreL2": "Sports",
+      "visits": 4609488572,
+      "favoritedCount": 5774710,
+      "upVotes": 9753591,
+      "downVotes": 343109,
+      "playing": 20196,
+      "created": "2024-07-26T19:16:18.383Z",
+      "updated": "2026-05-06T20:25:06.118321Z",
+      "canonicalUrlPath": "/games/18668065416/Blue-Lock-Rivals",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 21222,
+          "visits": 4609480682
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 20196,
+          "visits": 4609488572
+        }
+      ]
+    },
+    {
+      "universeId": 9663757076,
+      "rootPlaceId": 80943018226476,
+      "name": "🐛Catch Bugs! [🌸]",
+      "creatorName": "Catch Bugs!",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 17126467,
+      "favoritedCount": 324360,
+      "upVotes": 96075,
+      "downVotes": 2925,
+      "playing": 7152,
+      "created": "2026-02-02T04:42:56.783Z",
+      "updated": "2026-05-03T14:17:06.105Z",
+      "canonicalUrlPath": "/games/80943018226476/Catch-Bugs",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 7071,
+          "visits": 17124782
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 7152,
+          "visits": 17126467
+        }
+      ]
+    },
+    {
+      "universeId": 9348272796,
+      "rootPlaceId": 114204398207377,
+      "name": "Survive Zombie Arena",
+      "creatorName": "Nectarforge Studios",
+      "genreL1": "Survival",
+      "genreL2": "",
+      "visits": 102543475,
+      "favoritedCount": 77197,
+      "upVotes": 32375,
+      "downVotes": 3701,
+      "playing": 33364,
+      "created": "2025-12-13T12:08:14.347Z",
+      "updated": "2026-05-06T08:03:05.8896704Z",
+      "canonicalUrlPath": "/games/114204398207377/Survive-Zombie-Arena",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 33064,
+          "visits": 102530398
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 33364,
+          "visits": 102543475
+        }
+      ]
+    },
+    {
+      "universeId": 10062649503,
+      "rootPlaceId": 128469876423260,
+      "name": "Would You Rather: Outfit Tower 💖",
+      "creatorName": "MostWanted Studio",
+      "genreL1": "Obby & Platformer",
+      "genreL2": "Tower Obby",
+      "visits": 36294099,
+      "favoritedCount": 3582880,
+      "upVotes": 29539,
+      "downVotes": 5438,
+      "playing": 14010,
+      "created": "2026-04-20T22:05:31.874Z",
+      "updated": "2026-05-06T22:50:29.6445357Z",
+      "canonicalUrlPath": "/games/128469876423260/Would-You-Rather-Outfit-Tower",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 14148,
+          "visits": 36280592
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 14010,
+          "visits": 36294099
+        }
+      ]
+    },
+    {
+      "universeId": 9041696916,
+      "rootPlaceId": 138615169232956,
+      "name": "AP Study Game",
+      "creatorName": "StudyVerse",
+      "genreL1": "Education",
+      "genreL2": "",
+      "visits": 614410,
+      "favoritedCount": 14567,
+      "upVotes": 3007,
+      "downVotes": 150,
+      "playing": 1925,
+      "created": "2025-10-27T01:23:36.393Z",
+      "updated": "2026-05-04T04:11:37.275Z",
+      "canonicalUrlPath": "/games/138615169232956/AP-Study-Game",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1891,
+          "visits": 613555
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1925,
+          "visits": 614410
+        }
+      ]
+    },
+    {
+      "universeId": 110181652,
+      "rootPlaceId": 277751860,
+      "name": "Epic Minigames ✨",
+      "creatorName": "Typical Games",
+      "genreL1": "Party & Casual",
+      "genreL2": "Minigame",
+      "visits": 2315570644,
+      "favoritedCount": 8284514,
+      "upVotes": 2215191,
+      "downVotes": 233373,
+      "playing": 2213,
+      "created": "2015-07-29T08:46:24.84Z",
+      "updated": "2026-05-06T13:34:13.8009339Z",
+      "canonicalUrlPath": "/games/277751860/Epic-Minigames",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2171,
+          "visits": 2315569795
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2213,
+          "visits": 2315570644
+        }
+      ]
+    },
+    {
+      "universeId": 9067401541,
+      "rootPlaceId": 134963296781989,
+      "name": "[UPDATE 3 BETA] Clover Origins ",
+      "creatorName": "Funzy Labs",
+      "genreL1": "RPG",
+      "genreL2": "Action RPG",
+      "visits": 7015342,
+      "favoritedCount": 46061,
+      "upVotes": 75421,
+      "downVotes": 1720,
+      "playing": 5415,
+      "created": "2025-10-30T23:29:24.54Z",
+      "updated": "2026-05-06T23:23:14.8315286Z",
+      "canonicalUrlPath": "/games/134963296781989/Clover-Origins",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 5433,
+          "visits": 7013515
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 5415,
+          "visits": 7015342
+        }
+      ]
+    },
+    {
+      "universeId": 10040497010,
+      "rootPlaceId": 129870876180628,
+      "name": "[🌍]Guess My Country!",
+      "creatorName": "SimpleFun",
+      "genreL1": "Party & Casual",
+      "genreL2": "",
+      "visits": 10029773,
+      "favoritedCount": 21541,
+      "upVotes": 15564,
+      "downVotes": 2273,
+      "playing": 4538,
+      "created": "2026-04-15T19:21:17.093Z",
+      "updated": "2026-05-06T17:05:19.0501941Z",
+      "canonicalUrlPath": "/games/129870876180628/Guess-My-Country",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 4421,
+          "visits": 10027515
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 4538,
+          "visits": 10029773
+        }
+      ]
+    },
+    {
+      "universeId": 9859536675,
+      "rootPlaceId": 76362086364047,
+      "name": "Hell Rails: The Scary Train",
+      "creatorName": "Mandem Games",
+      "genreL1": "Survival",
+      "genreL2": "",
+      "visits": 702386,
+      "favoritedCount": 24601,
+      "upVotes": 1417,
+      "downVotes": 362,
+      "playing": 4481,
+      "created": "2026-03-09T16:23:24.643Z",
+      "updated": "2026-05-07T00:47:23.127636Z",
+      "canonicalUrlPath": "/games/76362086364047/Hell-Rails-The-Scary-Train",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 4317,
+          "visits": 700857
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 4481,
+          "visits": 702386
+        }
+      ]
+    },
+    {
+      "universeId": 10096303772,
+      "rootPlaceId": 113311052191985,
+      "name": "Pokemon Brick Bronze | Roria Conquest",
+      "creatorName": "CC_CC",
+      "genreL1": "RPG",
+      "genreL2": "Turn-based RPG",
+      "visits": 4228706,
+      "favoritedCount": 105616,
+      "upVotes": 5251,
+      "downVotes": 180,
+      "playing": 4722,
+      "created": "2026-04-28T19:03:30.358Z",
+      "updated": "2026-05-06T15:14:02.4975598Z",
+      "canonicalUrlPath": "/games/113311052191985/Pokemon-Brick-Bronze-Roria-Conquest",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 4666,
+          "visits": 4226505
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 4722,
+          "visits": 4228706
+        }
+      ]
+    },
+    {
+      "universeId": 9952351777,
+      "rootPlaceId": 109715918987082,
+      "name": "[🌸] Anime Waifu Card Collection",
+      "creatorName": "Nova Digital Games",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 4027930,
+      "favoritedCount": 24459,
+      "upVotes": 6420,
+      "downVotes": 982,
+      "playing": 2444,
+      "created": "2026-03-28T11:54:03.886Z",
+      "updated": "2026-05-07T01:19:18.1894161Z",
+      "canonicalUrlPath": "/games/109715918987082/Anime-Waifu-Card-Collection",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2458,
+          "visits": 4027062
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2444,
+          "visits": 4027930
+        }
+      ]
+    },
+    {
+      "universeId": 10050364824,
+      "rootPlaceId": 105282886970300,
+      "name": "[TERRANOVA] Trending Meme Animations",
+      "creatorName": "Reflections Studio [DEV]",
+      "genreL1": "Entertainment",
+      "genreL2": "",
+      "visits": 6461472,
+      "favoritedCount": 59071,
+      "upVotes": 10670,
+      "downVotes": 1003,
+      "playing": 4794,
+      "created": "2026-04-18T08:27:25.386Z",
+      "updated": "2026-05-05T15:16:04.4730524Z",
+      "canonicalUrlPath": "/games/105282886970300/Trending-Meme-Animations",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 4831,
+          "visits": 6457620
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 4794,
+          "visits": 6461472
+        }
+      ]
+    },
+    {
+      "universeId": 10015834582,
+      "rootPlaceId": 109908567838703,
+      "name": "Nuke for Brainrot",
+      "creatorName": "Future Trash 2",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 7989259,
+      "favoritedCount": 11845,
+      "upVotes": 3764,
+      "downVotes": 706,
+      "playing": 13736,
+      "created": "2026-04-10T15:24:55.052Z",
+      "updated": "2026-05-06T13:41:27.0433296Z",
+      "canonicalUrlPath": "/games/109908567838703/Nuke-for-Brainrot",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 13947,
+          "visits": 7983987
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 13736,
+          "visits": 7989259
+        }
+      ]
+    },
+    {
+      "universeId": 9838453857,
+      "rootPlaceId": 90316083466771,
+      "name": "[🦈] Catch and Cook!",
+      "creatorName": "Lotus Green",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 3916899,
+      "favoritedCount": 30656,
+      "upVotes": 7237,
+      "downVotes": 1366,
+      "playing": 1875,
+      "created": "2026-03-05T16:40:22.947Z",
+      "updated": "2026-05-06T17:58:24.7879816Z",
+      "canonicalUrlPath": "/games/90316083466771/Catch-and-Cook",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1832,
+          "visits": 3916399
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1875,
+          "visits": 3916899
+        }
+      ]
+    },
+    {
+      "universeId": 8539298853,
+      "rootPlaceId": 137826330724902,
+      "name": "Scary Shawarma Kiosk: the ANOMALY [horror]",
+      "creatorName": "kharbor_ykt",
+      "genreL1": "Survival",
+      "genreL2": "",
+      "visits": 1071827349,
+      "favoritedCount": 1398561,
+      "upVotes": 318273,
+      "downVotes": 35823,
+      "playing": 11574,
+      "created": "2025-08-25T00:39:08.193Z",
+      "updated": "2026-05-02T17:45:22.428Z",
+      "canonicalUrlPath": "/games/137826330724902/Scary-Shawarma-Kiosk-the-ANOMALY",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 11680,
+          "visits": 1071821615
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 11574,
+          "visits": 1071827349
+        }
+      ]
+    },
+    {
+      "universeId": 6517184723,
+      "rootPlaceId": 132756651286184,
+      "name": "[🔥UPD] Baseball Universe 9v9",
+      "creatorName": "Roblox - Baseball Universe",
+      "genreL1": "Sports & Racing",
+      "genreL2": "Sports",
+      "visits": 12441859,
+      "favoritedCount": 29242,
+      "upVotes": 20505,
+      "downVotes": 2887,
+      "playing": 926,
+      "created": "2024-09-06T05:32:57.463Z",
+      "updated": "2026-05-07T00:03:09.3853332Z",
+      "canonicalUrlPath": "/games/132756651286184/Baseball-Universe-9v9",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 860,
+          "visits": 12440958
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 926,
+          "visits": 12441859
+        }
+      ]
+    },
+    {
+      "universeId": 4778845442,
+      "rootPlaceId": 13775256536,
+      "name": "[LEGACY] Toilet Tower Defense",
+      "creatorName": "Telanthric Development",
+      "genreL1": "Strategy",
+      "genreL2": "Tower Defense",
+      "visits": 6100933542,
+      "favoritedCount": 1505669,
+      "upVotes": 1320984,
+      "downVotes": 225275,
+      "playing": 10516,
+      "created": "2023-06-17T07:34:01.93Z",
+      "updated": "2026-05-02T23:44:39.727Z",
+      "canonicalUrlPath": "/games/13775256536/Toilet-Tower-Defense",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 10373,
+          "visits": 6100930802
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 10516,
+          "visits": 6100933542
+        }
+      ]
+    },
+    {
+      "universeId": 6760085372,
+      "rootPlaceId": 128451689942376,
+      "name": "[💥BLACK FLASH] Jujutsu: Zero",
+      "creatorName": "Studio Resonance",
+      "genreL1": "Action",
+      "genreL2": "Open World Action",
+      "visits": 69823623,
+      "favoritedCount": 128939,
+      "upVotes": 164449,
+      "downVotes": 7242,
+      "playing": 3508,
+      "created": "2024-11-04T17:58:40.07Z",
+      "updated": "2026-05-04T21:16:54.735Z",
+      "canonicalUrlPath": "/games/128451689942376/Jujutsu-Zero",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 3499,
+          "visits": 69822679
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3508,
+          "visits": 69823623
+        }
+      ]
+    },
+    {
+      "universeId": 7321712757,
+      "rootPlaceId": 89788834648171,
+      "name": "Toons Universe [ALPHA]",
+      "creatorName": "Toon Shenanigans",
+      "genreL1": "Survival",
+      "genreL2": "Escape",
+      "visits": 4613567,
+      "favoritedCount": 31757,
+      "upVotes": 17048,
+      "downVotes": 718,
+      "playing": 3990,
+      "created": "2025-03-03T01:10:11.947Z",
+      "updated": "2026-05-06T22:02:14.5678754Z",
+      "canonicalUrlPath": "/games/89788834648171/Toons-Universe",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 4010,
+          "visits": 4612367
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3990,
+          "visits": 4613567
+        }
+      ]
+    },
+    {
+      "universeId": 10033740377,
+      "rootPlaceId": 108632069675268,
+      "name": "🍪 Roll Your Cookie",
+      "creatorName": "Who Wants A Cookie?",
+      "genreL1": "Party & Casual",
+      "genreL2": "",
+      "visits": 6277718,
+      "favoritedCount": 15566,
+      "upVotes": 8957,
+      "downVotes": 1498,
+      "playing": 3981,
+      "created": "2026-04-13T22:15:41.854Z",
+      "updated": "2026-05-06T19:42:34.4986107Z",
+      "canonicalUrlPath": "/games/108632069675268/Roll-Your-Cookie",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 4077,
+          "visits": 6274824
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3981,
+          "visits": 6277718
+        }
+      ]
+    },
+    {
+      "universeId": 9645309602,
+      "rootPlaceId": 104776930318129,
+      "name": "Mahjong Duel",
+      "creatorName": "Dream Block Studio",
+      "genreL1": "Party & Casual",
+      "genreL2": "",
+      "visits": 8893752,
+      "favoritedCount": 20397,
+      "upVotes": 7960,
+      "downVotes": 1557,
+      "playing": 6187,
+      "created": "2026-01-30T06:40:10.46Z",
+      "updated": "2026-05-06T17:34:47.4741955Z",
+      "canonicalUrlPath": "/games/104776930318129/Mahjong-Duel",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 6116,
+          "visits": 8889896
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 6187,
+          "visits": 8893752
+        }
+      ]
+    },
+    {
+      "universeId": 9526307912,
+      "rootPlaceId": 75839707976715,
+      "name": "[🐒] Escape The ZOO!",
+      "creatorName": "My Gorilla Friend",
+      "genreL1": "Adventure",
+      "genreL2": "Story",
+      "visits": 9046129,
+      "favoritedCount": 19730,
+      "upVotes": 15211,
+      "downVotes": 880,
+      "playing": 7152,
+      "created": "2026-01-08T18:42:24.227Z",
+      "updated": "2026-05-06T17:04:43.7912323Z",
+      "canonicalUrlPath": "/games/75839707976715/Escape-The-ZOO",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 7115,
+          "visits": 9042235
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 7152,
+          "visits": 9046129
+        }
+      ]
+    },
+    {
+      "universeId": 9804429271,
+      "rootPlaceId": 130274245431977,
+      "name": "Climb and Plunge",
+      "creatorName": "Black BBB Studio",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 13389654,
+      "favoritedCount": 868780,
+      "upVotes": 23374,
+      "downVotes": 1007,
+      "playing": 7631,
+      "created": "2026-02-27T05:40:08.81Z",
+      "updated": "2026-05-06T21:41:56.4025668Z",
+      "canonicalUrlPath": "/games/130274245431977/Climb-and-Plunge",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 7608,
+          "visits": 13386381
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 7631,
+          "visits": 13389654
+        }
+      ]
+    },
+    {
+      "universeId": 4509896324,
+      "rootPlaceId": 12886143095,
+      "name": "[🌎 World 3 💫] Anime Last Stand",
+      "creatorName": "[B:S] ALS Team",
+      "genreL1": "Strategy",
+      "genreL2": "Tower Defense",
+      "visits": 1075868543,
+      "favoritedCount": 708889,
+      "upVotes": 980759,
+      "downVotes": 43278,
+      "playing": 1377,
+      "created": "2023-03-24T22:47:28.563Z",
+      "updated": "2026-05-06T15:37:29.1474945Z",
+      "canonicalUrlPath": "/games/12886143095/Anime-Last-Stand",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1359,
+          "visits": 1075868231
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1377,
+          "visits": 1075868543
+        }
+      ]
+    },
+    {
+      "universeId": 4785982047,
+      "rootPlaceId": 13796645198,
+      "name": "FLASHPOINT⚡",
+      "creatorName": "Varis Studios",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 194143835,
+      "favoritedCount": 2766790,
+      "upVotes": 1544463,
+      "downVotes": 24855,
+      "playing": 1809,
+      "created": "2023-06-19T05:44:21.743Z",
+      "updated": "2026-05-02T17:58:37.737Z",
+      "canonicalUrlPath": "/games/13796645198/FLASHPOINT",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1828,
+          "visits": 194143080
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1809,
+          "visits": 194143835
+        }
+      ]
+    },
+    {
+      "universeId": 10016841656,
+      "rootPlaceId": 127758462685845,
+      "name": "[2x XP] Noob Tower Defense ☄️",
+      "creatorName": "Vitan Games",
+      "genreL1": "Strategy",
+      "genreL2": "Tower Defense",
+      "visits": 8441902,
+      "favoritedCount": 174452,
+      "upVotes": 20831,
+      "downVotes": 1231,
+      "playing": 6776,
+      "created": "2026-04-10T20:40:21.225Z",
+      "updated": "2026-05-06T23:13:44.527153Z",
+      "canonicalUrlPath": "/games/127758462685845/Noob-Tower-Defense",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 6702,
+          "visits": 8439518
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 6776,
+          "visits": 8441902
+        }
+      ]
+    },
+    {
+      "universeId": 1390601379,
+      "rootPlaceId": 4282985734,
+      "name": "Combat Warriors",
+      "creatorName": "PlayCombatWarriors",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 1417531768,
+      "favoritedCount": 2349544,
+      "upVotes": 1354359,
+      "downVotes": 265663,
+      "playing": 2214,
+      "created": "2019-11-03T00:57:01.03Z",
+      "updated": "2026-04-29T22:37:34.455Z",
+      "canonicalUrlPath": "/games/4282985734/Combat-Warriors",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2178,
+          "visits": 1417530775
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2214,
+          "visits": 1417531768
+        }
+      ]
+    },
+    {
+      "universeId": 5422546686,
+      "rootPlaceId": 15696848933,
+      "name": "⛈️ Horse Life 🐎 [NEW MAP + REVAMP]  🗺️",
+      "creatorName": "Sonar Studios",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Pet Care",
+      "visits": 335356565,
+      "favoritedCount": 2100230,
+      "upVotes": 466860,
+      "downVotes": 20031,
+      "playing": 2412,
+      "created": "2023-12-21T01:01:32.093Z",
+      "updated": "2026-05-06T16:33:10.7041121Z",
+      "canonicalUrlPath": "/games/15696848933/Horse-Life",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2400,
+          "visits": 335355896
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2412,
+          "visits": 335356565
+        }
+      ]
+    },
+    {
+      "universeId": 1944926840,
+      "rootPlaceId": 5566045709,
+      "name": "My Prison Cell ",
+      "creatorName": "(NRPG) Sage Village",
+      "genreL1": "Survival",
+      "genreL2": "",
+      "visits": 5351194,
+      "favoritedCount": 17395,
+      "upVotes": 5547,
+      "downVotes": 2036,
+      "playing": 4624,
+      "created": "2020-08-15T20:21:48.157Z",
+      "updated": "2026-05-07T01:28:21.8878727Z",
+      "canonicalUrlPath": "/games/5566045709/My-Prison-Cell",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 4564,
+          "visits": 5349465
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 4624,
+          "visits": 5351194
+        }
+      ]
+    },
+    {
+      "universeId": 6022371481,
+      "rootPlaceId": 17590362521,
+      "name": "[🌷] Spelling Bee",
+      "creatorName": "Bean's Can",
+      "genreL1": "Education",
+      "genreL2": "",
+      "visits": 67356513,
+      "favoritedCount": 124614,
+      "upVotes": 44542,
+      "downVotes": 16306,
+      "playing": 673,
+      "created": "2024-05-23T21:22:16.863Z",
+      "updated": "2026-05-03T22:18:27.459Z",
+      "canonicalUrlPath": "/games/17590362521/Spelling-Bee",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 671,
+          "visits": 67356117
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 673,
+          "visits": 67356513
+        }
+      ]
+    },
+    {
+      "universeId": 9893515490,
+      "rootPlaceId": 113918641206373,
+      "name": "☢️ Nuke Your City",
+      "creatorName": "Nuclear Fun",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 20865367,
+      "favoritedCount": 608507,
+      "upVotes": 202154,
+      "downVotes": 3685,
+      "playing": 7303,
+      "created": "2026-03-16T14:40:52.345Z",
+      "updated": "2026-05-06T03:08:36.2408011Z",
+      "canonicalUrlPath": "/games/113918641206373/Nuke-Your-City",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 7258,
+          "visits": 20862288
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 7303,
+          "visits": 20865367
+        }
+      ]
+    },
+    {
+      "universeId": 9135448153,
+      "rootPlaceId": 94309190278698,
+      "name": "Safety NOT Required!",
+      "creatorName": "mega fun balling",
+      "genreL1": "Obby & Platformer",
+      "genreL2": "",
+      "visits": 3731552,
+      "favoritedCount": 24242,
+      "upVotes": 6380,
+      "downVotes": 2300,
+      "playing": 2037,
+      "created": "2025-11-09T09:51:17.63Z",
+      "updated": "2026-05-01T12:06:38.832Z",
+      "canonicalUrlPath": "/games/94309190278698/Safety-NOT-Required",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2003,
+          "visits": 3730758
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2037,
+          "visits": 3731552
+        }
+      ]
+    },
+    {
+      "universeId": 9141743926,
+      "rootPlaceId": 98664161516921,
+      "name": "[Free S] Catch a Monster",
+      "creatorName": "LDS II",
+      "genreL1": "Adventure",
+      "genreL2": "",
+      "visits": 255036961,
+      "favoritedCount": 441166,
+      "upVotes": 415627,
+      "downVotes": 9168,
+      "playing": 19766,
+      "created": "2025-11-10T07:20:57.997Z",
+      "updated": "2026-05-06T06:29:42.4104265Z",
+      "canonicalUrlPath": "/games/98664161516921/Catch-a-Monster",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 19775,
+          "visits": 255030069
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 19766,
+          "visits": 255036961
+        }
+      ]
+    },
+    {
+      "universeId": 7115773109,
+      "rootPlaceId": 94590879393563,
+      "name": "Weird Gun Game",
+      "creatorName": "Redscape Interactive Projects",
+      "genreL1": "Shooter",
+      "genreL2": "Deathmatch Shooter",
+      "visits": 236805457,
+      "favoritedCount": 916943,
+      "upVotes": 592706,
+      "downVotes": 32154,
+      "playing": 2089,
+      "created": "2025-01-20T06:49:45.09Z",
+      "updated": "2026-05-06T17:40:34.208043Z",
+      "canonicalUrlPath": "/games/94590879393563/Weird-Gun-Game",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2113,
+          "visits": 236804442
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2089,
+          "visits": 236805457
+        }
+      ]
+    },
+    {
+      "universeId": 1198533421,
+      "rootPlaceId": 3339374541,
+      "name": "[New Car and Remodels!] Midnight Racing: Tokyo",
+      "creatorName": "devGem",
+      "genreL1": "Sports & Racing",
+      "genreL2": "Racing",
+      "visits": 171799764,
+      "favoritedCount": 711671,
+      "upVotes": 246202,
+      "downVotes": 28107,
+      "playing": 1315,
+      "created": "2019-06-20T21:29:15.317Z",
+      "updated": "2026-05-05T10:43:32.972Z",
+      "canonicalUrlPath": "/games/3339374541/Midnight-Racing-Tokyo",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1319,
+          "visits": 171799474
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1315,
+          "visits": 171799764
+        }
+      ]
+    },
+    {
+      "universeId": 274816972,
+      "rootPlaceId": 654732683,
+      "name": "[Barn Find!🔧] Car Crushers 2 - Physics Simulation",
+      "creatorName": "Car Crushers Community",
+      "genreL1": "Simulation",
+      "genreL2": "Vehicle Sim",
+      "visits": 1313500581,
+      "favoritedCount": 6515207,
+      "upVotes": 1893857,
+      "downVotes": 135625,
+      "playing": 2158,
+      "created": "2017-02-11T16:19:43.283Z",
+      "updated": "2026-05-02T16:15:09.415Z",
+      "canonicalUrlPath": "/games/654732683/Car-Crushers-2-Physics-Simulation",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2203,
+          "visits": 1313499862
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2158,
+          "visits": 1313500581
+        }
+      ]
+    },
+    {
+      "universeId": 4009558569,
+      "rootPlaceId": 11238892040,
+      "name": "Type or Die",
+      "creatorName": "SL Studios x Type or Die",
+      "genreL1": "Party & Casual",
+      "genreL2": "Minigame",
+      "visits": 124263424,
+      "favoritedCount": 166586,
+      "upVotes": 126700,
+      "downVotes": 45384,
+      "playing": 466,
+      "created": "2022-10-10T23:43:49.847Z",
+      "updated": "2026-05-03T05:02:58.91Z",
+      "canonicalUrlPath": "/games/11238892040/Type-or-Die",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 459,
+          "visits": 124263236
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 466,
+          "visits": 124263424
+        }
+      ]
+    },
+    {
+      "universeId": 9945976408,
+      "rootPlaceId": 139769003880269,
+      "name": "[ SPACEGODZILLA ] Kaiju Alpha",
+      "creatorName": "SULU KAKA",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 9822193,
+      "favoritedCount": 26273,
+      "upVotes": 13797,
+      "downVotes": 1990,
+      "playing": 6764,
+      "created": "2026-03-27T05:10:47.437Z",
+      "updated": "2026-05-06T17:18:50.9639963Z",
+      "canonicalUrlPath": "/games/139769003880269/Kaiju-Alpha",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 6847,
+          "visits": 9819812
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 6764,
+          "visits": 9822193
+        }
+      ]
+    },
+    {
+      "universeId": 9876258060,
+      "rootPlaceId": 109141895577255,
+      "name": "Coding Simulator 2 ",
+      "creatorName": "RoDark Studios",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 2169178,
+      "favoritedCount": 110469,
+      "upVotes": 20464,
+      "downVotes": 1332,
+      "playing": 1694,
+      "created": "2026-03-13T17:33:24.963Z",
+      "updated": "2026-05-04T15:04:56.885Z",
+      "canonicalUrlPath": "/games/109141895577255/Coding-Simulator-2",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1696,
+          "visits": 2168858
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1694,
+          "visits": 2169178
+        }
+      ]
+    },
+    {
+      "universeId": 10013145287,
+      "rootPlaceId": 79442754394573,
+      "name": "Giant Bug Zoo 🐞",
+      "creatorName": "| Axolotl Armies |",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 1633901,
+      "favoritedCount": 26821,
+      "upVotes": 14572,
+      "downVotes": 2917,
+      "playing": 814,
+      "created": "2026-04-10T00:25:35.844Z",
+      "updated": "2026-04-29T20:19:31.099Z",
+      "canonicalUrlPath": "/games/79442754394573/Giant-Bug-Zoo",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 832,
+          "visits": 1633460
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 814,
+          "visits": 1633901
+        }
+      ]
+    },
+    {
+      "universeId": 6057699512,
+      "rootPlaceId": 17687504411,
+      "name": "[UPD] All Star Tower Defense X",
+      "creatorName": "Top Down Games",
+      "genreL1": "Strategy",
+      "genreL2": "Tower Defense",
+      "visits": 944575957,
+      "favoritedCount": 374160,
+      "upVotes": 585579,
+      "downVotes": 20427,
+      "playing": 3091,
+      "created": "2024-06-01T01:13:39.07Z",
+      "updated": "2026-05-02T07:54:04.991Z",
+      "canonicalUrlPath": "/games/17687504411/All-Star-Tower-Defense-X",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 3060,
+          "visits": 944574111
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3091,
+          "visits": 944575957
+        }
+      ]
+    },
+    {
+      "universeId": 9974910633,
+      "rootPlaceId": 93999763241813,
+      "name": "Roll an Anime [🎲]",
+      "creatorName": "Anime Yahu",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 2968270,
+      "favoritedCount": 10051,
+      "upVotes": 22861,
+      "downVotes": 543,
+      "playing": 4385,
+      "created": "2026-04-02T00:32:42.345Z",
+      "updated": "2026-05-06T00:12:50.4049488Z",
+      "canonicalUrlPath": "/games/93999763241813/Roll-an-Anime",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 4410,
+          "visits": 2966960
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 4385,
+          "visits": 2968270
+        }
+      ]
+    },
+    {
+      "universeId": 4864117649,
+      "rootPlaceId": 14044547200,
+      "name": "untitled tag game",
+      "creatorName": "_create",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 397114713,
+      "favoritedCount": 879335,
+      "upVotes": 629830,
+      "downVotes": 64793,
+      "playing": 2089,
+      "created": "2023-07-12T21:01:23.517Z",
+      "updated": "2026-05-04T01:13:43.166Z",
+      "canonicalUrlPath": "/games/14044547200/untitled-tag-game",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2054,
+          "visits": 397113766
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2089,
+          "visits": 397114713
+        }
+      ]
+    },
+    {
+      "universeId": 10000284712,
+      "rootPlaceId": 71407662868481,
+      "name": " 🥊 +1 Punch Per Click",
+      "creatorName": "3T Games",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 2818838,
+      "favoritedCount": 147207,
+      "upVotes": 11878,
+      "downVotes": 299,
+      "playing": 3626,
+      "created": "2026-04-06T18:19:31.381Z",
+      "updated": "2026-05-03T21:40:43.036Z",
+      "canonicalUrlPath": "/games/71407662868481/1-Punch-Per-Click",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 3528,
+          "visits": 2817683
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3626,
+          "visits": 2818838
+        }
+      ]
+    },
+    {
+      "universeId": 2157872230,
+      "rootPlaceId": 5985232436,
+      "name": "Infectious Smile [SPRING 🌻]",
+      "creatorName": "laughablehaha",
+      "genreL1": "Survival",
+      "genreL2": "",
+      "visits": 1221527869,
+      "favoritedCount": 2096882,
+      "upVotes": 608721,
+      "downVotes": 164565,
+      "playing": 5291,
+      "created": "2020-11-21T21:30:08.547Z",
+      "updated": "2026-05-02T05:11:49.736Z",
+      "canonicalUrlPath": "/games/5985232436/Infectious-Smile",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 5239,
+          "visits": 1221525673
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 5291,
+          "visits": 1221527869
+        }
+      ]
+    },
+    {
+      "universeId": 9898510520,
+      "rootPlaceId": 103422753402418,
+      "name": "🐟 Bait a Fish",
+      "creatorName": "Crazy Fishers",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 9002567,
+      "favoritedCount": 23123,
+      "upVotes": 12337,
+      "downVotes": 864,
+      "playing": 3092,
+      "created": "2026-03-17T18:18:20.449Z",
+      "updated": "2026-05-05T22:50:29.4407184Z",
+      "canonicalUrlPath": "/games/103422753402418/Bait-a-Fish",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 3104,
+          "visits": 9000832
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3092,
+          "visits": 9002567
+        }
+      ]
+    },
+    {
+      "universeId": 9765324104,
+      "rootPlaceId": 89490838554710,
+      "name": "[🏍️] Wheelie District",
+      "creatorName": "Wheelie District Studios",
+      "genreL1": "Simulation",
+      "genreL2": "Vehicle Sim",
+      "visits": 6378071,
+      "favoritedCount": 42208,
+      "upVotes": 5412,
+      "downVotes": 519,
+      "playing": 6369,
+      "created": "2026-02-20T20:05:37.543Z",
+      "updated": "2026-05-06T19:35:56.0869777Z",
+      "canonicalUrlPath": "/games/89490838554710/Wheelie-District",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 6331,
+          "visits": 6375358
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 6369,
+          "visits": 6378071
+        }
+      ]
+    },
+    {
+      "universeId": 10000383119,
+      "rootPlaceId": 100109315849314,
+      "name": "+1 Gun Evolution",
+      "creatorName": "Scruffy Games",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 7511696,
+      "favoritedCount": 520992,
+      "upVotes": 75821,
+      "downVotes": 1651,
+      "playing": 5051,
+      "created": "2026-04-06T18:56:01.805Z",
+      "updated": "2026-05-04T22:03:33.922Z",
+      "canonicalUrlPath": "/games/100109315849314/1-Gun-Evolution",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 5059,
+          "visits": 7509766
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 5051,
+          "visits": 7511696
+        }
+      ]
+    },
+    {
+      "universeId": 9776222468,
+      "rootPlaceId": 82539019711975,
+      "name": "🐔Cluck or Hide",
+      "creatorName": "sausagerate",
+      "genreL1": "Party & Casual",
+      "genreL2": "Childhood Game",
+      "visits": 8825041,
+      "favoritedCount": 21816,
+      "upVotes": 8167,
+      "downVotes": 1674,
+      "playing": 9377,
+      "created": "2026-02-22T03:25:27.51Z",
+      "updated": "2026-05-06T06:11:04.2733295Z",
+      "canonicalUrlPath": "/games/82539019711975/Cluck-or-Hide",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 9246,
+          "visits": 8819449
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 9377,
+          "visits": 8825041
+        }
+      ]
+    },
+    {
+      "universeId": 5580972377,
+      "rootPlaceId": 16154918775,
+      "name": "💥 BUCKSHOT",
+      "creatorName": "crookit",
+      "genreL1": "Strategy",
+      "genreL2": "",
+      "visits": 89883510,
+      "favoritedCount": 391347,
+      "upVotes": 491224,
+      "downVotes": 17347,
+      "playing": 2416,
+      "created": "2024-01-28T18:36:04.97Z",
+      "updated": "2026-05-01T16:08:30.924Z",
+      "canonicalUrlPath": "/games/16154918775/BUCKSHOT",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2414,
+          "visits": 89882565
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2416,
+          "visits": 89883510
+        }
+      ]
+    },
+    {
+      "universeId": 6596627293,
+      "rootPlaceId": 70476134485723,
+      "name": "[UPD] Investor City",
+      "creatorName": "F1ctional",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 32298178,
+      "favoritedCount": 820488,
+      "upVotes": 65036,
+      "downVotes": 4646,
+      "playing": 1422,
+      "created": "2024-09-25T01:48:51.373Z",
+      "updated": "2026-05-02T10:14:55.008Z",
+      "canonicalUrlPath": "/games/70476134485723/Investor-City",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1400,
+          "visits": 32297883
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1422,
+          "visits": 32298178
+        }
+      ]
+    },
+    {
+      "universeId": 8300580369,
+      "rootPlaceId": 109745098209948,
+      "name": "[⚡] Get +1 Skill Point Every Second ",
+      "creatorName": "Bare Bone Games",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 3501145,
+      "favoritedCount": 56917,
+      "upVotes": 6954,
+      "downVotes": 1164,
+      "playing": 1093,
+      "created": "2025-07-30T15:59:58.023Z",
+      "updated": "2026-05-06T11:22:43.8594868Z",
+      "canonicalUrlPath": "/games/109745098209948/Get-1-Skill-Point-Every-Second",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1095,
+          "visits": 3500880
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1093,
+          "visits": 3501145
+        }
+      ]
+    },
+    {
+      "universeId": 3365661357,
+      "rootPlaceId": 8908228901,
+      "name": "SharkBite 2 🦈",
+      "creatorName": "Abracadabra",
+      "genreL1": "Survival",
+      "genreL2": "1 vs All",
+      "visits": 464591183,
+      "favoritedCount": 680677,
+      "upVotes": 384285,
+      "downVotes": 50657,
+      "playing": 1668,
+      "created": "2022-02-22T23:58:58.383Z",
+      "updated": "2026-05-06T18:13:40.9320542Z",
+      "canonicalUrlPath": "/games/8908228901/SharkBite-2",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1714,
+          "visits": 464590437
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1668,
+          "visits": 464591183
+        }
+      ]
+    },
+    {
+      "universeId": 8279887603,
+      "rootPlaceId": 133968315607063,
+      "name": "[🍎] Redfield Elementary School 🐦",
+      "creatorName": "Izzyan Studios",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Life",
+      "visits": 66761609,
+      "favoritedCount": 270481,
+      "upVotes": 49940,
+      "downVotes": 5170,
+      "playing": 2812,
+      "created": "2025-07-28T07:40:00.263Z",
+      "updated": "2026-05-05T07:01:35.37Z",
+      "canonicalUrlPath": "/games/133968315607063/Redfield-Elementary-School",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2919,
+          "visits": 66760400
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2812,
+          "visits": 66761609
+        }
+      ]
+    },
+    {
+      "universeId": 9671373627,
+      "rootPlaceId": 84394416472632,
+      "name": "Minecraft",
+      "creatorName": "Infinite Blocks",
+      "genreL1": "Simulation",
+      "genreL2": "Sandbox",
+      "visits": 9960334,
+      "favoritedCount": 33136,
+      "upVotes": 7575,
+      "downVotes": 2820,
+      "playing": 5261,
+      "created": "2026-02-03T19:18:49.823Z",
+      "updated": "2026-05-05T07:13:31.758Z",
+      "canonicalUrlPath": "/games/84394416472632/Minecraft",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 5267,
+          "visits": 9958626
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 5261,
+          "visits": 9960334
+        }
+      ]
+    },
+    {
+      "universeId": 7618444254,
+      "rootPlaceId": 136955914362530,
+      "name": "Horse RNG 🐎 ",
+      "creatorName": "Tou Interactive",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 28582716,
+      "favoritedCount": 525854,
+      "upVotes": 275695,
+      "downVotes": 4976,
+      "playing": 2543,
+      "created": "2025-04-29T19:58:04.113Z",
+      "updated": "2026-05-03T04:22:40.577Z",
+      "canonicalUrlPath": "/games/136955914362530/Horse-RNG",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2527,
+          "visits": 28581951
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2543,
+          "visits": 28582716
+        }
+      ]
+    },
+    {
+      "universeId": 8473646150,
+      "rootPlaceId": 139862517286509,
+      "name": "Power Simulator X ",
+      "creatorName": "Power Simulator X",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 2013304,
+      "favoritedCount": 11725,
+      "upVotes": 23900,
+      "downVotes": 560,
+      "playing": 2154,
+      "created": "2025-08-18T06:45:35.343Z",
+      "updated": "2026-05-06T06:39:56.194411Z",
+      "canonicalUrlPath": "/games/139862517286509/Power-Simulator-X",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2143,
+          "visits": 2012867
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2154,
+          "visits": 2013304
+        }
+      ]
+    },
+    {
+      "universeId": 10104229716,
+      "rootPlaceId": 75462869229229,
+      "name": "[RELEASE] Soccer: Zero ",
+      "creatorName": "Current.",
+      "genreL1": "Sports & Racing",
+      "genreL2": "Sports",
+      "visits": 4996033,
+      "favoritedCount": 38740,
+      "upVotes": 99724,
+      "downVotes": 4472,
+      "playing": 6674,
+      "created": "2026-04-30T22:21:23.761Z",
+      "updated": "2026-05-07T00:25:34.1256517Z",
+      "canonicalUrlPath": "/games/75462869229229/Soccer-Zero",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 6731,
+          "visits": 4992608
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 6674,
+          "visits": 4996033
+        }
+      ]
+    },
+    {
+      "universeId": 10078741050,
+      "rootPlaceId": 133018602124236,
+      "name": "DERS HOOD [0 DELAY!]",
+      "creatorName": "Marsilor47",
+      "genreL1": "All",
+      "genreL2": "",
+      "visits": 574421,
+      "favoritedCount": 477,
+      "upVotes": 284,
+      "downVotes": 49,
+      "playing": 822,
+      "created": "2026-04-24T23:30:48.249Z",
+      "updated": "2026-05-06T15:24:51.2801854Z",
+      "canonicalUrlPath": "/games/133018602124236/DERS-HOOD",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 819,
+          "visits": 573931
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 822,
+          "visits": 574421
+        }
+      ]
+    },
+    {
+      "universeId": 10078476822,
+      "rootPlaceId": 92772067242924,
+      "name": "Would You Rather: Style Towers 💞✨",
+      "creatorName": "JSK Games",
+      "genreL1": "Obby & Platformer",
+      "genreL2": "Tower Obby",
+      "visits": 3604254,
+      "favoritedCount": 209740,
+      "upVotes": 1335,
+      "downVotes": 392,
+      "playing": 5814,
+      "created": "2026-04-24T21:51:37.657Z",
+      "updated": "2026-05-07T01:25:53.3380156Z",
+      "canonicalUrlPath": "/games/92772067242924/Would-You-Rather-Style-Towers",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 5771,
+          "visits": 3600466
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 5814,
+          "visits": 3604254
+        }
+      ]
+    },
+    {
+      "universeId": 10034440925,
+      "rootPlaceId": 111896378748580,
+      "name": "Shells",
+      "creatorName": "A Shell Game",
+      "genreL1": "Simulation",
+      "genreL2": "",
+      "visits": 375371,
+      "favoritedCount": 5646,
+      "upVotes": 6283,
+      "downVotes": 410,
+      "playing": 1773,
+      "created": "2026-04-14T03:27:57.909Z",
+      "updated": "2026-05-07T01:02:38.5151554Z",
+      "canonicalUrlPath": "/games/111896378748580/Shells",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1755,
+          "visits": 374918
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1773,
+          "visits": 375371
+        }
+      ]
+    },
+    {
+      "universeId": 8675480462,
+      "rootPlaceId": 81712765462061,
+      "name": "(+10) Escape The Rooms [2 Player]",
+      "creatorName": "PEAK Games !",
+      "genreL1": "Obby & Platformer",
+      "genreL2": "",
+      "visits": 1774473,
+      "favoritedCount": 6302,
+      "upVotes": 1485,
+      "downVotes": 259,
+      "playing": 1842,
+      "created": "2025-09-09T19:46:39.497Z",
+      "updated": "2026-05-06T22:18:01.4877122Z",
+      "canonicalUrlPath": "/games/81712765462061/Escape-The-Rooms",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1786,
+          "visits": 1773961
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1842,
+          "visits": 1774473
+        }
+      ]
+    },
+    {
+      "universeId": 8222896303,
+      "rootPlaceId": 74963355937590,
+      "name": "[ALPHA RELEASE] Echoes of Heian",
+      "creatorName": "Echoes of Heian",
+      "genreL1": "RPG",
+      "genreL2": "Action RPG",
+      "visits": 85182,
+      "favoritedCount": 3507,
+      "upVotes": 1783,
+      "downVotes": 232,
+      "playing": 146,
+      "created": "2025-07-21T22:42:20.25Z",
+      "updated": "2026-05-06T22:19:32.3557269Z",
+      "canonicalUrlPath": "/games/74963355937590/Echoes-of-Heian",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 153,
+          "visits": 85118
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 146,
+          "visits": 85182
+        }
+      ]
+    },
+    {
+      "universeId": 10061511956,
+      "rootPlaceId": 126631821717419,
+      "name": "🌇[SUNSET] Seishun: School Life Roleplay",
+      "creatorName": "TsukimiSoft",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Life",
+      "visits": 1383839,
+      "favoritedCount": 7847,
+      "upVotes": 4183,
+      "downVotes": 423,
+      "playing": 1837,
+      "created": "2026-04-20T14:44:51.248Z",
+      "updated": "2026-05-05T22:28:18.2773802Z",
+      "canonicalUrlPath": "/games/126631821717419/Seishun-School-Life-Roleplay",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1839,
+          "visits": 1383469
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1837,
+          "visits": 1383839
+        }
+      ]
+    },
+    {
+      "universeId": 10045198531,
+      "rootPlaceId": 101766599346743,
+      "name": "Hangman ✏️",
+      "creatorName": "Miniverse Game Studios",
+      "genreL1": "Party & Casual",
+      "genreL2": "",
+      "visits": 474145,
+      "favoritedCount": 34188,
+      "upVotes": 1218,
+      "downVotes": 268,
+      "playing": 855,
+      "created": "2026-04-17T04:24:08.711Z",
+      "updated": "2026-05-07T01:08:59.6736973Z",
+      "canonicalUrlPath": "/games/101766599346743/Hangman",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 818,
+          "visits": 473546
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 855,
+          "visits": 474145
+        }
+      ]
+    },
+    {
+      "universeId": 8739739464,
+      "rootPlaceId": 119757349390174,
+      "name": "Terraria TD Remastered [Night]",
+      "creatorName": "Monster's Games",
+      "genreL1": "Strategy",
+      "genreL2": "Tower Defense",
+      "visits": 363682,
+      "favoritedCount": 2822,
+      "upVotes": 876,
+      "downVotes": 101,
+      "playing": 537,
+      "created": "2025-09-17T23:34:36.1Z",
+      "updated": "2026-05-06T00:46:26.7137972Z",
+      "canonicalUrlPath": "/games/119757349390174/Terraria-TD-Remastered",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 530,
+          "visits": 363346
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 537,
+          "visits": 363682
+        }
+      ]
+    },
+    {
+      "universeId": 10010371086,
+      "rootPlaceId": 73684979946677,
+      "name": "Invincible Edit Test",
+      "creatorName": "Tuff Edits",
+      "genreL1": "Entertainment",
+      "genreL2": "",
+      "visits": 3549871,
+      "favoritedCount": 29816,
+      "upVotes": 11669,
+      "downVotes": 444,
+      "playing": 1961,
+      "created": "2026-04-09T07:57:37.926Z",
+      "updated": "2026-05-06T19:58:20.5163227Z",
+      "canonicalUrlPath": "/games/73684979946677/Invincible-Edit-Test",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2008,
+          "visits": 3547986
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1961,
+          "visits": 3549871
+        }
+      ]
+    },
+    {
+      "universeId": 10029566389,
+      "rootPlaceId": 85771135139600,
+      "name": "[NEW!] Brawl RNG ⭐",
+      "creatorName": "ChillyTea Studios",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 1225123,
+      "favoritedCount": 5345,
+      "upVotes": 13537,
+      "downVotes": 606,
+      "playing": 1217,
+      "created": "2026-04-12T21:19:12.579Z",
+      "updated": "2026-05-06T19:30:05.2935903Z",
+      "canonicalUrlPath": "/games/85771135139600/Brawl-RNG",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1189,
+          "visits": 1224560
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1217,
+          "visits": 1225123
+        }
+      ]
+    },
+    {
+      "universeId": 10055536497,
+      "rootPlaceId": 140051950444458,
+      "name": "[NEW] Everything Incremental",
+      "creatorName": "Hmm... Games",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 135423,
+      "favoritedCount": 2240,
+      "upVotes": 1119,
+      "downVotes": 238,
+      "playing": 577,
+      "created": "2026-04-19T06:28:33.997Z",
+      "updated": "2026-04-29T18:48:28.268Z",
+      "canonicalUrlPath": "/games/140051950444458/Everything-Incremental",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 578,
+          "visits": 135274
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 577,
+          "visits": 135423
+        }
+      ]
+    },
+    {
+      "universeId": 9948670918,
+      "rootPlaceId": 92546724840766,
+      "name": "[BETA] Launch!",
+      "creatorName": "Moneybag Games",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 184807,
+      "favoritedCount": 5102,
+      "upVotes": 3420,
+      "downVotes": 210,
+      "playing": 405,
+      "created": "2026-03-27T17:58:31.454Z",
+      "updated": "2026-05-06T16:31:18.632235Z",
+      "canonicalUrlPath": "/games/92546724840766/Launch",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 398,
+          "visits": 184629
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 405,
+          "visits": 184807
+        }
+      ]
+    },
+    {
+      "universeId": 9255895519,
+      "rootPlaceId": 97329540301761,
+      "name": "[GLITTER✨] Trade Needohs!",
+      "creatorName": "Urus Games",
+      "genreL1": "All",
+      "genreL2": "",
+      "visits": 1075217,
+      "favoritedCount": 2837,
+      "upVotes": 672,
+      "downVotes": 190,
+      "playing": 1107,
+      "created": "2025-11-28T00:33:45.773Z",
+      "updated": "2026-05-04T00:08:47.895Z",
+      "canonicalUrlPath": "/games/97329540301761/Trade-Needohs",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1172,
+          "visits": 1074566
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1107,
+          "visits": 1075217
+        }
+      ]
+    },
+    {
+      "universeId": 10001527292,
+      "rootPlaceId": 119382507680341,
+      "name": "[🛹]My SkatePark",
+      "creatorName": "Whyyyy Did We Cook",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 3022757,
+      "favoritedCount": 8075,
+      "upVotes": 3886,
+      "downVotes": 388,
+      "playing": 2016,
+      "created": "2026-04-07T01:44:45.122Z",
+      "updated": "2026-05-06T04:04:37.8943307Z",
+      "canonicalUrlPath": "/games/119382507680341/My-SkatePark",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2080,
+          "visits": 3021668
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2016,
+          "visits": 3022757
+        }
+      ]
+    },
+    {
+      "universeId": 10092619788,
+      "rootPlaceId": 130253630950453,
+      "name": "[⛈️ UPD 0.5] Anime Card Battle X",
+      "creatorName": "ACBX Team",
+      "genreL1": "All",
+      "genreL2": "",
+      "visits": 500932,
+      "favoritedCount": 975,
+      "upVotes": 3299,
+      "downVotes": 74,
+      "playing": 3324,
+      "created": "2026-04-27T18:06:52.681Z",
+      "updated": "2026-05-07T01:12:06.6339664Z",
+      "canonicalUrlPath": "/games/130253630950453/Anime-Card-Battle-X",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 3335,
+          "visits": 500495
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3324,
+          "visits": 500932
+        }
+      ]
+    },
+    {
+      "universeId": 10032271327,
+      "rootPlaceId": 95630541662383,
+      "name": "[UPDATE 2.5] World Fighters",
+      "creatorName": "StarX Inc",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 7612899,
+      "favoritedCount": 38712,
+      "upVotes": 19253,
+      "downVotes": 875,
+      "playing": 9164,
+      "created": "2026-04-13T14:30:16.881Z",
+      "updated": "2026-05-05T20:18:08.5217003Z",
+      "canonicalUrlPath": "/games/95630541662383/World-Fighters",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 9197,
+          "visits": 7611390
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 9164,
+          "visits": 7612899
+        }
+      ]
+    },
+    {
+      "universeId": 10013764297,
+      "rootPlaceId": 82969199935441,
+      "name": "💻 Don't Hack Me!",
+      "creatorName": "HackEm Studios",
+      "genreL1": "Party & Casual",
+      "genreL2": "",
+      "visits": 6238064,
+      "favoritedCount": 14580,
+      "upVotes": 9680,
+      "downVotes": 1092,
+      "playing": 1842,
+      "created": "2026-04-10T04:39:30.415Z",
+      "updated": "2026-04-22T00:49:36.905Z",
+      "canonicalUrlPath": "/games/82969199935441/Dont-Hack-Me",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1899,
+          "visits": 6236848
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1842,
+          "visits": 6238064
+        }
+      ]
+    },
+    {
+      "universeId": 1686885941,
+      "rootPlaceId": 4924922222,
+      "name": "Brookhaven 🏡RP",
+      "creatorName": "Brookhaven by Voldex",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Life",
+      "visits": 82035193506,
+      "favoritedCount": 27442127,
+      "upVotes": 8032743,
+      "downVotes": 1317030,
+      "playing": 405388,
+      "created": "2020-04-21T02:15:38.373Z",
+      "updated": "2026-05-06T05:54:30.0329126Z",
+      "canonicalUrlPath": "/games/4924922222/Brookhaven-RP",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 405030,
+          "visits": 82035070833
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 405388,
+          "visits": 82035193506
+        }
+      ]
+    },
+    {
+      "universeId": 9186719164,
+      "rootPlaceId": 77747658251236,
+      "name": "[🍀2x Luck🍀] Sailor Piece",
+      "creatorName": "Shadowrise Devs",
+      "genreL1": "RPG",
+      "genreL2": "Action RPG",
+      "visits": 1299637747,
+      "favoritedCount": 678301,
+      "upVotes": 1099080,
+      "downVotes": 41485,
+      "playing": 242777,
+      "created": "2025-11-17T00:39:15.91Z",
+      "updated": "2026-05-04T16:06:36.166Z",
+      "canonicalUrlPath": "/games/77747658251236/Sailor-Piece",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 242635,
+          "visits": 1299594288
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 242777,
+          "visits": 1299637747
+        }
+      ]
+    },
+    {
+      "universeId": 994732206,
+      "rootPlaceId": 2753915549,
+      "name": "Blox Fruits",
+      "creatorName": "Gamer Robot Inc",
+      "genreL1": "RPG",
+      "genreL2": "Action RPG",
+      "visits": 61240128920,
+      "favoritedCount": 18751192,
+      "upVotes": 12048565,
+      "downVotes": 1035903,
+      "playing": 231149,
+      "created": "2019-01-16T03:29:19.433Z",
+      "updated": "2026-05-05T07:17:20.055Z",
+      "canonicalUrlPath": "/games/2753915549/Blox-Fruits",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 230518,
+          "visits": 61240061741
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 231149,
+          "visits": 61240128920
+        }
+      ]
+    },
+    {
+      "universeId": 383310974,
+      "rootPlaceId": 920587237,
+      "name": "[🧼] Adopt Me!",
+      "creatorName": "Uplift Games",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Pet Care",
+      "visits": 43401279133,
+      "favoritedCount": 28968154,
+      "upVotes": 9077720,
+      "downVotes": 1501037,
+      "playing": 237160,
+      "created": "2017-07-14T19:26:21.347Z",
+      "updated": "2026-05-06T18:51:42.686463Z",
+      "canonicalUrlPath": "/games/920587237/Adopt-Me",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 230452,
+          "visits": 43401246752
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 237160,
+          "visits": 43401279133
+        }
+      ]
+    },
+    {
+      "universeId": 6035872082,
+      "rootPlaceId": 17625359962,
+      "name": "RIVALS",
+      "creatorName": "Nosniy Games",
+      "genreL1": "Shooter",
+      "genreL2": "Deathmatch Shooter",
+      "visits": 14573364996,
+      "favoritedCount": 73237908,
+      "upVotes": 9367307,
+      "downVotes": 578097,
+      "playing": 217564,
+      "created": "2024-05-26T16:47:48.617Z",
+      "updated": "2026-05-06T23:18:32.1471247Z",
+      "canonicalUrlPath": "/games/17625359962/RIVALS",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 218655,
+          "visits": 14573261603
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 217564,
+          "visits": 14573364996
+        }
+      ]
+    },
+    {
+      "universeId": 7709344486,
+      "rootPlaceId": 109983668079237,
+      "name": "[🐷] Steal a Brainrot",
+      "creatorName": "BRAZILIAN SPYDER",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 68059775148,
+      "favoritedCount": 27854796,
+      "upVotes": 15025273,
+      "downVotes": 2515166,
+      "playing": 201539,
+      "created": "2025-05-16T00:49:12.563Z",
+      "updated": "2026-05-04T03:29:52.678Z",
+      "canonicalUrlPath": "/games/109983668079237/Steal-a-Brainrot",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 201841,
+          "visits": 68059600308
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 201539,
+          "visits": 68059775148
+        }
+      ]
+    },
+    {
+      "universeId": 3508322461,
+      "rootPlaceId": 9391468976,
+      "name": "Jujutsu Shenanigans",
+      "creatorName": "Tze's Shenanigans",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 5129497607,
+      "favoritedCount": 2285050,
+      "upVotes": 2131219,
+      "downVotes": 322663,
+      "playing": 193847,
+      "created": "2022-04-17T04:51:12.57Z",
+      "updated": "2026-05-04T20:20:28.169Z",
+      "canonicalUrlPath": "/games/9391468976/Jujutsu-Shenanigans",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 195745,
+          "visits": 5129423948
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 193847,
+          "visits": 5129497607
+        }
+      ]
+    },
+    {
+      "universeId": 7326934954,
+      "rootPlaceId": 79546208627805,
+      "name": "99 Nights in the Forest 🔦",
+      "creatorName": "Grandma's Favourite Games",
+      "genreL1": "Survival",
+      "genreL2": "",
+      "visits": 26445765190,
+      "favoritedCount": 7426863,
+      "upVotes": 4822651,
+      "downVotes": 503423,
+      "playing": 148632,
+      "created": "2025-03-04T04:46:49.73Z",
+      "updated": "2026-04-26T01:41:53.518Z",
+      "canonicalUrlPath": "/games/79546208627805/99-Nights-in-the-Forest",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 148272,
+          "visits": 26445714607
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 148632,
+          "visits": 26445765190
+        }
+      ]
+    },
+    {
+      "universeId": 6701277882,
+      "rootPlaceId": 121864768012064,
+      "name": "[UPD🕹️] Fish It! 🐟",
+      "creatorName": "Fish Atelier",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 4356881824,
+      "favoritedCount": 1149857,
+      "upVotes": 1310360,
+      "downVotes": 274043,
+      "playing": 115130,
+      "created": "2024-10-21T00:25:27.823Z",
+      "updated": "2026-05-06T20:54:23.2367332Z",
+      "canonicalUrlPath": "/games/121864768012064/Fish-It",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 114896,
+          "visits": 4356874610
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 115130,
+          "visits": 4356881824
+        }
+      ]
+    },
+    {
+      "universeId": 7219654364,
+      "rootPlaceId": 135856908115931,
+      "name": "[🪇DUELS] Murderers VS Sheriffs",
+      "creatorName": "MVS Duels Community",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 941899619,
+      "favoritedCount": 11701876,
+      "upVotes": 145137,
+      "downVotes": 19676,
+      "playing": 90506,
+      "created": "2025-02-09T12:47:47.52Z",
+      "updated": "2026-05-06T23:37:33.0806318Z",
+      "canonicalUrlPath": "/games/135856908115931/Murderers-VS-Sheriffs",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 90520,
+          "visits": 941853716
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 90506,
+          "visits": 941899619
+        }
+      ]
+    },
+    {
+      "universeId": 3808081382,
+      "rootPlaceId": 10449761463,
+      "name": "The Strongest Battlegrounds",
+      "creatorName": "Yielding Arts",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 17794161141,
+      "favoritedCount": 6867547,
+      "upVotes": 4961017,
+      "downVotes": 963089,
+      "playing": 72230,
+      "created": "2022-08-02T09:26:24.09Z",
+      "updated": "2026-05-06T01:31:17.9918219Z",
+      "canonicalUrlPath": "/games/10449761463/The-Strongest-Battlegrounds",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 71969,
+          "visits": 17794119332
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 72230,
+          "visits": 17794161141
+        }
+      ]
+    },
+    {
+      "universeId": 7436755782,
+      "rootPlaceId": 126884695634066,
+      "name": "[📜] Grow a Garden 🌶️",
+      "creatorName": "The Garden Game",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 35270205134,
+      "favoritedCount": 10896030,
+      "upVotes": 9261865,
+      "downVotes": 1041855,
+      "playing": 70812,
+      "created": "2025-03-25T22:32:09.437Z",
+      "updated": "2026-05-06T22:09:39.6707883Z",
+      "canonicalUrlPath": "/games/126884695634066/Grow-a-Garden",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 70704,
+          "visits": 35270180151
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 70812,
+          "visits": 35270205134
+        }
+      ]
+    },
+    {
+      "universeId": 2711375305,
+      "rootPlaceId": 7041939546,
+      "name": "Catalog Avatar Creator",
+      "creatorName": "Muneeb",
+      "genreL1": "Shopping",
+      "genreL2": "Avatar Shopping",
+      "visits": 6748773675,
+      "favoritedCount": 5185301,
+      "upVotes": 2716618,
+      "downVotes": 181611,
+      "playing": 69388,
+      "created": "2021-07-03T18:17:43.59Z",
+      "updated": "2026-05-06T12:30:22.8760746Z",
+      "canonicalUrlPath": "/games/7041939546/Catalog-Avatar-Creator",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 68981,
+          "visits": 6748745445
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 69388,
+          "visits": 6748773675
+        }
+      ]
+    },
+    {
+      "universeId": 6331902150,
+      "rootPlaceId": 18687417158,
+      "name": "Forsaken",
+      "creatorName": "Forsaken Dev Team",
+      "genreL1": "Survival",
+      "genreL2": "1 vs All",
+      "visits": 4900301307,
+      "favoritedCount": 2787905,
+      "upVotes": 2177610,
+      "downVotes": 383569,
+      "playing": 61277,
+      "created": "2024-07-28T02:20:42.22Z",
+      "updated": "2026-05-03T03:24:42.716Z",
+      "canonicalUrlPath": "/games/18687417158/Forsaken",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 61408,
+          "visits": 4900282008
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 61277,
+          "visits": 4900301307
+        }
+      ]
+    },
+    {
+      "universeId": 5203828273,
+      "rootPlaceId": 15101393044,
+      "name": "[QUEST] Dress To Impress🖤",
+      "creatorName": "Dress To Impress Group",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Dress Up",
+      "visits": 10029698523,
+      "favoritedCount": 6449677,
+      "upVotes": 3706864,
+      "downVotes": 388311,
+      "playing": 60095,
+      "created": "2023-10-18T09:11:36.563Z",
+      "updated": "2026-05-06T22:15:21.4529124Z",
+      "canonicalUrlPath": "/games/15101393044/Dress-To-Impress",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 60550,
+          "visits": 10029678767
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 60095,
+          "visits": 10029698523
+        }
+      ]
+    },
+    {
+      "universeId": 5361032378,
+      "rootPlaceId": 15532962292,
+      "name": "Sol's RNG [ Eon1 - 20🪐]",
+      "creatorName": "Sol's Studio",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 1832084204,
+      "favoritedCount": 935155,
+      "upVotes": 1313099,
+      "downVotes": 130070,
+      "playing": 58447,
+      "created": "2023-12-03T08:42:00.263Z",
+      "updated": "2026-05-05T14:10:40.3127794Z",
+      "canonicalUrlPath": "/games/15532962292/Sols-RNG",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 58374,
+          "visits": 1832074689
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 58447,
+          "visits": 1832084204
+        }
+      ]
+    },
+    {
+      "universeId": 8202280624,
+      "rootPlaceId": 70845479499574,
+      "name": "[BETA] Bite By Night",
+      "creatorName": "totally not secret games",
+      "genreL1": "Survival",
+      "genreL2": "1 vs All",
+      "visits": 304192940,
+      "favoritedCount": 943508,
+      "upVotes": 667164,
+      "downVotes": 56476,
+      "playing": 48331,
+      "created": "2025-07-19T15:44:39.67Z",
+      "updated": "2026-05-06T18:51:25.781501Z",
+      "canonicalUrlPath": "/games/70845479499574/Bite-By-Night",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 48545,
+          "visits": 304177158
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 48331,
+          "visits": 304192940
+        }
+      ]
+    },
+    {
+      "universeId": 3317771874,
+      "rootPlaceId": 8737899170,
+      "name": "🍄 Pet Simulator 99! ⏰",
+      "creatorName": "BIG Games Pets",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 2407274360,
+      "favoritedCount": 2122637,
+      "upVotes": 3005233,
+      "downVotes": 165610,
+      "playing": 47827,
+      "created": "2022-02-05T13:30:02.357Z",
+      "updated": "2026-05-06T23:45:25.4529997Z",
+      "canonicalUrlPath": "/games/8737899170/Pet-Simulator-99",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 46839,
+          "visits": 2407271325
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 47827,
+          "visits": 2407274360
+        }
+      ]
+    },
+    {
+      "universeId": 6931042565,
+      "rootPlaceId": 73956553001240,
+      "name": "[UPD] Volleyball Legends",
+      "creatorName": "Volleyball Game Group",
+      "genreL1": "Sports & Racing",
+      "genreL2": "Sports",
+      "visits": 3295730640,
+      "favoritedCount": 4485573,
+      "upVotes": 2362241,
+      "downVotes": 111730,
+      "playing": 33132,
+      "created": "2024-12-17T02:31:13.453Z",
+      "updated": "2026-05-04T01:53:06.267Z",
+      "canonicalUrlPath": "/games/73956553001240/Volleyball-Legends",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 33218,
+          "visits": 3295716900
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 33132,
+          "visits": 3295730640
+        }
+      ]
+    },
+    {
+      "universeId": 9363735110,
+      "rootPlaceId": 131623223084840,
+      "name": "Escape Tsunami For Brainrots!",
+      "creatorName": "Wave of Brainrots",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 5481940535,
+      "favoritedCount": 1917811,
+      "upVotes": 1910328,
+      "downVotes": 373341,
+      "playing": 32124,
+      "created": "2025-12-15T20:50:16.743Z",
+      "updated": "2026-05-06T20:06:24.1374488Z",
+      "canonicalUrlPath": "/games/131623223084840/Escape-Tsunami-For-Brainrots",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 32290,
+          "visits": 5481923906
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 32124,
+          "visits": 5481940535
+        }
+      ]
+    },
+    {
+      "universeId": 3647333358,
+      "rootPlaceId": 9872472334,
+      "name": "🐝 Evade [🌻SPRING] ",
+      "creatorName": "Hexagon Development Community",
+      "genreL1": "Survival",
+      "genreL2": "",
+      "visits": 8544164961,
+      "favoritedCount": 7691520,
+      "upVotes": 3015706,
+      "downVotes": 193339,
+      "playing": 29492,
+      "created": "2022-06-10T19:20:37.097Z",
+      "updated": "2026-05-06T15:48:01.8680567Z",
+      "canonicalUrlPath": "/games/9872472334/Evade",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 29234,
+          "visits": 8544151576
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 29492,
+          "visits": 8544164961
+        }
+      ]
+    },
+    {
+      "universeId": 9098570654,
+      "rootPlaceId": 90148635862803,
+      "name": "[🩸EVENT] 🧟 Survive the Apocalypse",
+      "creatorName": "Rubicon South",
+      "genreL1": "Survival",
+      "genreL2": "",
+      "visits": 97369229,
+      "favoritedCount": 167531,
+      "upVotes": 87273,
+      "downVotes": 5636,
+      "playing": 28701,
+      "created": "2025-11-04T03:35:29.833Z",
+      "updated": "2026-05-03T22:22:25.902Z",
+      "canonicalUrlPath": "/games/90148635862803/Survive-the-Apocalypse",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 28560,
+          "visits": 97362291
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 28701,
+          "visits": 97369229
+        }
+      ]
+    },
+    {
+      "universeId": 601130232,
+      "rootPlaceId": 1537690962,
+      "name": "Bee Swarm Simulator",
+      "creatorName": "Onett",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 4388174729,
+      "favoritedCount": 6432053,
+      "upVotes": 2966126,
+      "downVotes": 138144,
+      "playing": 27088,
+      "created": "2018-03-21T15:59:58.777Z",
+      "updated": "2026-04-23T22:14:23.85Z",
+      "canonicalUrlPath": "/games/1537690962/Bee-Swarm-Simulator",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 27053,
+          "visits": 4388167407
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 27088,
+          "visits": 4388174729
+        }
+      ]
+    },
+    {
+      "universeId": 4839802560,
+      "rootPlaceId": 13967668166,
+      "name": "LifeTogether 🏠 RP",
+      "creatorName": "Cinnamon Software",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Life",
+      "visits": 3346208684,
+      "favoritedCount": 12987383,
+      "upVotes": 819549,
+      "downVotes": 83905,
+      "playing": 26852,
+      "created": "2023-07-05T20:36:59.163Z",
+      "updated": "2026-04-29T03:02:32.08Z",
+      "canonicalUrlPath": "/games/13967668166/LifeTogether-RP",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 26976,
+          "visits": 3346198937
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 26852,
+          "visits": 3346208684
+        }
+      ]
+    },
+    {
+      "universeId": 3240075297,
+      "rootPlaceId": 8481844229,
+      "name": "Berry Avenue 🏠 RP",
+      "creatorName": "Amberry Games",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Life",
+      "visits": 8031559553,
+      "favoritedCount": 3225829,
+      "upVotes": 1057097,
+      "downVotes": 174113,
+      "playing": 23993,
+      "created": "2022-01-07T23:54:58.843Z",
+      "updated": "2026-04-24T23:58:44.266Z",
+      "canonicalUrlPath": "/games/8481844229/Berry-Avenue-RP",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 23824,
+          "visits": 8031549720
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 23993,
+          "visits": 8031559553
+        }
+      ]
+    },
+    {
+      "universeId": 10004760418,
+      "rootPlaceId": 110334393584385,
+      "name": "[🔥] Roller for Brainrots!",
+      "creatorName": "i think i like it",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 32939206,
+      "favoritedCount": 46331,
+      "upVotes": 21381,
+      "downVotes": 1064,
+      "playing": 23709,
+      "created": "2026-04-07T21:05:27.288Z",
+      "updated": "2026-05-03T13:44:40.699Z",
+      "canonicalUrlPath": "/games/110334393584385/Roller-for-Brainrots",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 23415,
+          "visits": 32928723
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 23709,
+          "visits": 32939206
+        }
+      ]
+    },
+    {
+      "universeId": 372226183,
+      "rootPlaceId": 893973440,
+      "name": "Flee the Facility",
+      "creatorName": "A.W. Apps",
+      "genreL1": "Survival",
+      "genreL2": "1 vs All",
+      "visits": 5580299392,
+      "favoritedCount": 9457687,
+      "upVotes": 2657799,
+      "downVotes": 230721,
+      "playing": 22540,
+      "created": "2017-07-01T07:01:19.197Z",
+      "updated": "2026-03-31T06:21:56.566Z",
+      "canonicalUrlPath": "/games/893973440/Flee-the-Facility",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 22685,
+          "visits": 5580289868
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 22540,
+          "visits": 5580299392
+        }
+      ]
+    },
+    {
+      "universeId": 88070565,
+      "rootPlaceId": 185655149,
+      "name": "[🍼] Welcome to Bloxburg 🏡",
+      "creatorName": "Bloxburg Development",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Life",
+      "visits": 9913783008,
+      "favoritedCount": 13858586,
+      "upVotes": 5568006,
+      "downVotes": 733351,
+      "playing": 21370,
+      "created": "2014-11-04T03:31:28.28Z",
+      "updated": "2026-05-04T07:31:41.805Z",
+      "canonicalUrlPath": "/games/185655149/Welcome-to-Bloxburg",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 21451,
+          "visits": 9913778265
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 21370,
+          "visits": 9913783008
+        }
+      ]
+    },
+    {
+      "universeId": 2668101271,
+      "rootPlaceId": 6961824067,
+      "name": "Fling Things and People",
+      "creatorName": "Horomori",
+      "genreL1": "Simulation",
+      "genreL2": "Physics Sim",
+      "visits": 2983039563,
+      "favoritedCount": 2249903,
+      "upVotes": 849963,
+      "downVotes": 213397,
+      "playing": 21196,
+      "created": "2021-06-16T13:57:11.12Z",
+      "updated": "2025-10-29T20:26:07.34Z",
+      "canonicalUrlPath": "/games/6961824067/Fling-Things-and-People",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 21162,
+          "visits": 2983031936
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 21196,
+          "visits": 2983039563
+        }
+      ]
+    },
+    {
+      "universeId": 6739698191,
+      "rootPlaceId": 93978595733734,
+      "name": "Violence District",
+      "creatorName": "VIOLENCE DISTRICT",
+      "genreL1": "Survival",
+      "genreL2": "1 vs All",
+      "visits": 727376202,
+      "favoritedCount": 1043811,
+      "upVotes": 458951,
+      "downVotes": 35785,
+      "playing": 20781,
+      "created": "2024-10-31T00:18:08.683Z",
+      "updated": "2026-05-05T12:16:23.886Z",
+      "canonicalUrlPath": "/games/93978595733734/Violence-District",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 20526,
+          "visits": 727369549
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 20781,
+          "visits": 727376202
+        }
+      ]
+    },
+    {
+      "universeId": 1202096104,
+      "rootPlaceId": 3351674303,
+      "name": "[NEW BRAND] Driving Empire 🏎️ Car Racing",
+      "creatorName": "Driving Empire by Voldex",
+      "genreL1": "Simulation",
+      "genreL2": "Vehicle Sim",
+      "visits": 2799673939,
+      "favoritedCount": 31061210,
+      "upVotes": 2384056,
+      "downVotes": 168368,
+      "playing": 19987,
+      "created": "2019-06-23T03:39:38.623Z",
+      "updated": "2026-05-05T17:15:17.9056513Z",
+      "canonicalUrlPath": "/games/3351674303/Driving-Empire-Car-Racing",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 20314,
+          "visits": 2799665594
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 19987,
+          "visits": 2799673939
+        }
+      ]
+    },
+    {
+      "universeId": 5995470825,
+      "rootPlaceId": 17516596118,
+      "name": "[🔥WEAPON WEDNESDAY] Hypershot",
+      "creatorName": "Frosted Studio",
+      "genreL1": "Shooter",
+      "genreL2": "Deathmatch Shooter",
+      "visits": 910556492,
+      "favoritedCount": 13448017,
+      "upVotes": 1470411,
+      "downVotes": 77297,
+      "playing": 19677,
+      "created": "2024-05-17T04:08:24.07Z",
+      "updated": "2026-05-06T22:09:30.8766107Z",
+      "canonicalUrlPath": "/games/17516596118/Hypershot",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 19823,
+          "visits": 910547878
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 19677,
+          "visits": 910556492
+        }
+      ]
+    },
+    {
+      "universeId": 7488668004,
+      "rootPlaceId": 86479448397834,
+      "name": "🍰 Bake or Die 💀",
+      "creatorName": "Big Bakers",
+      "genreL1": "Adventure",
+      "genreL2": "",
+      "visits": 156286310,
+      "favoritedCount": 187228,
+      "upVotes": 59064,
+      "downVotes": 5725,
+      "playing": 17861,
+      "created": "2025-04-05T00:53:21.713Z",
+      "updated": "2026-05-04T23:52:50.999Z",
+      "canonicalUrlPath": "/games/86479448397834/Bake-or-Die",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 17849,
+          "visits": 156281366
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 17861,
+          "visits": 156286310
+        }
+      ]
+    },
+    {
+      "universeId": 9787206684,
+      "rootPlaceId": 124473577469410,
+      "name": "Be a Lucky Block",
+      "creatorName": "xFrozen x Dudes",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 642312229,
+      "favoritedCount": 2694593,
+      "upVotes": 716542,
+      "downVotes": 35797,
+      "playing": 17444,
+      "created": "2026-02-24T01:08:35.757Z",
+      "updated": "2026-05-06T17:26:19.8891437Z",
+      "canonicalUrlPath": "/games/124473577469410/Be-a-Lucky-Block",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 17569,
+          "visits": 642300433
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 17444,
+          "visits": 642312229
+        }
+      ]
+    },
+    {
+      "universeId": 2619619496,
+      "rootPlaceId": 6872265039,
+      "name": "BedWars [🌟NEW KIT]",
+      "creatorName": "Easy.gg",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 11258938505,
+      "favoritedCount": 4449394,
+      "upVotes": 2395075,
+      "downVotes": 520072,
+      "playing": 17055,
+      "created": "2021-05-27T15:14:38.887Z",
+      "updated": "2026-05-03T21:58:26.023Z",
+      "canonicalUrlPath": "/games/6872265039/BedWars",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 17008,
+          "visits": 11258932097
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 17055,
+          "visits": 11258938505
+        }
+      ]
+    },
+    {
+      "universeId": 5678284602,
+      "rootPlaceId": 16483433878,
+      "name": "🏰 Block Tales [DEMO 5]",
+      "creatorName": "Spaceman Moonbase",
+      "genreL1": "RPG",
+      "genreL2": "Turn-based RPG",
+      "visits": 130087605,
+      "favoritedCount": 809381,
+      "upVotes": 440215,
+      "downVotes": 22829,
+      "playing": 15769,
+      "created": "2024-02-23T03:46:51.513Z",
+      "updated": "2026-05-06T01:51:55.1374683Z",
+      "canonicalUrlPath": "/games/16483433878/Block-Tales",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 15804,
+          "visits": 130084952
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 15769,
+          "visits": 130087605
+        }
+      ]
+    },
+    {
+      "universeId": 9091133975,
+      "rootPlaceId": 96645548064314,
+      "name": "Catch And Tame!",
+      "creatorName": "Manta Games",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 256204310,
+      "favoritedCount": 901022,
+      "upVotes": 961552,
+      "downVotes": 15433,
+      "playing": 15875,
+      "created": "2025-11-02T22:43:14.693Z",
+      "updated": "2026-05-06T17:20:45.7581185Z",
+      "canonicalUrlPath": "/games/96645548064314/Catch-And-Tame",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 15835,
+          "visits": 256198493
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 15875,
+          "visits": 256204310
+        }
+      ]
+    },
+    {
+      "universeId": 8524572339,
+      "rootPlaceId": 99449877692519,
+      "name": "bridger: WESTERN (UPDATE 1.7)",
+      "creatorName": "BRIDGER INC.",
+      "genreL1": "Action",
+      "genreL2": "Open World Action",
+      "visits": 50853341,
+      "favoritedCount": 105773,
+      "upVotes": 59553,
+      "downVotes": 15248,
+      "playing": 14595,
+      "created": "2025-08-23T17:46:40.803Z",
+      "updated": "2026-05-06T18:38:30.6691553Z",
+      "canonicalUrlPath": "/games/99449877692519/bridger-WESTERN",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 14596,
+          "visits": 50848455
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 14595,
+          "visits": 50853341
+        }
+      ]
+    },
+    {
+      "universeId": 7008097940,
+      "rootPlaceId": 99567941238278,
+      "name": "[🆕] Ink Game",
+      "creatorName": "games i think",
+      "genreL1": "Party & Casual",
+      "genreL2": "",
+      "visits": 3023520335,
+      "favoritedCount": 20905019,
+      "upVotes": 1145830,
+      "downVotes": 296922,
+      "playing": 14181,
+      "created": "2024-12-31T03:07:28.08Z",
+      "updated": "2026-05-06T16:10:20.5868581Z",
+      "canonicalUrlPath": "/games/99567941238278/Ink-Game",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 14341,
+          "visits": 3023514943
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 14181,
+          "visits": 3023520335
+        }
+      ]
+    },
+    {
+      "universeId": 3317679266,
+      "rootPlaceId": 8737602449,
+      "name": "PLS DONATE 💸",
+      "creatorName": "Quataun",
+      "genreL1": "Social",
+      "genreL2": "",
+      "visits": 5058097742,
+      "favoritedCount": 4246875,
+      "upVotes": 3583563,
+      "downVotes": 262617,
+      "playing": 13752,
+      "created": "2022-02-05T12:57:42.61Z",
+      "updated": "2026-05-04T08:05:19.606Z",
+      "canonicalUrlPath": "/games/8737602449/PLS-DONATE",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 13717,
+          "visits": 5058089265
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 13752,
+          "visits": 5058097742
+        }
+      ]
+    },
+    {
+      "universeId": 8786713187,
+      "rootPlaceId": 107095834793267,
+      "name": "Oil Empire🛢️",
+      "creatorName": "My Pump Game",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 71071429,
+      "favoritedCount": 178794,
+      "upVotes": 434332,
+      "downVotes": 7811,
+      "playing": 13793,
+      "created": "2025-09-23T19:02:58.073Z",
+      "updated": "2026-05-05T19:07:56.2514608Z",
+      "canonicalUrlPath": "/games/107095834793267/Oil-Empire",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 13643,
+          "visits": 71067107
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 13793,
+          "visits": 71071429
+        }
+      ]
+    },
+    {
+      "universeId": 7785400752,
+      "rootPlaceId": 139233844569220,
+      "name": "ZOO or OOF🎯",
+      "creatorName": "Dropping a Banger",
+      "genreL1": "Party & Casual",
+      "genreL2": "",
+      "visits": 174588209,
+      "favoritedCount": 5376824,
+      "upVotes": 270678,
+      "downVotes": 16999,
+      "playing": 12815,
+      "created": "2025-05-27T16:45:13.593Z",
+      "updated": "2026-05-06T14:15:24.512188Z",
+      "canonicalUrlPath": "/games/139233844569220/ZOO-or-OOF",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 12892,
+          "visits": 174582691
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 12815,
+          "visits": 174588209
+        }
+      ]
+    },
+    {
+      "universeId": 7554119808,
+      "rootPlaceId": 75387700043737,
+      "name": "🛍️ My Avatar!",
+      "creatorName": "THINK DIFFERENT.",
+      "genreL1": "Shopping",
+      "genreL2": "Avatar Shopping",
+      "visits": 170815101,
+      "favoritedCount": 2516897,
+      "upVotes": 54952,
+      "downVotes": 7299,
+      "playing": 12634,
+      "created": "2025-04-17T15:46:01.82Z",
+      "updated": "2026-05-06T23:15:00.6852909Z",
+      "canonicalUrlPath": "/games/75387700043737/My-Avatar",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 12766,
+          "visits": 170810162
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 12634,
+          "visits": 170815101
+        }
+      ]
+    },
+    {
+      "universeId": 9384605736,
+      "rootPlaceId": 136764190843219,
+      "name": "[🥋] Knockout! 🐧",
+      "creatorName": "braxworks",
+      "genreL1": "Party & Casual",
+      "genreL2": "Minigame",
+      "visits": 946416530,
+      "favoritedCount": 15882376,
+      "upVotes": 2670778,
+      "downVotes": 101385,
+      "playing": 12666,
+      "created": "2025-12-19T19:25:28.177Z",
+      "updated": "2026-05-06T17:13:26.7573563Z",
+      "canonicalUrlPath": "/games/136764190843219/Knockout",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 12735,
+          "visits": 946409987
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 12666,
+          "visits": 946416530
+        }
+      ]
+    },
+    {
+      "universeId": 210851291,
+      "rootPlaceId": 537413528,
+      "name": "Build A Boat For Treasure",
+      "creatorName": "Chillz Studios",
+      "genreL1": "Simulation",
+      "genreL2": "Sandbox",
+      "visits": 4992146836,
+      "favoritedCount": 8326652,
+      "upVotes": 3548110,
+      "downVotes": 253983,
+      "playing": 12673,
+      "created": "2016-11-02T15:36:44.187Z",
+      "updated": "2026-03-19T16:39:22.312Z",
+      "canonicalUrlPath": "/games/537413528/Build-A-Boat-For-Treasure",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 12481,
+          "visits": 4992143438
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 12673,
+          "visits": 4992146836
+        }
+      ]
+    },
+    {
+      "universeId": 9506013695,
+      "rootPlaceId": 72387437800091,
+      "name": "DUELS",
+      "creatorName": "YOU ARE MURDER",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 6047933,
+      "favoritedCount": 25955,
+      "upVotes": 5156,
+      "downVotes": 839,
+      "playing": 12467,
+      "created": "2026-01-05T03:35:38.87Z",
+      "updated": "2026-05-02T14:01:21.353Z",
+      "canonicalUrlPath": "/games/72387437800091/DUELS",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 12504,
+          "visits": 6043190
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 12467,
+          "visits": 6047933
+        }
+      ]
+    },
+    {
+      "universeId": 9272693470,
+      "rootPlaceId": 112490729816320,
+      "name": "[🌟] Spin a Soccer Card",
+      "creatorName": "Pixellar Studios | RSC",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 92084855,
+      "favoritedCount": 66922,
+      "upVotes": 52915,
+      "downVotes": 3071,
+      "playing": 12052,
+      "created": "2025-11-30T11:00:59.57Z",
+      "updated": "2026-05-06T12:59:23.2919589Z",
+      "canonicalUrlPath": "/games/112490729816320/Spin-a-Soccer-Card",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 12355,
+          "visits": 92081319
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 12052,
+          "visits": 92084855
+        }
+      ]
+    },
+    {
+      "universeId": 4568630521,
+      "rootPlaceId": 13076380114,
+      "name": "Heroes Battlegrounds",
+      "creatorName": "more awesome games yo",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 1547882670,
+      "favoritedCount": 1423434,
+      "upVotes": 1040613,
+      "downVotes": 175432,
+      "playing": 12178,
+      "created": "2023-04-11T02:16:49.137Z",
+      "updated": "2026-05-06T19:27:05.4781455Z",
+      "canonicalUrlPath": "/games/13076380114/Heroes-Battlegrounds",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 12265,
+          "visits": 1547877545
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 12178,
+          "visits": 1547882670
+        }
+      ]
+    },
+    {
+      "universeId": 4777817887,
+      "rootPlaceId": 13772394625,
+      "name": "Blade Ball",
+      "creatorName": "Wiggity.",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 6135855985,
+      "favoritedCount": 12372549,
+      "upVotes": 8154451,
+      "downVotes": 563047,
+      "playing": 11604,
+      "created": "2023-06-17T00:05:26.103Z",
+      "updated": "2026-05-03T00:43:39.507Z",
+      "canonicalUrlPath": "/games/13772394625/Blade-Ball",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 11574,
+          "visits": 6135850999
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 11604,
+          "visits": 6135855985
+        }
+      ]
+    },
+    {
+      "universeId": 4949420752,
+      "rootPlaceId": 14315258385,
+      "name": "Realistic Street Soccer",
+      "creatorName": "The Builder's Legion",
+      "genreL1": "Sports & Racing",
+      "genreL2": "Sports",
+      "visits": 1193039552,
+      "favoritedCount": 524486,
+      "upVotes": 378480,
+      "downVotes": 65382,
+      "playing": 10118,
+      "created": "2023-08-04T18:34:38.06Z",
+      "updated": "2026-05-06T21:51:30.0355616Z",
+      "canonicalUrlPath": "/games/14315258385/Realistic-Street-Soccer",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 10174,
+          "visits": 1193034005
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 10118,
+          "visits": 1193039552
+        }
+      ]
+    },
+    {
+      "universeId": 73885730,
+      "rootPlaceId": 155615604,
+      "name": "Prison Life",
+      "creatorName": "Aesthetical",
+      "genreL1": "Action",
+      "genreL2": "Open World Action",
+      "visits": 2885484652,
+      "favoritedCount": 5840327,
+      "upVotes": 1487189,
+      "downVotes": 259437,
+      "playing": 10406,
+      "created": "2014-05-02T01:25:47.94Z",
+      "updated": "2026-02-20T18:58:05.723Z",
+      "canonicalUrlPath": "/games/155615604/Prison-Life",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 10417,
+          "visits": 2885479964
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 10406,
+          "visits": 2885484652
+        }
+      ]
+    },
+    {
+      "universeId": 7996365376,
+      "rootPlaceId": 113506071094099,
+      "name": "[🌸] SHARP",
+      "creatorName": "MAD STUDIO",
+      "genreL1": "Shooter",
+      "genreL2": "Deathmatch Shooter",
+      "visits": 285875616,
+      "favoritedCount": 325430,
+      "upVotes": 148499,
+      "downVotes": 19886,
+      "playing": 10451,
+      "created": "2025-06-25T13:22:25.633Z",
+      "updated": "2026-03-31T10:00:43.622Z",
+      "canonicalUrlPath": "/games/113506071094099/SHARP",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 10533,
+          "visits": 285871375
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 10451,
+          "visits": 285875616
+        }
+      ]
+    },
+    {
+      "universeId": 2936053166,
+      "rootPlaceId": 7554888362,
+      "name": "[🦑] Squid Game X",
+      "creatorName": "redifi",
+      "genreL1": "Party & Casual",
+      "genreL2": "Minigame",
+      "visits": 1899235081,
+      "favoritedCount": 1504670,
+      "upVotes": 1231729,
+      "downVotes": 85904,
+      "playing": 10372,
+      "created": "2021-09-24T23:38:34.723Z",
+      "updated": "2026-05-06T17:48:39.7654658Z",
+      "canonicalUrlPath": "/games/7554888362/Squid-Game-X",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 10297,
+          "visits": 1899228262
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 10372,
+          "visits": 1899235081
+        }
+      ]
+    },
+    {
+      "universeId": 9875383684,
+      "rootPlaceId": 105626692504093,
+      "name": "Be a Brainrot",
+      "creatorName": "Steal a garden or something",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 139726395,
+      "favoritedCount": 154734,
+      "upVotes": 81644,
+      "downVotes": 8812,
+      "playing": 10121,
+      "created": "2026-03-13T13:39:49.225Z",
+      "updated": "2026-05-04T09:07:01.537Z",
+      "canonicalUrlPath": "/games/105626692504093/Be-a-Brainrot",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 10264,
+          "visits": 139720179
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 10121,
+          "visits": 139726395
+        }
+      ]
+    },
+    {
+      "universeId": 3990106548,
+      "rootPlaceId": 11158043705,
+      "name": "Baddies 💅",
+      "creatorName": "Meow Meow Games!",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 1671822973,
+      "favoritedCount": 6276197,
+      "upVotes": 428012,
+      "downVotes": 89791,
+      "playing": 9820,
+      "created": "2022-10-03T23:09:42.303Z",
+      "updated": "2026-05-07T01:40:43.548104Z",
+      "canonicalUrlPath": "/games/11158043705/Baddies",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 9926,
+          "visits": 1671814979
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 9820,
+          "visits": 1671822973
+        }
+      ]
+    },
+    {
+      "universeId": 4540138978,
+      "rootPlaceId": 12985361032,
+      "name": "Metro Life 🏡 City RP",
+      "creatorName": "Century Creators",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Life",
+      "visits": 2149527070,
+      "favoritedCount": 61510102,
+      "upVotes": 303475,
+      "downVotes": 46022,
+      "playing": 9848,
+      "created": "2023-04-03T03:18:34.21Z",
+      "updated": "2026-04-24T07:26:58.339Z",
+      "canonicalUrlPath": "/games/12985361032/Metro-Life-City-RP",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 9793,
+          "visits": 2149523857
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 9848,
+          "visits": 2149527070
+        }
+      ]
+    },
+    {
+      "universeId": 8719555347,
+      "rootPlaceId": 79480724066456,
+      "name": "[TAILGATES + DOORS] Southern Mudding 🚜 OffRoading",
+      "creatorName": "Southern Mudding",
+      "genreL1": "Simulation",
+      "genreL2": "Vehicle Sim",
+      "visits": 165540060,
+      "favoritedCount": 264452,
+      "upVotes": 118821,
+      "downVotes": 8193,
+      "playing": 9121,
+      "created": "2025-09-15T04:28:37.477Z",
+      "updated": "2026-05-04T13:51:31.461Z",
+      "canonicalUrlPath": "/games/79480724066456/Southern-Mudding-OffRoading",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 9207,
+          "visits": 165536624
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 9121,
+          "visits": 165540060
+        }
+      ]
+    },
+    {
+      "universeId": 1000233041,
+      "rootPlaceId": 2768379856,
+      "name": "3008 [2.74]",
+      "creatorName": "uglyburger0",
+      "genreL1": "Survival",
+      "genreL2": "1 vs All",
+      "visits": 3157390533,
+      "favoritedCount": 5561666,
+      "upVotes": 1947954,
+      "downVotes": 176852,
+      "playing": 9922,
+      "created": "2019-01-20T15:38:59.747Z",
+      "updated": "2026-05-06T16:39:37.6082489Z",
+      "canonicalUrlPath": "/games/2768379856/3008",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 9807,
+          "visits": 3157388140
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 9922,
+          "visits": 3157390533
+        }
+      ]
+    },
+    {
+      "universeId": 1235188606,
+      "rootPlaceId": 3475397644,
+      "name": "[SZN 5] Dragon Adventures 🐉",
+      "creatorName": "Sonar Studios",
+      "genreL1": "RPG",
+      "genreL2": "",
+      "visits": 1581349589,
+      "favoritedCount": 13071568,
+      "upVotes": 1056248,
+      "downVotes": 75564,
+      "playing": 9758,
+      "created": "2019-07-15T16:19:10.623Z",
+      "updated": "2026-05-05T20:48:28.2672331Z",
+      "canonicalUrlPath": "/games/3475397644/Dragon-Adventures",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 9713,
+          "visits": 1581346459
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 9758,
+          "visits": 1581349589
+        }
+      ]
+    },
+    {
+      "universeId": 9362896961,
+      "rootPlaceId": 76285745979410,
+      "name": "Anime Card Collection",
+      "creatorName": "Crew Simulators",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 106724115,
+      "favoritedCount": 187558,
+      "upVotes": 551564,
+      "downVotes": 7878,
+      "playing": 9563,
+      "created": "2025-12-15T16:57:59.35Z",
+      "updated": "2026-05-06T18:56:15.4894652Z",
+      "canonicalUrlPath": "/games/76285745979410/Anime-Card-Collection",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 9560,
+          "visits": 106722651
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 9563,
+          "visits": 106724115
+        }
+      ]
+    },
+    {
+      "universeId": 2583564222,
+      "rootPlaceId": 6804602922,
+      "name": "[1B] Boxing Beta! 🥊",
+      "creatorName": "sketchy laboratory",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 1008929888,
+      "favoritedCount": 1813346,
+      "upVotes": 335265,
+      "downVotes": 79177,
+      "playing": 9606,
+      "created": "2021-05-12T06:38:07.677Z",
+      "updated": "2026-05-05T04:42:35.056Z",
+      "canonicalUrlPath": "/games/6804602922/Boxing-Beta",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 9585,
+          "visits": 1008924398
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 9606,
+          "visits": 1008929888
+        }
+      ]
+    },
+    {
+      "universeId": 9898609049,
+      "rootPlaceId": 98033586806203,
+      "name": "[🍔] Get HEAVY for Brainrots",
+      "creatorName": "Reizz Fan Club",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 6034780,
+      "favoritedCount": 9397,
+      "upVotes": 9608,
+      "downVotes": 357,
+      "playing": 9429,
+      "created": "2026-03-17T18:53:31.465Z",
+      "updated": "2026-05-06T23:12:29.3916567Z",
+      "canonicalUrlPath": "/games/98033586806203/Get-HEAVY-for-Brainrots",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 9391,
+          "visits": 6031718
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 9429,
+          "visits": 6034780
+        }
+      ]
+    },
+    {
+      "universeId": 9871940535,
+      "rootPlaceId": 140711793067980,
+      "name": "Don’t Steal Brainrot From Base!",
+      "creatorName": "Climb For Brainrot!",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 22033960,
+      "favoritedCount": 1820236,
+      "upVotes": 3683,
+      "downVotes": 599,
+      "playing": 8867,
+      "created": "2026-03-12T17:32:52.293Z",
+      "updated": "2026-05-01T21:17:46.607Z",
+      "canonicalUrlPath": "/games/140711793067980/Don-t-Steal-Brainrot-From-Base",
+      "samples": [
+        {
+          "ts": 1778118528352,
+          "playing": 8867,
+          "visits": 22033960
+        }
+      ]
+    },
+    {
+      "universeId": 3359505957,
+      "rootPlaceId": 8884433153,
+      "name": "Collect All Pets!",
+      "creatorName": "TwoZoos",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 202996658,
+      "favoritedCount": 316104,
+      "upVotes": 124079,
+      "downVotes": 9718,
+      "playing": 3251,
+      "created": "2022-02-20T17:07:04.26Z",
+      "updated": "2026-05-03T20:08:37.342Z",
+      "canonicalUrlPath": "/games/8884433153/Collect-All-Pets",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 3237,
+          "visits": 202996494
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3251,
+          "visits": 202996658
+        }
+      ]
+    },
+    {
+      "universeId": 5315312115,
+      "rootPlaceId": 15405900187,
+      "name": "[RP] Pine Ridge",
+      "creatorName": "Trite Roleplay",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Life",
+      "visits": 8932190,
+      "favoritedCount": 82885,
+      "upVotes": 13457,
+      "downVotes": 2028,
+      "playing": 483,
+      "created": "2023-11-19T19:22:22.06Z",
+      "updated": "2026-05-05T22:36:15.0775655Z",
+      "canonicalUrlPath": "/games/15405900187/Pine-Ridge",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 492,
+          "visits": 8932107
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 483,
+          "visits": 8932190
+        }
+      ]
+    },
+    {
+      "universeId": 123956318,
+      "rootPlaceId": 334730614,
+      "name": "Kaizen [RP]",
+      "creatorName": "Fate Forge",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Life",
+      "visits": 28826306,
+      "favoritedCount": 326719,
+      "upVotes": 74169,
+      "downVotes": 17335,
+      "playing": 415,
+      "created": "2015-12-21T08:44:03.553Z",
+      "updated": "2026-05-07T00:25:48.0977176Z",
+      "canonicalUrlPath": "/games/334730614/Kaizen",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 411,
+          "visits": 28826254
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 415,
+          "visits": 28826306
+        }
+      ]
+    },
+    {
+      "universeId": 3267012194,
+      "rootPlaceId": 8571687919,
+      "name": "LOCOfficial!",
+      "creatorName": "Rawblocky",
+      "genreL1": "Strategy",
+      "genreL2": "Board & Card Games",
+      "visits": 309111567,
+      "favoritedCount": 1048953,
+      "upVotes": 257746,
+      "downVotes": 38586,
+      "playing": 1525,
+      "created": "2022-01-17T23:01:42.923Z",
+      "updated": "2026-04-01T05:44:02.96Z",
+      "canonicalUrlPath": "/games/8571687919/LOCOfficial",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1496,
+          "visits": 309111025
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1525,
+          "visits": 309111567
+        }
+      ]
+    },
+    {
+      "universeId": 6026405541,
+      "rootPlaceId": 17600423422,
+      "name": "🌮 10 Player Flee",
+      "creatorName": "the workshopᅠ",
+      "genreL1": "Survival",
+      "genreL2": "1 vs All",
+      "visits": 38524231,
+      "favoritedCount": 104070,
+      "upVotes": 31430,
+      "downVotes": 4380,
+      "playing": 1464,
+      "created": "2024-05-24T20:31:30.283Z",
+      "updated": "2026-05-07T01:44:22.4773191Z",
+      "canonicalUrlPath": "/games/17600423422/10-Player-Flee",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1373,
+          "visits": 38523740
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1464,
+          "visits": 38524231
+        }
+      ]
+    },
+    {
+      "universeId": 7178032757,
+      "rootPlaceId": 74260430392611,
+      "name": "[🐸] Rebirth Champions: Ultimate",
+      "creatorName": "Powerful Studio",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 205251839,
+      "favoritedCount": 137576,
+      "upVotes": 225404,
+      "downVotes": 5548,
+      "playing": 7000,
+      "created": "2025-02-01T08:45:07.927Z",
+      "updated": "2026-05-06T17:15:53.0447515Z",
+      "canonicalUrlPath": "/games/74260430392611/Rebirth-Champions-Ultimate",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 6981,
+          "visits": 205250812
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 7000,
+          "visits": 205251839
+        }
+      ]
+    },
+    {
+      "universeId": 9739620371,
+      "rootPlaceId": 121488475980438,
+      "name": "[ Contracts + Karate ] Hyaku Asura",
+      "creatorName": "Not a small deal",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 2533296,
+      "favoritedCount": 2900,
+      "upVotes": 1998,
+      "downVotes": 566,
+      "playing": 832,
+      "created": "2026-02-16T13:36:18.84Z",
+      "updated": "2026-05-06T06:31:27.0109692Z",
+      "canonicalUrlPath": "/games/121488475980438/Hyaku-Asura",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 832,
+          "visits": 2533123
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 832,
+          "visits": 2533296
+        }
+      ]
+    },
+    {
+      "universeId": 4147392742,
+      "rootPlaceId": 11708967881,
+      "name": "Yeet A Friend! ✨",
+      "creatorName": "Low Effort Studios.",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 505935323,
+      "favoritedCount": 8600149,
+      "upVotes": 807726,
+      "downVotes": 42691,
+      "playing": 1147,
+      "created": "2022-11-30T22:46:45.237Z",
+      "updated": "2026-05-05T12:22:13.796Z",
+      "canonicalUrlPath": "/games/11708967881/Yeet-A-Friend",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1132,
+          "visits": 505934759
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1147,
+          "visits": 505935323
+        }
+      ]
+    },
+    {
+      "universeId": 6061766680,
+      "rootPlaceId": 17698425045,
+      "name": "[UPD🏈] fight in a school",
+      "creatorName": "Fight In A Game",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 487990916,
+      "favoritedCount": 552240,
+      "upVotes": 290241,
+      "downVotes": 74076,
+      "playing": 5054,
+      "created": "2024-06-01T19:46:18.193Z",
+      "updated": "2026-05-06T20:34:01.4482615Z",
+      "canonicalUrlPath": "/games/17698425045/fight-in-a-school",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 5005,
+          "visits": 487987875
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 5054,
+          "visits": 487990916
+        }
+      ]
+    },
+    {
+      "universeId": 7414497778,
+      "rootPlaceId": 95721658376580,
+      "name": "[MTC] Multicrew Tank Combat",
+      "creatorName": "Top Giun",
+      "genreL1": "Action",
+      "genreL2": "",
+      "visits": 51152751,
+      "favoritedCount": 143822,
+      "upVotes": 52492,
+      "downVotes": 9779,
+      "playing": 1337,
+      "created": "2025-03-22T03:21:47.883Z",
+      "updated": "2026-05-06T18:21:53.8923063Z",
+      "canonicalUrlPath": "/games/95721658376580/Multicrew-Tank-Combat",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1318,
+          "visits": 51152462
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1337,
+          "visits": 51152751
+        }
+      ]
+    },
+    {
+      "universeId": 1871172282,
+      "rootPlaceId": 5342047554,
+      "name": "🌻🚘Backstretch Battles",
+      "creatorName": "Backstretch Battles",
+      "genreL1": "Sports & Racing",
+      "genreL2": "Racing",
+      "visits": 89612652,
+      "favoritedCount": 322877,
+      "upVotes": 145525,
+      "downVotes": 48292,
+      "playing": 779,
+      "created": "2020-07-13T07:36:39.763Z",
+      "updated": "2026-05-07T00:40:55.7185407Z",
+      "canonicalUrlPath": "/games/5342047554/Backstretch-Battles",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 776,
+          "visits": 89612400
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 779,
+          "visits": 89612652
+        }
+      ]
+    },
+    {
+      "universeId": 6959389664,
+      "rootPlaceId": 82432929049078,
+      "name": "Sword Factory [BETA]",
+      "creatorName": "Sword Factory Community",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 8055076,
+      "favoritedCount": 5672,
+      "upVotes": 5968,
+      "downVotes": 732,
+      "playing": 1628,
+      "created": "2024-12-22T23:39:26.003Z",
+      "updated": "2026-05-06T22:43:06.0619538Z",
+      "canonicalUrlPath": "/games/82432929049078/Sword-Factory",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1626,
+          "visits": 8054706
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1628,
+          "visits": 8055076
+        }
+      ]
+    },
+    {
+      "universeId": 9908641400,
+      "rootPlaceId": 82866880824588,
+      "name": "Football Fusion 3",
+      "creatorName": "XSTNS GAMES",
+      "genreL1": "Sports & Racing",
+      "genreL2": "Sports",
+      "visits": 17786882,
+      "favoritedCount": 25180,
+      "upVotes": 17467,
+      "downVotes": 1452,
+      "playing": 3039,
+      "created": "2026-03-20T02:31:12.358Z",
+      "updated": "2026-04-11T06:43:05.824Z",
+      "canonicalUrlPath": "/games/82866880824588/Football-Fusion-3",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 3135,
+          "visits": 17784924
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3039,
+          "visits": 17786882
+        }
+      ]
+    },
+    {
+      "universeId": 8887260140,
+      "rootPlaceId": 81318904502331,
+      "name": "[🧚‍♀️] Superforest ",
+      "creatorName": "Superforest",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 10278122,
+      "favoritedCount": 28689,
+      "upVotes": 26198,
+      "downVotes": 1604,
+      "playing": 993,
+      "created": "2025-10-06T15:20:24.073Z",
+      "updated": "2026-05-06T13:55:01.6185243Z",
+      "canonicalUrlPath": "/games/81318904502331/Superforest",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1002,
+          "visits": 10277961
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 993,
+          "visits": 10278122
+        }
+      ]
+    },
+    {
+      "universeId": 4019583467,
+      "rootPlaceId": 11276071411,
+      "name": "NPC or DIE! 💢",
+      "creatorName": "arashiyama",
+      "genreL1": "Survival",
+      "genreL2": "Escape",
+      "visits": 335430787,
+      "favoritedCount": 704963,
+      "upVotes": 592471,
+      "downVotes": 43651,
+      "playing": 3173,
+      "created": "2022-10-15T03:25:46.403Z",
+      "updated": "2026-05-05T18:03:58.0628805Z",
+      "canonicalUrlPath": "/games/11276071411/NPC-or-DIE",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 3160,
+          "visits": 335429430
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3173,
+          "visits": 335430787
+        }
+      ]
+    },
+    {
+      "universeId": 6521100398,
+      "rootPlaceId": 74395953411817,
+      "name": "Dreamville 🏡 RP [Kids! 👶]",
+      "creatorName": "Dreamfusion Games",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Life",
+      "visits": 160001143,
+      "favoritedCount": 291789,
+      "upVotes": 152320,
+      "downVotes": 8880,
+      "playing": 6947,
+      "created": "2024-09-07T02:38:20.257Z",
+      "updated": "2026-05-04T15:32:33.545Z",
+      "canonicalUrlPath": "/games/74395953411817/Dreamville-RP",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 6931,
+          "visits": 159998807
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 6947,
+          "visits": 160001143
+        }
+      ]
+    },
+    {
+      "universeId": 5829613337,
+      "rootPlaceId": 16991287194,
+      "name": "something evil will happen",
+      "creatorName": "larvae studios",
+      "genreL1": "Survival",
+      "genreL2": "",
+      "visits": 302503341,
+      "favoritedCount": 794407,
+      "upVotes": 319562,
+      "downVotes": 25438,
+      "playing": 3872,
+      "created": "2024-04-03T03:00:22.81Z",
+      "updated": "2026-05-03T02:38:33.462Z",
+      "canonicalUrlPath": "/games/16991287194/something-evil-will-happen",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 3850,
+          "visits": 302501925
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3872,
+          "visits": 302503341
+        }
+      ]
+    },
+    {
+      "universeId": 9893490728,
+      "rootPlaceId": 104922659387499,
+      "name": "Steal A Valentino 💝",
+      "creatorName": "Steal A Valentino",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 6695517,
+      "favoritedCount": 11369,
+      "upVotes": 3601,
+      "downVotes": 570,
+      "playing": 368,
+      "created": "2026-03-16T14:33:24.085Z",
+      "updated": "2026-05-06T19:48:56.1690644Z",
+      "canonicalUrlPath": "/games/104922659387499/Steal-A-Valentino",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 369,
+          "visits": 6694832
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 368,
+          "visits": 6695517
+        }
+      ]
+    },
+    {
+      "universeId": 7629331599,
+      "rootPlaceId": 129827112113663,
+      "name": "Prospecting! 💎",
+      "creatorName": "Prospecting!",
+      "genreL1": "Simulation",
+      "genreL2": "",
+      "visits": 226198895,
+      "favoritedCount": 387618,
+      "upVotes": 297598,
+      "downVotes": 11014,
+      "playing": 5224,
+      "created": "2025-05-02T00:57:31.01Z",
+      "updated": "2026-05-06T18:47:22.2356959Z",
+      "canonicalUrlPath": "/games/129827112113663/Prospecting",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 5196,
+          "visits": 226197975
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 5224,
+          "visits": 226198895
+        }
+      ]
+    },
+    {
+      "universeId": 7983308985,
+      "rootPlaceId": 129866685202296,
+      "name": "Last Letter 💬",
+      "creatorName": "MmiiGames",
+      "genreL1": "Puzzle",
+      "genreL2": "Word",
+      "visits": 114110276,
+      "favoritedCount": 195485,
+      "upVotes": 421288,
+      "downVotes": 16917,
+      "playing": 1261,
+      "created": "2025-06-23T17:55:08.67Z",
+      "updated": "2026-05-06T02:57:07.3825502Z",
+      "canonicalUrlPath": "/games/129866685202296/Last-Letter",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1271,
+          "visits": 114109649
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1261,
+          "visits": 114110276
+        }
+      ]
+    },
+    {
+      "universeId": 1278035280,
+      "rootPlaceId": 3663340706,
+      "name": "Warrior Cats: Ultimate Edition",
+      "creatorName": "WarriorCatsRP",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Animal Sim",
+      "visits": 726676552,
+      "favoritedCount": 1408544,
+      "upVotes": 473368,
+      "downVotes": 35816,
+      "playing": 3862,
+      "created": "2019-08-15T21:39:42.407Z",
+      "updated": "2026-05-02T10:31:52.395Z",
+      "canonicalUrlPath": "/games/3663340706/Warrior-Cats-Ultimate-Edition",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 3937,
+          "visits": 726675637
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3862,
+          "visits": 726676552
+        }
+      ]
+    },
+    {
+      "universeId": 4348829796,
+      "rootPlaceId": 12355337193,
+      "name": "Murderers VS Sheriffs DUELS",
+      "creatorName": "RED21 Games",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 2438792005,
+      "favoritedCount": 9988638,
+      "upVotes": 529118,
+      "downVotes": 97101,
+      "playing": 8143,
+      "created": "2023-02-02T14:25:27.077Z",
+      "updated": "2026-04-25T22:34:23.57Z",
+      "canonicalUrlPath": "/games/12355337193/Murderers-VS-Sheriffs-DUELS",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 8144,
+          "visits": 2438787894
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 8143,
+          "visits": 2438792005
+        }
+      ]
+    },
+    {
+      "universeId": 1836146838,
+      "rootPlaceId": 5244411056,
+      "name": "Bloxy Bingo",
+      "creatorName": "Bloxy Bingo",
+      "genreL1": "Party & Casual",
+      "genreL2": "",
+      "visits": 464714791,
+      "favoritedCount": 1295299,
+      "upVotes": 325169,
+      "downVotes": 62590,
+      "playing": 4436,
+      "created": "2020-06-27T18:38:18.617Z",
+      "updated": "2026-05-01T08:16:10.728Z",
+      "canonicalUrlPath": "/games/5244411056/Bloxy-Bingo",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 4434,
+          "visits": 464713606
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 4436,
+          "visits": 464714791
+        }
+      ]
+    },
+    {
+      "universeId": 2139712082,
+      "rootPlaceId": 5951002734,
+      "name": "[RELEASE] Project Baki",
+      "creatorName": "Project Baki",
+      "genreL1": "Action",
+      "genreL2": "",
+      "visits": 76209729,
+      "favoritedCount": 194649,
+      "upVotes": 85123,
+      "downVotes": 21344,
+      "playing": 447,
+      "created": "2020-11-13T17:59:27.913Z",
+      "updated": "2026-05-06T18:54:49.4622774Z",
+      "canonicalUrlPath": "/games/5951002734/Project-Baki",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 473,
+          "visits": 76209591
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 447,
+          "visits": 76209729
+        }
+      ]
+    },
+    {
+      "universeId": 9324081218,
+      "rootPlaceId": 100337093788565,
+      "name": "[✨] evil plate game",
+      "creatorName": "vyse entertainment",
+      "genreL1": "Party & Casual",
+      "genreL2": "Minigame",
+      "visits": 5463490,
+      "favoritedCount": 34072,
+      "upVotes": 8901,
+      "downVotes": 2758,
+      "playing": 498,
+      "created": "2025-12-08T21:22:18.617Z",
+      "updated": "2026-05-06T21:54:26.9972275Z",
+      "canonicalUrlPath": "/games/100337093788565/evil-plate-game",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 514,
+          "visits": 5463273
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 498,
+          "visits": 5463490
+        }
+      ]
+    },
+    {
+      "universeId": 107172930,
+      "rootPlaceId": 263761432,
+      "name": "💥 Horrific Housing",
+      "creatorName": "CookieScript's games",
+      "genreL1": "Survival",
+      "genreL2": "",
+      "visits": 689889409,
+      "favoritedCount": 1900405,
+      "upVotes": 723507,
+      "downVotes": 203593,
+      "playing": 1403,
+      "created": "2015-06-27T15:30:12.92Z",
+      "updated": "2026-05-01T07:41:58.209Z",
+      "canonicalUrlPath": "/games/263761432/Horrific-Housing",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1348,
+          "visits": 689888913
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1403,
+          "visits": 689889409
+        }
+      ]
+    },
+    {
+      "universeId": 5974510967,
+      "rootPlaceId": 17457039279,
+      "name": "[V0.2 PRE-ALPHA] Darkest Hours",
+      "creatorName": "Oculus Inc",
+      "genreL1": "Survival",
+      "genreL2": "Escape",
+      "visits": 5563128,
+      "favoritedCount": 82645,
+      "upVotes": 33890,
+      "downVotes": 1693,
+      "playing": 1711,
+      "created": "2024-05-11T12:27:20.4Z",
+      "updated": "2026-05-06T02:48:16.6715605Z",
+      "canonicalUrlPath": "/games/17457039279/Darkest-Hours",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1723,
+          "visits": 5562649
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1711,
+          "visits": 5563128
+        }
+      ]
+    },
+    {
+      "universeId": 6275120808,
+      "rootPlaceId": 18519254033,
+      "name": "Jump Showdown",
+      "creatorName": "Jimpee’s Cabin",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 231555424,
+      "favoritedCount": 338357,
+      "upVotes": 224135,
+      "downVotes": 61658,
+      "playing": 2618,
+      "created": "2024-07-16T16:59:55.537Z",
+      "updated": "2026-05-03T22:43:39.342Z",
+      "canonicalUrlPath": "/games/18519254033/Jump-Showdown",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2639,
+          "visits": 231554535
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2618,
+          "visits": 231555424
+        }
+      ]
+    },
+    {
+      "universeId": 1312971993,
+      "rootPlaceId": 3823781113,
+      "name": "[🐪] Saber Simulator",
+      "creatorName": "HD Games.",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 631563186,
+      "favoritedCount": 1991829,
+      "upVotes": 567668,
+      "downVotes": 90591,
+      "playing": 1873,
+      "created": "2019-09-07T00:35:42.387Z",
+      "updated": "2026-05-01T18:32:00.513Z",
+      "canonicalUrlPath": "/games/3823781113/Saber-Simulator",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1886,
+          "visits": 631562871
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1873,
+          "visits": 631563186
+        }
+      ]
+    },
+    {
+      "universeId": 6945584306,
+      "rootPlaceId": 94647229517154,
+      "name": "[🏆RANKED] Azure Latch",
+      "creatorName": "[B:S] Azure Latch Team",
+      "genreL1": "Sports & Racing",
+      "genreL2": "Sports",
+      "visits": 453233489,
+      "favoritedCount": 524150,
+      "upVotes": 1498282,
+      "downVotes": 48442,
+      "playing": 5864,
+      "created": "2024-12-20T13:35:18.56Z",
+      "updated": "2026-05-05T21:35:08.9269511Z",
+      "canonicalUrlPath": "/games/94647229517154/Azure-Latch",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 5868,
+          "visits": 453231445
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 5864,
+          "visits": 453233489
+        }
+      ]
+    },
+    {
+      "universeId": 1053132402,
+      "rootPlaceId": 2913303231,
+      "name": "Obby Creator",
+      "creatorName": "Whirlpool Studio",
+      "genreL1": "Simulation",
+      "genreL2": "Sandbox",
+      "visits": 550923494,
+      "favoritedCount": 958517,
+      "upVotes": 291236,
+      "downVotes": 70339,
+      "playing": 1573,
+      "created": "2019-03-02T12:06:10.6Z",
+      "updated": "2026-02-05T19:31:40.376Z",
+      "canonicalUrlPath": "/games/2913303231/Obby-Creator",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1559,
+          "visits": 550923039
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1573,
+          "visits": 550923494
+        }
+      ]
+    },
+    {
+      "universeId": 245662005,
+      "rootPlaceId": 606849621,
+      "name": "Jailbreak ",
+      "creatorName": "Badimo",
+      "genreL1": "Action",
+      "genreL2": "Open World Action",
+      "visits": 7883930801,
+      "favoritedCount": 18550166,
+      "upVotes": 5748073,
+      "downVotes": 806194,
+      "playing": 6563,
+      "created": "2017-01-06T16:39:11.173Z",
+      "updated": "2026-05-04T18:06:58.5Z",
+      "canonicalUrlPath": "/games/606849621/Jailbreak",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 6450,
+          "visits": 7883928150
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 6563,
+          "visits": 7883930801
+        }
+      ]
+    },
+    {
+      "universeId": 9587877329,
+      "rootPlaceId": 70654235200182,
+      "name": "Baddie Jumping ✨",
+      "creatorName": "Epic Anime Battles",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 14168243,
+      "favoritedCount": 745323,
+      "upVotes": 25882,
+      "downVotes": 3135,
+      "playing": 344,
+      "created": "2026-01-19T08:23:05.913Z",
+      "updated": "2026-04-24T15:18:15.739Z",
+      "canonicalUrlPath": "/games/70654235200182/Baddie-Jumping",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 347,
+          "visits": 14168108
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 344,
+          "visits": 14168243
+        }
+      ]
+    },
+    {
+      "universeId": 1001911915,
+      "rootPlaceId": 2772610559,
+      "name": "Farming and Friends",
+      "creatorName": "Dunn Games",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 217101456,
+      "favoritedCount": 653949,
+      "upVotes": 256864,
+      "downVotes": 34605,
+      "playing": 1746,
+      "created": "2019-01-21T21:25:27.42Z",
+      "updated": "2026-05-06T22:12:32.6689474Z",
+      "canonicalUrlPath": "/games/2772610559/Farming-and-Friends",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1785,
+          "visits": 217100981
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1746,
+          "visits": 217101456
+        }
+      ]
+    },
+    {
+      "universeId": 65241,
+      "rootPlaceId": 189707,
+      "name": "Natural Disaster Survival",
+      "creatorName": "Stickmasterluke",
+      "genreL1": "Survival",
+      "genreL2": "",
+      "visits": 4239054677,
+      "favoritedCount": 11556664,
+      "upVotes": 4298604,
+      "downVotes": 436105,
+      "playing": 8332,
+      "created": "2008-03-28T21:33:42.623Z",
+      "updated": "2026-03-12T00:28:45.095Z",
+      "canonicalUrlPath": "/games/189707/Natural-Disaster-Survival",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 8558,
+          "visits": 4239049185
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 8332,
+          "visits": 4239054677
+        }
+      ]
+    },
+    {
+      "universeId": 1526814825,
+      "rootPlaceId": 4639625707,
+      "name": "[EOD] War Tycoon",
+      "creatorName": "KizmoTek Studio",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 1019147291,
+      "favoritedCount": 4136824,
+      "upVotes": 1051198,
+      "downVotes": 99148,
+      "playing": 6103,
+      "created": "2020-01-29T00:12:02.89Z",
+      "updated": "2026-05-02T18:21:28.052Z",
+      "canonicalUrlPath": "/games/4639625707/War-Tycoon",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 6198,
+          "visits": 1019145436
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 6103,
+          "visits": 1019147291
+        }
+      ]
+    },
+    {
+      "universeId": 2471084,
+      "rootPlaceId": 13822889,
+      "name": "🌳 Lumber Tycoon 2",
+      "creatorName": "Defaultio",
+      "genreL1": "Simulation",
+      "genreL2": "Tycoon",
+      "visits": 1294443509,
+      "favoritedCount": 4580211,
+      "upVotes": 2012037,
+      "downVotes": 282426,
+      "playing": 1123,
+      "created": "2009-07-30T11:02:45.77Z",
+      "updated": "2026-04-08T19:15:25.768Z",
+      "canonicalUrlPath": "/games/13822889/Lumber-Tycoon-2",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1101,
+          "visits": 1294443196
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1123,
+          "visits": 1294443509
+        }
+      ]
+    },
+    {
+      "universeId": 4987856151,
+      "rootPlaceId": 14438406081,
+      "name": "🏘️Wanted [UPDATE]",
+      "creatorName": "DevvGames",
+      "genreL1": "Action",
+      "genreL2": "Open World Action",
+      "visits": 38379819,
+      "favoritedCount": 158408,
+      "upVotes": 108565,
+      "downVotes": 4252,
+      "playing": 3834,
+      "created": "2023-08-14T22:09:22.64Z",
+      "updated": "2026-05-06T21:06:00.3521565Z",
+      "canonicalUrlPath": "/games/14438406081/Wanted",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 3790,
+          "visits": 38378811
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3834,
+          "visits": 38379819
+        }
+      ]
+    },
+    {
+      "universeId": 4154513353,
+      "rootPlaceId": 11729688377,
+      "name": "Booga Booga 🌴",
+      "creatorName": "Gang O' Fries Entertainment",
+      "genreL1": "RPG",
+      "genreL2": "Open World & Survival RPG",
+      "visits": 250595280,
+      "favoritedCount": 496125,
+      "upVotes": 183016,
+      "downVotes": 42172,
+      "playing": 1248,
+      "created": "2022-12-03T15:59:05.433Z",
+      "updated": "2026-05-06T21:50:25.4103094Z",
+      "canonicalUrlPath": "/games/11729688377/Booga-Booga",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1250,
+          "visits": 250594954
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1248,
+          "visits": 250595280
+        }
+      ]
+    },
+    {
+      "universeId": 4037244007,
+      "rootPlaceId": 11337633120,
+      "name": "Elementalism",
+      "creatorName": "Elementalism Studios",
+      "genreL1": "RPG",
+      "genreL2": "Action RPG",
+      "visits": 2832963,
+      "favoritedCount": 80278,
+      "upVotes": 58482,
+      "downVotes": 1881,
+      "playing": 1213,
+      "created": "2022-10-21T22:08:07.317Z",
+      "updated": "2026-05-06T15:37:13.1499082Z",
+      "canonicalUrlPath": "/games/11337633120/Elementalism",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1217,
+          "visits": 2832566
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1213,
+          "visits": 2832963
+        }
+      ]
+    },
+    {
+      "universeId": 2916593387,
+      "rootPlaceId": 7491927311,
+      "name": "[UPDATE] Undertale Test Place Reborn",
+      "creatorName": "UTPR",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 170252882,
+      "favoritedCount": 465977,
+      "upVotes": 179818,
+      "downVotes": 35679,
+      "playing": 1108,
+      "created": "2021-09-16T21:10:59.137Z",
+      "updated": "2026-05-06T00:29:43.888513Z",
+      "canonicalUrlPath": "/games/7491927311/Undertale-Test-Place-Reborn",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1120,
+          "visits": 170252576
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1108,
+          "visits": 170252882
+        }
+      ]
+    },
+    {
+      "universeId": 1709917610,
+      "rootPlaceId": 4972273297,
+      "name": "Regretevator [ ELEVATOR SIMULATOR ]",
+      "creatorName": "The Axolotl Sun",
+      "genreL1": "Party & Casual",
+      "genreL2": "Minigame",
+      "visits": 241733235,
+      "favoritedCount": 1004033,
+      "upVotes": 379796,
+      "downVotes": 42460,
+      "playing": 2200,
+      "created": "2020-05-02T02:57:08.217Z",
+      "updated": "2026-05-06T22:40:18.7119228Z",
+      "canonicalUrlPath": "/games/4972273297/Regretevator",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2204,
+          "visits": 241732606
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2200,
+          "visits": 241733235
+        }
+      ]
+    },
+    {
+      "universeId": 6369934270,
+      "rootPlaceId": 18799085098,
+      "name": "💀 Hide or Die!",
+      "creatorName": "0 CCU Games",
+      "genreL1": "Party & Casual",
+      "genreL2": "Childhood Game",
+      "visits": 701713695,
+      "favoritedCount": 9533824,
+      "upVotes": 340603,
+      "downVotes": 51263,
+      "playing": 4762,
+      "created": "2024-08-04T15:42:54.2Z",
+      "updated": "2026-05-07T01:37:00.3634938Z",
+      "canonicalUrlPath": "/games/18799085098/Hide-or-Die",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 4458,
+          "visits": 701711368
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 4762,
+          "visits": 701713695
+        }
+      ]
+    },
+    {
+      "universeId": 4938220315,
+      "rootPlaceId": 14279693118,
+      "name": "[WOD REWORK, 2X GLOBAL] Skibi Defense",
+      "creatorName": "Archkos Studios",
+      "genreL1": "Strategy",
+      "genreL2": "Tower Defense",
+      "visits": 428898918,
+      "favoritedCount": 741435,
+      "upVotes": 180177,
+      "downVotes": 14644,
+      "playing": 2367,
+      "created": "2023-08-01T20:57:54.767Z",
+      "updated": "2026-05-06T21:03:30.5886129Z",
+      "canonicalUrlPath": "/games/14279693118/Skibi-Defense",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2424,
+          "visits": 428897409
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2367,
+          "visits": 428898918
+        }
+      ]
+    },
+    {
+      "universeId": 8321616508,
+      "rootPlaceId": 84988808589910,
+      "name": "[ Modulo Arc ] Rogue Piece",
+      "creatorName": "Vox's House",
+      "genreL1": "RPG",
+      "genreL2": "Action RPG",
+      "visits": 44762696,
+      "favoritedCount": 45862,
+      "upVotes": 82916,
+      "downVotes": 3870,
+      "playing": 1304,
+      "created": "2025-08-02T00:59:06.673Z",
+      "updated": "2026-05-06T19:55:14.6173205Z",
+      "canonicalUrlPath": "/games/84988808589910/Rogue-Piece",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1285,
+          "visits": 44762446
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1304,
+          "visits": 44762696
+        }
+      ]
+    },
+    {
+      "universeId": 2682938349,
+      "rootPlaceId": 6989310863,
+      "name": "🌷Wild Horse Islands 🐎",
+      "creatorName": "Happy Acres",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Pet Care",
+      "visits": 618315271,
+      "favoritedCount": 627489,
+      "upVotes": 238391,
+      "downVotes": 20701,
+      "playing": 3230,
+      "created": "2021-06-22T16:46:19.733Z",
+      "updated": "2026-05-06T23:01:13.6568131Z",
+      "canonicalUrlPath": "/games/6989310863/Wild-Horse-Islands",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 3265,
+          "visits": 618314377
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3230,
+          "visits": 618315271
+        }
+      ]
+    },
+    {
+      "universeId": 5488708927,
+      "rootPlaceId": 15873244701,
+      "name": "EToH: The Eternal Abyss",
+      "creatorName": "bLockerman666",
+      "genreL1": "Obby & Platformer",
+      "genreL2": "",
+      "visits": 4649709,
+      "favoritedCount": 13140,
+      "upVotes": 4010,
+      "downVotes": 723,
+      "playing": 171,
+      "created": "2024-01-04T22:15:21.77Z",
+      "updated": "2026-05-06T19:13:55.6904907Z",
+      "canonicalUrlPath": "/games/15873244701/EToH-The-Eternal-Abyss",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 166,
+          "visits": 4649670
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 171,
+          "visits": 4649709
+        }
+      ]
+    },
+    {
+      "universeId": 839922895,
+      "rootPlaceId": 2394257515,
+      "name": "Project Stardust",
+      "creatorName": "Military Flight Simulator Community",
+      "genreL1": "Action",
+      "genreL2": "Battlegrounds & Fighting",
+      "visits": 19561376,
+      "favoritedCount": 170789,
+      "upVotes": 50586,
+      "downVotes": 7061,
+      "playing": 241,
+      "created": "2018-09-23T18:07:01.76Z",
+      "updated": "2026-05-07T00:40:31.7294151Z",
+      "canonicalUrlPath": "/games/2394257515/Project-Stardust",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 237,
+          "visits": 19561326
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 241,
+          "visits": 19561376
+        }
+      ]
+    },
+    {
+      "universeId": 7660436108,
+      "rootPlaceId": 107573139811370,
+      "name": "[🩸6.0🩸] Anime Crusaders",
+      "creatorName": "32x",
+      "genreL1": "Strategy",
+      "genreL2": "Tower Defense",
+      "visits": 115762567,
+      "favoritedCount": 113418,
+      "upVotes": 346913,
+      "downVotes": 6659,
+      "playing": 3296,
+      "created": "2025-05-07T22:35:01.237Z",
+      "updated": "2026-05-07T00:17:13.8040763Z",
+      "canonicalUrlPath": "/games/107573139811370/Anime-Crusaders",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 3297,
+          "visits": 115761854
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 3296,
+          "visits": 115762567
+        }
+      ]
+    },
+    {
+      "universeId": 6069634717,
+      "rootPlaceId": 17720162456,
+      "name": "Sorcerer Tower Defense [HIGURUMA⚖️]",
+      "creatorName": "Peanut Butter Entertainment",
+      "genreL1": "Strategy",
+      "genreL2": "Tower Defense",
+      "visits": 136609086,
+      "favoritedCount": 214646,
+      "upVotes": 308349,
+      "downVotes": 9754,
+      "playing": 2184,
+      "created": "2024-06-03T13:06:13.67Z",
+      "updated": "2026-05-06T11:31:51.4705126Z",
+      "canonicalUrlPath": "/games/17720162456/Sorcerer-Tower-Defense",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2154,
+          "visits": 136608146
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2184,
+          "visits": 136609086
+        }
+      ]
+    },
+    {
+      "universeId": 6682487255,
+      "rootPlaceId": 110829983956014,
+      "name": "[🐉🌎] Anime Card Clash",
+      "creatorName": "RNG Lab",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 421288956,
+      "favoritedCount": 207530,
+      "upVotes": 413003,
+      "downVotes": 9741,
+      "playing": 7413,
+      "created": "2024-10-16T12:48:08.193Z",
+      "updated": "2026-05-02T01:14:31.679Z",
+      "canonicalUrlPath": "/games/110829983956014/Anime-Card-Clash",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 7406,
+          "visits": 421286761
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 7413,
+          "visits": 421288956
+        }
+      ]
+    },
+    {
+      "universeId": 6718454990,
+      "rootPlaceId": 101640913672688,
+      "name": "Anime Ghosts [🔥]",
+      "creatorName": "HF x Anime Ghosts",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 29240388,
+      "favoritedCount": 29439,
+      "upVotes": 69706,
+      "downVotes": 1536,
+      "playing": 4422,
+      "created": "2024-10-26T00:08:46.077Z",
+      "updated": "2026-05-05T21:31:20.2609708Z",
+      "canonicalUrlPath": "/games/101640913672688/Anime-Ghosts",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 4420,
+          "visits": 29239879
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 4422,
+          "visits": 29240388
+        }
+      ]
+    },
+    {
+      "universeId": 2491559356,
+      "rootPlaceId": 6608498361,
+      "name": "Cursed Tank Simulator【SKYFALL】",
+      "creatorName": "tanmk",
+      "genreL1": "Action",
+      "genreL2": "",
+      "visits": 74290214,
+      "favoritedCount": 158593,
+      "upVotes": 53488,
+      "downVotes": 16102,
+      "playing": 447,
+      "created": "2021-04-04T02:41:53.62Z",
+      "updated": "2026-05-06T22:38:25.0739126Z",
+      "canonicalUrlPath": "/games/6608498361/Cursed-Tank-Simulator-SKYFALL",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 442,
+          "visits": 74290088
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 447,
+          "visits": 74290214
+        }
+      ]
+    },
+    {
+      "universeId": 1801716281,
+      "rootPlaceId": 5169051062,
+      "name": "Futuretops: Rework",
+      "creatorName": "AFK Studios",
+      "genreL1": "Shooter",
+      "genreL2": "Deathmatch Shooter",
+      "visits": 18838981,
+      "favoritedCount": 25011,
+      "upVotes": 12217,
+      "downVotes": 3442,
+      "playing": 120,
+      "created": "2020-06-12T03:58:47.07Z",
+      "updated": "2026-05-03T18:24:26.486Z",
+      "canonicalUrlPath": "/games/5169051062/Futuretops-Rework",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 104,
+          "visits": 18838931
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 120,
+          "visits": 18838981
+        }
+      ]
+    },
+    {
+      "universeId": 3047037061,
+      "rootPlaceId": 7871169780,
+      "name": "bLockerman's Minesweeper",
+      "creatorName": "bLockerman666",
+      "genreL1": "Puzzle",
+      "genreL2": "",
+      "visits": 108027274,
+      "favoritedCount": 124681,
+      "upVotes": 68307,
+      "downVotes": 11246,
+      "playing": 1257,
+      "created": "2021-11-01T16:47:24.003Z",
+      "updated": "2026-04-30T15:35:38.302Z",
+      "canonicalUrlPath": "/games/7871169780/bLockermans-Minesweeper",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1230,
+          "visits": 108026501
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1257,
+          "visits": 108027274
+        }
+      ]
+    },
+    {
+      "universeId": 324740367,
+      "rootPlaceId": 740581899,
+      "name": "[The Lakehouse] Entry Point: Freelancer's Cut",
+      "creatorName": "Cishshato",
+      "genreL1": "Shooter",
+      "genreL2": "PvE Shooter",
+      "visits": 7693706,
+      "favoritedCount": 33302,
+      "upVotes": 9752,
+      "downVotes": 207,
+      "playing": 114,
+      "created": "2017-04-16T05:14:33.1Z",
+      "updated": "2026-04-24T15:12:56.121Z",
+      "canonicalUrlPath": "/games/740581899/Entry-Point-Freelancers-Cut",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 111,
+          "visits": 7693632
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 114,
+          "visits": 7693706
+        }
+      ]
+    },
+    {
+      "universeId": 1157126388,
+      "rootPlaceId": 3203685552,
+      "name": "BEAR (Alpha)",
+      "creatorName": "Cheedaman",
+      "genreL1": "Survival",
+      "genreL2": "1 vs All",
+      "visits": 342283257,
+      "favoritedCount": 1136331,
+      "upVotes": 302902,
+      "downVotes": 35587,
+      "playing": 1626,
+      "created": "2019-05-21T19:21:49.78Z",
+      "updated": "2026-05-05T19:19:26.6141639Z",
+      "canonicalUrlPath": "/games/3203685552/BEAR",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1671,
+          "visits": 342282717
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1626,
+          "visits": 342283257
+        }
+      ]
+    },
+    {
+      "universeId": 2082205150,
+      "rootPlaceId": 5846386835,
+      "name": "RetroStudio 🔨",
+      "creatorName": "Retro Dev",
+      "genreL1": "Simulation",
+      "genreL2": "Sandbox",
+      "visits": 167588021,
+      "favoritedCount": 525308,
+      "upVotes": 179811,
+      "downVotes": 11261,
+      "playing": 467,
+      "created": "2020-10-18T22:30:12.51Z",
+      "updated": "2026-05-06T21:57:31.7427445Z",
+      "canonicalUrlPath": "/games/5846386835/RetroStudio",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 447,
+          "visits": 167587712
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 467,
+          "visits": 167588021
+        }
+      ]
+    },
+    {
+      "universeId": 1374118848,
+      "rootPlaceId": 4195834406,
+      "name": "Dragon Generations",
+      "creatorName": "Asunder Studios",
+      "genreL1": "RPG",
+      "genreL2": "Action RPG",
+      "visits": 67655660,
+      "favoritedCount": 376230,
+      "upVotes": 153179,
+      "downVotes": 21134,
+      "playing": 486,
+      "created": "2019-10-24T01:24:05.3Z",
+      "updated": "2026-05-05T14:40:52.8089127Z",
+      "canonicalUrlPath": "/games/4195834406/Dragon-Generations",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 475,
+          "visits": 67655557
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 486,
+          "visits": 67655660
+        }
+      ]
+    },
+    {
+      "universeId": 1316421563,
+      "rootPlaceId": 3840352284,
+      "name": "Volleyball 4.2",
+      "creatorName": "unlimited bolg works",
+      "genreL1": "Sports & Racing",
+      "genreL2": "Sports",
+      "visits": 326683611,
+      "favoritedCount": 460871,
+      "upVotes": 171989,
+      "downVotes": 17923,
+      "playing": 363,
+      "created": "2019-09-08T23:48:25.407Z",
+      "updated": "2026-04-20T05:00:09.717Z",
+      "canonicalUrlPath": "/games/3840352284/Volleyball-4-2",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 354,
+          "visits": 326683459
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 363,
+          "visits": 326683611
+        }
+      ]
+    },
+    {
+      "universeId": 6763123315,
+      "rootPlaceId": 99146394215857,
+      "name": "Dolly's Factory [Alpha]",
+      "creatorName": "The Forever Studio",
+      "genreL1": "Survival",
+      "genreL2": "",
+      "visits": 58655154,
+      "favoritedCount": 157889,
+      "upVotes": 77872,
+      "downVotes": 10426,
+      "playing": 4950,
+      "created": "2024-11-05T17:09:43.327Z",
+      "updated": "2026-05-05T21:54:59.2040449Z",
+      "canonicalUrlPath": "/games/99146394215857/Dollys-Factory",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 4945,
+          "visits": 58653476
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 4950,
+          "visits": 58655154
+        }
+      ]
+    },
+    {
+      "universeId": 4810910714,
+      "rootPlaceId": 13876564679,
+      "name": "[SEASON 6] Highschool Hoops",
+      "creatorName": "delpw",
+      "genreL1": "Sports & Racing",
+      "genreL2": "Sports",
+      "visits": 26115606,
+      "favoritedCount": 46763,
+      "upVotes": 25046,
+      "downVotes": 5098,
+      "playing": 386,
+      "created": "2023-06-27T03:39:25.87Z",
+      "updated": "2026-04-30T10:41:09.385Z",
+      "canonicalUrlPath": "/games/13876564679/Highschool-Hoops",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 428,
+          "visits": 26115485
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 386,
+          "visits": 26115606
+        }
+      ]
+    },
+    {
+      "universeId": 7934320560,
+      "rootPlaceId": 70400654680508,
+      "name": "Five Nights TD 2 [FAZ RATING PRESTIGE]",
+      "creatorName": "Hyper TD",
+      "genreL1": "Strategy",
+      "genreL2": "Tower Defense",
+      "visits": 70604197,
+      "favoritedCount": 112602,
+      "upVotes": 142056,
+      "downVotes": 6719,
+      "playing": 2133,
+      "created": "2025-06-17T09:24:50.61Z",
+      "updated": "2026-05-06T17:51:34.3905355Z",
+      "canonicalUrlPath": "/games/70400654680508/Five-Nights-TD-2",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 2104,
+          "visits": 70603657
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 2133,
+          "visits": 70604197
+        }
+      ]
+    },
+    {
+      "universeId": 905954377,
+      "rootPlaceId": 2538919751,
+      "name": "💫 Pulse RP ||  Magic V1.25 💫",
+      "creatorName": "Suggyiem",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Morph Roleplay",
+      "visits": 162524116,
+      "favoritedCount": 420770,
+      "upVotes": 100938,
+      "downVotes": 16957,
+      "playing": 421,
+      "created": "2018-11-03T17:58:30.677Z",
+      "updated": "2026-05-06T01:01:39.9035607Z",
+      "canonicalUrlPath": "/games/2538919751/Pulse-RP-Magic-V1-25",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 424,
+          "visits": 162524038
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 421,
+          "visits": 162524116
+        }
+      ]
+    },
+    {
+      "universeId": 9063922112,
+      "rootPlaceId": 131716605322839,
+      "name": "[F3X] BYBAT: Scene Builder",
+      "creatorName": "BYB @",
+      "genreL1": "Simulation",
+      "genreL2": "Sandbox",
+      "visits": 1605037,
+      "favoritedCount": 9381,
+      "upVotes": 1648,
+      "downVotes": 295,
+      "playing": 224,
+      "created": "2025-10-30T11:12:07.063Z",
+      "updated": "2026-05-06T05:37:38.0701849Z",
+      "canonicalUrlPath": "/games/131716605322839/BYBAT-Scene-Builder",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 223,
+          "visits": 1604994
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 224,
+          "visits": 1605037
+        }
+      ]
+    },
+    {
+      "universeId": 1775919872,
+      "rootPlaceId": 5116869569,
+      "name": "[♟️NEW BP] Doodle World ",
+      "creatorName": "Doodle World Studios",
+      "genreL1": "RPG",
+      "genreL2": "Turn-based RPG",
+      "visits": 131015949,
+      "favoritedCount": 509734,
+      "upVotes": 223016,
+      "downVotes": 18588,
+      "playing": 607,
+      "created": "2020-05-31T15:23:57.253Z",
+      "updated": "2026-05-05T05:58:50.588Z",
+      "canonicalUrlPath": "/games/5116869569/Doodle-World",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 585,
+          "visits": 131015825
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 607,
+          "visits": 131015949
+        }
+      ]
+    },
+    {
+      "universeId": 3064619271,
+      "rootPlaceId": 7922773201,
+      "name": "Final Stand: Remastered",
+      "creatorName": "Final Stand Remastered",
+      "genreL1": "RPG",
+      "genreL2": "Action RPG",
+      "visits": 17749256,
+      "favoritedCount": 89392,
+      "upVotes": 39275,
+      "downVotes": 5634,
+      "playing": 330,
+      "created": "2021-11-06T20:30:24.23Z",
+      "updated": "2026-05-05T23:24:04.6720715Z",
+      "canonicalUrlPath": "/games/7922773201/Final-Stand-Remastered",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 331,
+          "visits": 17749198
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 330,
+          "visits": 17749256
+        }
+      ]
+    },
+    {
+      "universeId": 3264581003,
+      "rootPlaceId": 8562822414,
+      "name": "[🥚] Eternal Towers of Hell",
+      "creatorName": "ETERNITγ",
+      "genreL1": "Obby & Platformer",
+      "genreL2": "Tower Obby",
+      "visits": 104109444,
+      "favoritedCount": 167103,
+      "upVotes": 89275,
+      "downVotes": 23011,
+      "playing": 728,
+      "created": "2022-01-17T00:20:38.113Z",
+      "updated": "2026-05-07T00:01:31.0655719Z",
+      "canonicalUrlPath": "/games/8562822414/Eternal-Towers-of-Hell",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 722,
+          "visits": 104109253
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 728,
+          "visits": 104109444
+        }
+      ]
+    },
+    {
+      "universeId": 9634944540,
+      "rootPlaceId": 97217195056224,
+      "name": "[⛏️UPDATE!!] Break A Sunni Blind Box!",
+      "creatorName": "Otam Game",
+      "genreL1": "Simulation",
+      "genreL2": "Incremental Simulator",
+      "visits": 7458841,
+      "favoritedCount": 14882,
+      "upVotes": 12578,
+      "downVotes": 999,
+      "playing": 1142,
+      "created": "2026-01-28T00:49:33.74Z",
+      "updated": "2026-05-06T23:40:30.2255794Z",
+      "canonicalUrlPath": "/games/97217195056224/Break-A-Sunni-Blind-Box",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1163,
+          "visits": 7458404
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1142,
+          "visits": 7458841
+        }
+      ]
+    },
+    {
+      "universeId": 8991105066,
+      "rootPlaceId": 81505591700031,
+      "name": "[🤖Update] Idle Defense",
+      "creatorName": "Idle Defense",
+      "genreL1": "Strategy",
+      "genreL2": "Tower Defense",
+      "visits": 14300100,
+      "favoritedCount": 13799,
+      "upVotes": 10168,
+      "downVotes": 1679,
+      "playing": 617,
+      "created": "2025-10-20T14:04:00.293Z",
+      "updated": "2026-05-06T12:29:01.4424135Z",
+      "canonicalUrlPath": "/games/81505591700031/Idle-Defense",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 629,
+          "visits": 14299696
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 617,
+          "visits": 14300100
+        }
+      ]
+    },
+    {
+      "universeId": 8015734617,
+      "rootPlaceId": 139217467707445,
+      "name": "Steal Brainrots Trading Plaza 🛒",
+      "creatorName": "No CCU Games",
+      "genreL1": "Social",
+      "genreL2": "",
+      "visits": 388609349,
+      "favoritedCount": 2404148,
+      "upVotes": 90169,
+      "downVotes": 7709,
+      "playing": 1475,
+      "created": "2025-06-28T02:05:07.657Z",
+      "updated": "2026-04-30T01:59:37.24Z",
+      "canonicalUrlPath": "/games/139217467707445/Steal-Brainrots-Trading-Plaza",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 1451,
+          "visits": 388606039
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 1475,
+          "visits": 388609349
+        }
+      ]
+    },
+    {
+      "universeId": 5578556129,
+      "rootPlaceId": 16146832113,
+      "name": "[🥷UPD 12🥷] Anime Vanguards",
+      "creatorName": "Kitawari",
+      "genreL1": "Strategy",
+      "genreL2": "Tower Defense",
+      "visits": 1877739133,
+      "favoritedCount": 1869992,
+      "upVotes": 2557120,
+      "downVotes": 81947,
+      "playing": 7806,
+      "created": "2024-01-28T07:09:39.507Z",
+      "updated": "2026-05-06T14:31:55.1214734Z",
+      "canonicalUrlPath": "/games/16146832113/Anime-Vanguards",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 7819,
+          "visits": 1877737875
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 7806,
+          "visits": 1877739133
+        }
+      ]
+    },
+    {
+      "universeId": 371263894,
+      "rootPlaceId": 891852901,
+      "name": "Greenville",
+      "creatorName": "Greenville, Wisconsin",
+      "genreL1": "Roleplay & Avatar Sim",
+      "genreL2": "Life",
+      "visits": 1361170725,
+      "favoritedCount": 2583258,
+      "upVotes": 1002663,
+      "downVotes": 142183,
+      "playing": 4507,
+      "created": "2017-06-28T12:52:29.43Z",
+      "updated": "2026-04-30T23:19:59.337Z",
+      "canonicalUrlPath": "/games/891852901/Greenville",
+      "samples": [
+        {
+          "ts": 1778118219575,
+          "playing": 4573,
+          "visits": 1361169229
+        },
+        {
+          "ts": 1778118528352,
+          "playing": 4507,
+          "visits": 1361170725
+        }
+      ]
+    }
+  ]
+}
