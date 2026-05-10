@@ -10,23 +10,33 @@ import {
   VoteRecord,
 } from "./types";
 
-const UA = "roblox-pulse/0.1 (+https://github.com/yourname/roblox-pulse)";
+const UA = "roblox-pulse/0.1 (+https://github.com/shippyfoxy/roblox-pulse)";
 
-// Brief: official APIs ceiling 5 req/sec.
-const MIN_INTERVAL_MS = 200;
+// Brief: official APIs ceiling 5 req/sec. We pace at 2 req/sec — the per-IP
+// limit appears to be a sliding window across all roblox.com hosts, and bursts
+// of ~40 calls at 3 req/sec trip a multi-minute lockout (observed during the
+// expanded-seed refresh). 500ms interval matches what manual probes tolerated.
+const MIN_INTERVAL_MS = 500;
 
 // Roblox /v1/games and /v1/games/votes both cap at 50 universeIds per call.
 export const UNIVERSE_BATCH_SIZE = 50;
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+// Serialises concurrent callers via a promise chain — naive read-then-set on a
+// shared `last` lets parallel awaits sleep the same interval and fire together,
+// which trips Roblox's 429s when many batches race (e.g. games+votes in parallel).
 class TokenBucket {
   private last = 0;
-  async take(): Promise<void> {
-    const now = Date.now();
-    const wait = Math.max(0, this.last + MIN_INTERVAL_MS - now);
-    if (wait > 0) await sleep(wait);
-    this.last = Date.now();
+  private chain: Promise<void> = Promise.resolve();
+  take(): Promise<void> {
+    const next = this.chain.then(async () => {
+      const wait = Math.max(0, this.last + MIN_INTERVAL_MS - Date.now());
+      if (wait > 0) await sleep(wait);
+      this.last = Date.now();
+    });
+    this.chain = next.catch(() => {});
+    return next;
   }
 }
 
@@ -36,6 +46,15 @@ interface FetchOpts {
   retries?: number;
   signal?: AbortSignal;
 }
+
+// Roblox accepts these axes on /explore-api/v1/get-sorts. Each (country, device)
+// pair returns a different ranked slice; fanning out widens the seed pool.
+export interface SeedVariant {
+  country?: string; // ISO-2 lowercase, e.g. "us", "gb". Default "us".
+  device?: string;  // "computer" | "high_end_phone" | "low_end_phone" | "high_end_tablet" | "console". Default "computer".
+}
+
+interface ExploreOpts extends FetchOpts, SeedVariant {}
 
 export class RobloxApiError extends Error {
   constructor(
@@ -49,8 +68,10 @@ export class RobloxApiError extends Error {
 
 async function jget<T>(url: string, opts: FetchOpts = {}): Promise<T> {
   const retries = opts.retries ?? 3;
+  // 429s persist longer than transient 5xx — give them a bigger retry envelope.
+  const rateLimitRetries = Math.max(retries, 5);
 
-  for (let attempt = 0; attempt <= retries; attempt++) {
+  for (let attempt = 0; attempt <= Math.max(retries, rateLimitRetries); attempt++) {
     await bucket.take();
 
     let res: Response;
@@ -69,8 +90,10 @@ async function jget<T>(url: string, opts: FetchOpts = {}): Promise<T> {
 
     if (res.status === 429) {
       const retryAfter = parseInt(res.headers.get("retry-after") ?? "0", 10);
-      const wait = retryAfter > 0 ? retryAfter * 1000 : backoff(attempt);
-      if (attempt === retries) {
+      // Honour Retry-After when present, else 10s/20s/40s/80s/160s. Roblox's
+      // per-IP lockout typically lifts within a minute or two.
+      const wait = retryAfter > 0 ? retryAfter * 1000 : 10_000 * Math.pow(2, attempt);
+      if (attempt >= rateLimitRetries) {
         throw new RobloxApiError(url, 429, "rate limited (out of retries)");
       }
       await sleep(wait);
@@ -111,12 +134,51 @@ function chunk<T>(arr: T[], size: number): T[][] {
 
 // Discovery seed. Each sort embeds 30-90 games with universeId/playerCount/votes.
 // Pass a stable sessionId to make Roblox happy; new uuid each refresh is fine.
+// Optional `country`/`device` change the regional slice — use `getExpandedSeed`
+// to fan across many variants for a wider seed pool.
 export async function getExploreSorts(
   sessionId: string,
-  opts?: FetchOpts,
+  opts?: ExploreOpts,
 ): Promise<ExploreSortsResponse> {
-  const url = `https://apis.roblox.com/explore-api/v1/get-sorts?sessionId=${encodeURIComponent(sessionId)}`;
+  const params = new URLSearchParams({ sessionId });
+  if (opts?.country) params.set("country", opts.country);
+  if (opts?.device) params.set("device", opts.device);
+  const url = `https://apis.roblox.com/explore-api/v1/get-sorts?${params.toString()}`;
   return jget<ExploreSortsResponse>(url, opts);
+}
+
+// Fans get-sorts across the supplied (country, device) variants and returns the
+// deduped union of universeIds plus per-variant new-id counts (for logging).
+// Calls run sequentially through the shared TokenBucket — N variants ≈ N*200ms.
+export async function getExpandedSeed(
+  sessionId: string,
+  variants: SeedVariant[],
+  opts?: FetchOpts,
+): Promise<{
+  universeIds: number[];
+  perVariant: Array<{ variant: SeedVariant; total: number; added: number }>;
+}> {
+  const seen = new Set<number>();
+  const perVariant: Array<{ variant: SeedVariant; total: number; added: number }> = [];
+
+  for (const variant of variants) {
+    const sorts = await getExploreSorts(sessionId, { ...opts, ...variant });
+    const ids = (sorts.sorts ?? [])
+      .filter((s) => s.contentType === "Games")
+      .flatMap((s) => (s.games ?? []).map((g) => g.universeId))
+      .filter((n) => Number.isInteger(n) && n > 0);
+
+    let added = 0;
+    for (const id of ids) {
+      if (!seen.has(id)) {
+        seen.add(id);
+        added++;
+      }
+    }
+    perVariant.push({ variant, total: ids.length, added });
+  }
+
+  return { universeIds: [...seen], perVariant };
 }
 
 // Resolves placeId -> universeId. Used when seeds only have placeIds.

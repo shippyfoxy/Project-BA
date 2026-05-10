@@ -6,14 +6,32 @@ import { randomUUID } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import {
-  getExploreSorts,
+  getExpandedSeed,
   getGames,
   getVotes,
+  type SeedVariant,
 } from "../lib/roblox/client";
 import type { Snapshot, SnapshotGame, SnapshotSample } from "../lib/snapshot/schema";
 
 const SNAPSHOT_PATH = path.resolve(process.cwd(), "data/snapshots/latest.json");
 const MAX_SAMPLES_PER_GAME = 12; // ~12 hours of history at hourly refresh
+
+// Modest fan-out: baseline + 4 device classes on US + 7 non-US countries on
+// the default device. Roughly 3-4x more universeIds than a single get-sorts call.
+const SEED_VARIANTS: SeedVariant[] = [
+  {},
+  { device: "high_end_phone" },
+  { device: "low_end_phone" },
+  { device: "high_end_tablet" },
+  { device: "console" },
+  { country: "gb" },
+  { country: "br" },
+  { country: "jp" },
+  { country: "kr" },
+  { country: "de" },
+  { country: "ru" },
+  { country: "ph" },
+];
 
 async function readPreviousSnapshot(): Promise<Snapshot | null> {
   try {
@@ -33,17 +51,26 @@ async function main() {
   const sessionId = randomUUID();
   console.log(`[refresh] sessionId=${sessionId}`);
 
-  const sorts = await getExploreSorts(sessionId);
-  const seedIds = dedupeIds(
-    (sorts.sorts ?? [])
-      .filter((s) => s.contentType === "Games")
-      .flatMap((s) => (s.games ?? []).map((g) => g.universeId)),
+  const { universeIds, perVariant } = await getExpandedSeed(sessionId, SEED_VARIANTS);
+  const seedIds = dedupeIds(universeIds);
+  for (const v of perVariant) {
+    const label = `country=${v.variant.country ?? "us"} device=${v.variant.device ?? "computer"}`;
+    console.log(`[refresh]   ${label}: ${v.total} games (+${v.added} new)`);
+  }
+  console.log(
+    `[refresh] seeded ${seedIds.length} unique universeIds across ${SEED_VARIANTS.length} variants`,
   );
-  console.log(`[refresh] seeded ${seedIds.length} universeIds from explore-api`);
 
   if (seedIds.length === 0) {
     throw new Error("explore-api returned no games — refusing to overwrite snapshot");
   }
+
+  // Roblox enforces a per-IP burst window across all *.roblox.com hosts. Without
+  // this pause the seed burst (12 calls) bleeds straight into the enrichment
+  // burst (~28 calls) and the first /games batch trips a multi-minute lockout.
+  const COOLDOWN_MS = 10_000;
+  console.log(`[refresh] cooling down ${COOLDOWN_MS / 1000}s before enrichment`);
+  await new Promise((r) => setTimeout(r, COOLDOWN_MS));
 
   const [games, votes] = await Promise.all([
     getGames(seedIds),
