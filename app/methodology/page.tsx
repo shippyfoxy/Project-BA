@@ -25,33 +25,42 @@ export default function MethodologyPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Retention proxy</CardTitle>
+          <CardTitle>Retention proxy (v2)</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           <pre className="overflow-x-auto rounded-md border border-border bg-muted/40 p-3 font-mono text-xs">
 {`retentionProxy =
     (upVotes / (upVotes + downVotes))
   × log10(favoritedCount + 1)
-  × playing / max(visits / 24, 1)`}
+  × log10(playing + 1)`}
           </pre>
           <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
             <li>
-              <strong>Like-ratio</strong> rewards games with positive reception.
-              Returns 0 when a game has no votes (e.g. brand-new releases).
+              <strong>Like-ratio</strong> rewards games with positive
+              reception. Returns 0 when a game has no votes (e.g. brand-new
+              releases).
             </li>
             <li>
-              <strong>log10(favourites + 1)</strong> dampens the long tail —
-              the difference between 100 and 1,000 favourites matters more
-              than between 10M and 100M.
+              <strong>log10(favourites + 1)</strong> measures depth of
+              fandom on a log scale — the difference between 100 and 1,000
+              favourites matters more than between 10M and 100M.
             </li>
             <li>
-              <strong>playing ÷ (visits ÷ 24)</strong> measures how
-              concentrated current concurrency is, relative to the game&rsquo;s
-              historical reach. The <code>÷ 24</code> reads as &ldquo;visits
-              per hour assuming a 24-hour spread&rdquo;; the floor of 1 stops
-              tiny games blowing the metric up.
+              <strong>log10(playing + 1)</strong> measures current concurrent
+              engagement, also log-scaled so a 600k-player giant doesn&rsquo;t
+              completely drown out a 5k-player niche darling.
             </li>
           </ul>
+          <p className="text-muted-foreground">
+            <strong>Why v2:</strong> the v1 formula divided by{" "}
+            <code>visits / 24</code>, which collapsed established games like
+            Brookhaven (82B lifetime visits) to a near-zero score —
+            backwards from the business meaning of retention. v2 drops the
+            visits-as-denominator term entirely and rewards
+            quality × fandom × current activity. Lifetime visits no longer
+            penalise the score; if anything, they correlate with all three
+            terms going up.
+          </p>
         </CardContent>
       </Card>
 

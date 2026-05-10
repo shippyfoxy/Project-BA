@@ -1,0 +1,65 @@
+name: Refresh snapshot
+
+# Pulls a fresh data/snapshots/latest.json from Roblox's public APIs every
+# 30 minutes and commits it back to master. Each runner gets a fresh public
+# IP, so per-IP rate-limit lockouts (the failure mode we hit locally) do not
+# apply here. The validate-snapshot script gates the commit — broken data
+# fails the run instead of being committed.
+
+on:
+  schedule:
+    # GitHub Actions cron is best-effort; expect a few minutes of jitter.
+    - cron: "*/30 * * * *"
+  workflow_dispatch: {}
+
+# Required so the bot commit can be pushed back.
+permissions:
+  contents: write
+
+# If a previous run is still going, let it finish but don't queue more than one
+# pending run on top of it.
+concurrency:
+  group: refresh-snapshot
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Need write access to push the snapshot back.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Refresh snapshot
+        run: pnpm refresh-data
+
+      - name: Validate snapshot
+        run: pnpm validate-snapshot
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- data/snapshots/latest.json; then
+            echo "No snapshot changes — skipping commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/snapshots/latest.json
+          git commit -m "chore(data): refresh snapshot $(date -u +'%Y-%m-%dT%H:%MZ')"
+          # Rebase on remote in case anything was pushed since checkout —
+          # avoids a 'non-fast-forward' rejection without force-pushing.
+          git pull --rebase origin master
+          git push origin master

@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "refresh-data": "tsx scripts/refresh-data.ts"
+    "refresh-data": "tsx scripts/refresh-data.ts",
+    "validate-snapshot": "tsx scripts/validate-snapshot.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",

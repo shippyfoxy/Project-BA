@@ -51,8 +51,8 @@ async function main() {
   const sessionId = randomUUID();
   console.log(`[refresh] sessionId=${sessionId}`);
 
-  const { universeIds, perVariant } = await getExpandedSeed(sessionId, SEED_VARIANTS);
-  const seedIds = dedupeIds(universeIds);
+  const { hits, perVariant } = await getExpandedSeed(sessionId, SEED_VARIANTS);
+  const seedIds = dedupeIds([...hits.keys()]);
   for (const v of perVariant) {
     const label = `country=${v.variant.country ?? "us"} device=${v.variant.device ?? "computer"}`;
     console.log(`[refresh]   ${label}: ${v.total} games (+${v.added} new)`);
@@ -89,6 +89,7 @@ async function main() {
   const ts = Date.now();
   const merged: SnapshotGame[] = games.map((g) => {
     const v = voteMap.get(g.id);
+    const hit = hits.get(g.id);
     const sample: SnapshotSample = { ts, playing: g.playing, visits: g.visits };
     const prevSamples = prevMap.get(g.id)?.samples ?? [];
     const samples = [...prevSamples, sample].slice(-MAX_SAMPLES_PER_GAME);
@@ -107,6 +108,10 @@ async function main() {
       created: g.created,
       updated: g.updated,
       canonicalUrlPath: g.canonicalUrlPath,
+      minimumAge: hit?.minimumAge ?? null,
+      ageRecommendation: hit?.ageRecommendation ?? null,
+      popularInCountries: hit ? [...hit.countries].sort() : [],
+      popularOnDevices: hit ? [...hit.devices].sort() : [],
       samples,
     };
   });

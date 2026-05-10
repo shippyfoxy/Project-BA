@@ -36,6 +36,15 @@ export function likeRatio(upVotes: number, downVotes: number): number {
 }
 
 export function retentionProxy(g: RetentionInputs): number {
+  // v2 formula (2026-05-10). The previous version divided by `visits / 24`,
+  // which for established games (e.g. Brookhaven at 82B visits) collapsed
+  // the score to ~zero — backwards from the business meaning of retention.
+  // The new composite uses three log-scaled engagement signals and does NOT
+  // penalise lifetime visits at all:
+  //   retentionScore = likeRatio × log10(favoritedCount + 1) × log10(playing + 1)
+  // Interpretation: high score = quality (likes) AND deep fandom (favourites)
+  // AND active concurrent engagement. Brookhaven now ranks at the top, where
+  // a game with 600k+ live players obviously belongs.
   const ratio = likeRatio(g.upVotes, g.downVotes);
   if (ratio === 0) return 0;
 
@@ -45,13 +54,9 @@ export function retentionProxy(g: RetentionInputs): number {
 
   const playing = finite(g.playing);
   if (playing === 0) return 0;
+  const playingTerm = Math.log10(playing + 1);
 
-  const visits = finite(g.visits);
-  // visits/24 reads "visits per hour assuming a 24-hour spread".
-  // The floor of 1 prevents tiny new games from blowing the metric up.
-  const visitRate = Math.max(visits / 24, 1);
-
-  return ratio * favTerm * (playing / visitRate);
+  return ratio * favTerm * playingTerm;
 }
 
 export function estimatedSessionMinutes(g: SessionInputs): number | null {

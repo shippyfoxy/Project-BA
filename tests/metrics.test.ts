@@ -59,34 +59,41 @@ describe("retentionProxy", () => {
     ).toBe(0);
   });
 
-  it("computes the spec formula: like-ratio * log10(favs+1) * playing / max(visits/24, 1)", () => {
+  it("computes the v2 formula: like-ratio * log10(favs+1) * log10(playing+1)", () => {
     // upVotes=900, downVotes=100 -> like-ratio=0.9
-    // favoritedCount=999 -> log10(1000)=3
-    // playing=240, visits=24*1000 -> visits/24 = 1000 -> playing/visits-rate = 0.24
-    // expected = 0.9 * 3 * 0.24 = 0.648
+    // favs=999 -> log10(1000)=3
+    // playing=999 -> log10(1000)=3
+    // expected = 0.9 * 3 * 3 = 8.1
     const v = retentionProxy({
       upVotes: 900,
       downVotes: 100,
       favoritedCount: 999,
-      playing: 240,
+      playing: 999,
       visits: 24_000,
     });
-    expect(v).toBeCloseTo(0.648, 4);
+    expect(v).toBeCloseTo(8.1, 4);
   });
 
-  it("uses the visits/24 floor of 1 to avoid blowing up tiny games", () => {
-    // visits=12 -> visits/24 = 0.5 -> floored to 1, so denom is 1
-    // upVotes=10,downVotes=0 -> 1.0 ; favs=9 -> log10(10)=1 ; playing=2
-    // expected = 1.0 * 1 * 2 / 1 = 2
-    expect(
-      retentionProxy({
-        upVotes: 10,
-        downVotes: 0,
-        favoritedCount: 9,
-        playing: 2,
-        visits: 12,
-      }),
-    ).toBeCloseTo(2, 4);
+  it("does not penalise high lifetime visits (was a v1 bug)", () => {
+    // Brookhaven-shaped: huge visits, huge favs, huge playing, near-perfect ratio.
+    // v1 collapsed this to ~0; v2 should rank it near the top of the score range.
+    const brookhaven = retentionProxy({
+      upVotes: 970_000,
+      downVotes: 30_000,
+      favoritedCount: 73_000_000,
+      playing: 620_000,
+      visits: 82_000_000_000,
+    });
+    // Tiny new game with similar quality but no scale.
+    const newGame = retentionProxy({
+      upVotes: 95,
+      downVotes: 5,
+      favoritedCount: 100,
+      playing: 10,
+      visits: 1_000,
+    });
+    expect(brookhaven).toBeGreaterThan(newGame);
+    expect(brookhaven).toBeGreaterThan(40); // ≈ 0.97 × 7.86 × 5.79
   });
 
   it("returns 0 (not NaN/Infinity) on malformed input", () => {

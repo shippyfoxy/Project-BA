@@ -147,38 +147,64 @@ export async function getExploreSorts(
   return jget<ExploreSortsResponse>(url, opts);
 }
 
-// Fans get-sorts across the supplied (country, device) variants and returns the
-// deduped union of universeIds plus per-variant new-id counts (for logging).
-// Calls run sequentially through the shared TokenBucket — N variants ≈ N*200ms.
+// Per-universe metadata accumulated while fanning across (country, device)
+// variants. The age fields come from explore-api directly; countries/devices
+// record every variant where this universeId surfaced (deduped).
+export interface SeedHit {
+  universeId: number;
+  minimumAge: number | null;
+  ageRecommendation: string | null;
+  countries: Set<string>;
+  devices: Set<string>;
+}
+
+// Fans get-sorts across the supplied (country, device) variants and returns
+// the deduped per-universe metadata. Each universeId carries the age info
+// from its first appearance plus the set of (country, device) variants where
+// it was promoted. Calls run sequentially through the shared TokenBucket.
 export async function getExpandedSeed(
   sessionId: string,
   variants: SeedVariant[],
   opts?: FetchOpts,
 ): Promise<{
-  universeIds: number[];
+  hits: Map<number, SeedHit>;
   perVariant: Array<{ variant: SeedVariant; total: number; added: number }>;
 }> {
-  const seen = new Set<number>();
+  const hits = new Map<number, SeedHit>();
   const perVariant: Array<{ variant: SeedVariant; total: number; added: number }> = [];
 
   for (const variant of variants) {
     const sorts = await getExploreSorts(sessionId, { ...opts, ...variant });
-    const ids = (sorts.sorts ?? [])
-      .filter((s) => s.contentType === "Games")
-      .flatMap((s) => (s.games ?? []).map((g) => g.universeId))
-      .filter((n) => Number.isInteger(n) && n > 0);
+    const country = variant.country ?? "us";
+    const device = variant.device ?? "computer";
 
+    let total = 0;
     let added = 0;
-    for (const id of ids) {
-      if (!seen.has(id)) {
-        seen.add(id);
-        added++;
+    for (const sort of sorts.sorts ?? []) {
+      if (sort.contentType !== "Games") continue;
+      for (const g of sort.games ?? []) {
+        if (!Number.isInteger(g.universeId) || g.universeId <= 0) continue;
+        total++;
+        let hit = hits.get(g.universeId);
+        if (!hit) {
+          hit = {
+            universeId: g.universeId,
+            minimumAge: typeof g.minimumAge === "number" ? g.minimumAge : null,
+            ageRecommendation: g.ageRecommendationDisplayName || null,
+            countries: new Set<string>(),
+            devices: new Set<string>(),
+          };
+          hits.set(g.universeId, hit);
+          added++;
+        }
+        hit.countries.add(country);
+        hit.devices.add(device);
       }
     }
-    perVariant.push({ variant, total: ids.length, added });
+    perVariant.push({ variant, total, added });
   }
 
-  return { universeIds: [...seen], perVariant };
+  return { hits, perVariant };
 }
 
 // Resolves placeId -> universeId. Used when seeds only have placeIds.

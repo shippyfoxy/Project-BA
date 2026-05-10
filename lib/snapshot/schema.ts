@@ -23,6 +23,15 @@ export interface SnapshotGame {
   created: string;
   updated: string;
   canonicalUrlPath: string;
+  // Age targeting from explore-api: minimumAge is a numeric floor (e.g. 5, 9, 13),
+  // ageRecommendation is the human label ("Maturity: Minimal", "Maturity: Mild", ...).
+  // Both are nullable because they are absent from games we never saw via explore-api.
+  minimumAge: number | null;
+  ageRecommendation: string | null;
+  // ISO-2 country codes / device classes where this game appeared in an
+  // explore-api sort during the last refresh. Used for the regional breakdown.
+  popularInCountries: string[];
+  popularOnDevices: string[];
   // Rolling list of (ts, playing, visits) readings — newest last.
   // Cohort proxy uses the last two.
   samples: SnapshotSample[];
