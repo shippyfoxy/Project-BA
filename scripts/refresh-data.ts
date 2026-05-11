@@ -14,7 +14,7 @@ import {
 import type { Snapshot, SnapshotGame, SnapshotSample } from "../lib/snapshot/schema";
 
 const SNAPSHOT_PATH = path.resolve(process.cwd(), "data/snapshots/latest.json");
-const MAX_SAMPLES_PER_GAME = 12; // ~12 hours of history at hourly refresh
+const MAX_SAMPLES_PER_GAME = 48; // 24 h of history at 30-min refresh
 
 // Fan-out across country + device variants to widen the seed pool to ~1000
 // unique games. Each variant is a single explore-api call; all calls run

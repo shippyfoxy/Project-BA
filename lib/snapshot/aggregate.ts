@@ -50,6 +50,49 @@ export function gameSessionMinutes(g: SnapshotGame): number | null {
   return estimatedSessionMinutes({ earlier, later });
 }
 
+// Returns the UTC hour (0-23) where this game averages the most concurrent
+// players across its sample history. Needs at least 2 distinct hours to be
+// meaningful — single-hour data can't distinguish peak from baseline.
+export function gamePeakHourUTC(g: SnapshotGame): number | null {
+  if (g.samples.length < 2) return null;
+  const hourSums = new Map<number, { sum: number; count: number }>();
+  for (const s of g.samples) {
+    const h = new Date(s.ts).getUTCHours();
+    const entry = hourSums.get(h) ?? { sum: 0, count: 0 };
+    entry.sum += s.playing;
+    entry.count++;
+    hourSums.set(h, entry);
+  }
+  if (hourSums.size < 2) return null;
+  let bestHour = -1;
+  let bestAvg = -Infinity;
+  for (const [h, { sum, count }] of hourSums) {
+    const avg = sum / count;
+    if (avg > bestAvg) { bestAvg = avg; bestHour = h; }
+  }
+  return bestHour >= 0 ? bestHour : null;
+}
+
+// Returns the UTC hour where the combined concurrent count across a group of
+// games is highest — summing all samples grouped by hour. Avoids the circular-
+// median problem (23 and 0 are adjacent) by working on totals, not per-game peaks.
+function groupPeakHourUTC(games: SnapshotGame[]): number | null {
+  const hourSums = new Map<number, number>();
+  for (const g of games) {
+    for (const s of g.samples) {
+      const h = new Date(s.ts).getUTCHours();
+      hourSums.set(h, (hourSums.get(h) ?? 0) + s.playing);
+    }
+  }
+  if (hourSums.size < 2) return null;
+  let bestHour = -1;
+  let bestSum = -Infinity;
+  for (const [h, sum] of hourSums) {
+    if (sum > bestSum) { bestSum = sum; bestHour = h; }
+  }
+  return bestHour >= 0 ? bestHour : null;
+}
+
 // Roblox's `genre_l1` field includes a few bookkeeping buckets that aren't
 // actually playstyle categories — we drop them so the chart shows real genres.
 const NON_GENRES = new Set([
@@ -259,6 +302,9 @@ export interface GenreAgeRow {
   // Share of total concurrent players across the catalogue (0..1). Lets
   // executives see niche-vs-mainstream alongside the retention score.
   shareOfPlayers: number;
+  // UTC hour (0-23) when combined concurrent players in this combo is highest
+  // across all sample history. Null when fewer than 2 distinct hours are recorded.
+  peakHourUTC: number | null;
 }
 
 const AGE_FALLBACK = "Unknown maturity";
@@ -318,6 +364,7 @@ export function retentionByGenreAndAge(
         sessionValues.length === 0 ? null : mean(sessionValues),
       totalPlaying,
       shareOfPlayers: totalPlayers === 0 ? 0 : totalPlaying / totalPlayers,
+      peakHourUTC: groupPeakHourUTC(gs),
     });
   }
 
