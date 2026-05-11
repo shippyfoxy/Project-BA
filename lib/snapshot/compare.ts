@@ -70,6 +70,14 @@ export function availableAgeRatings(games: SnapshotGame[]): string[] {
   return [...seen].sort();
 }
 
+// Maps user-facing filter labels to the raw strings stored in popularOnDevices.
+const DEVICE_VALUES: Record<DeviceFilter, string[]> = {
+  Desktop: ["computer"],
+  Console: ["console"],
+  Phone: ["high_end_phone", "low_end_phone"],
+  Tablet: ["high_end_tablet"],
+};
+
 export function applyFilter(games: SnapshotGame[], filter: GroupFilter): SnapshotGame[] {
   return games.filter((g) => {
     if (filter.genres.length > 0 && !filter.genres.includes(g.genreL1)) return false;
@@ -77,7 +85,8 @@ export function applyFilter(games: SnapshotGame[], filter: GroupFilter): Snapsho
       if (!g.ageRecommendation || !filter.ageRatings.includes(g.ageRecommendation)) return false;
     }
     if (filter.devices.length > 0) {
-      const hasOverlap = filter.devices.some((d) => g.popularOnDevices.includes(d));
+      const stored = filter.devices.flatMap((d) => DEVICE_VALUES[d]);
+      const hasOverlap = stored.some((v) => g.popularOnDevices.includes(v));
       if (!hasOverlap) return false;
     }
     return true;

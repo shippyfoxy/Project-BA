@@ -16,14 +16,19 @@ import type { Snapshot, SnapshotGame, SnapshotSample } from "../lib/snapshot/sch
 const SNAPSHOT_PATH = path.resolve(process.cwd(), "data/snapshots/latest.json");
 const MAX_SAMPLES_PER_GAME = 12; // ~12 hours of history at hourly refresh
 
-// Modest fan-out: baseline + 4 device classes on US + 7 non-US countries on
-// the default device. Roughly 3-4x more universeIds than a single get-sorts call.
+// Fan-out across country + device variants to widen the seed pool to ~1000
+// unique games. Each variant is a single explore-api call; all calls run
+// sequentially through the shared 500ms TokenBucket, so no separate rate
+// concern. On GitHub Actions every run gets a fresh public IP, so the burst
+// lockout that triggered the local cooldown (see below) doesn't apply there.
 const SEED_VARIANTS: SeedVariant[] = [
+  // US baseline + all device classes
   {},
   { device: "high_end_phone" },
   { device: "low_end_phone" },
   { device: "high_end_tablet" },
   { device: "console" },
+  // Major non-US markets (desktop/default device)
   { country: "gb" },
   { country: "br" },
   { country: "jp" },
@@ -31,6 +36,16 @@ const SEED_VARIANTS: SeedVariant[] = [
   { country: "de" },
   { country: "ru" },
   { country: "ph" },
+  { country: "in" },
+  { country: "mx" },
+  { country: "id" },
+  { country: "tr" },
+  // Cross-device variants for high-mobile regions — surface phone-first titles
+  // that don't appear in the desktop or US slices
+  { country: "br", device: "high_end_phone" },
+  { country: "ph", device: "high_end_phone" },
+  { country: "in", device: "low_end_phone" },
+  { country: "id", device: "low_end_phone" },
 ];
 
 async function readPreviousSnapshot(): Promise<Snapshot | null> {
@@ -65,10 +80,10 @@ async function main() {
     throw new Error("explore-api returned no games — refusing to overwrite snapshot");
   }
 
-  // Roblox enforces a per-IP burst window across all *.roblox.com hosts. Without
-  // this pause the seed burst (12 calls) bleeds straight into the enrichment
-  // burst (~28 calls) and the first /games batch trips a multi-minute lockout.
-  const COOLDOWN_MS = 10_000;
+  // Brief pause between seed phase and enrichment phase. On GitHub Actions
+  // (fresh IP per run) this isn't strictly needed, but a small buffer guards
+  // against any sliding-window overlap at the host level.
+  const COOLDOWN_MS = 3_000;
   console.log(`[refresh] cooling down ${COOLDOWN_MS / 1000}s before enrichment`);
   await new Promise((r) => setTimeout(r, COOLDOWN_MS));
 

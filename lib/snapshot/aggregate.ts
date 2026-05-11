@@ -378,6 +378,10 @@ const COUNTRY_NAMES: Record<string, string> = {
   de: "Germany",
   ru: "Russia",
   ph: "Philippines",
+  in: "India",
+  mx: "Mexico",
+  id: "Indonesia",
+  tr: "Turkey",
 };
 
 function genreShares(
