@@ -12,7 +12,7 @@ Both metrics are *proxies*, not ground-truth telemetry. Read
 `/methodology` (or [`app/methodology/page.tsx`](app/methodology/page.tsx)) for
 the formulas, assumptions, and what they don't measure.
 
-> Live demo: <https://roblox-pulse.vercel.app> *(placeholder — replace after deploy)*
+> Live demo: <https://pulse.shipfox.me>
 
 ## Stack
 
