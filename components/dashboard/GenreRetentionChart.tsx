@@ -76,7 +76,8 @@ function TopGamesPanel({ genre, games }: { genre: string; games: TopGameRow[] })
               <th className="pb-1 pr-4 font-medium">#</th>
               <th className="pb-1 pr-4 font-medium">Game</th>
               <th className="pb-1 pr-4 text-right font-medium">Retention</th>
-              <th className="pb-1 text-right font-medium">Concurrent</th>
+              <th className="pb-1 pr-4 text-right font-medium">Concurrent</th>
+              <th className="pb-1 text-right font-medium">Session</th>
             </tr>
           </thead>
           <tbody>
@@ -99,8 +100,11 @@ function TopGamesPanel({ genre, games }: { genre: string; games: TopGameRow[] })
                 <td className="py-1.5 pr-4 text-right tabular-nums">
                   {g.retentionProxy.toFixed(2)}
                 </td>
-                <td className="py-1.5 text-right tabular-nums">
+                <td className="py-1.5 pr-4 text-right tabular-nums">
                   {fmtCompact.format(g.playing)}
+                </td>
+                <td className="py-1.5 text-right tabular-nums text-muted-foreground">
+                  {g.sessionBucket ?? "—"}
                 </td>
               </tr>
             ))}

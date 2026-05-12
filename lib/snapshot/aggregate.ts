@@ -20,6 +20,7 @@ export interface CohortRow {
   bucket: SessionBucket;
   count: number;
   totalPlaying: number;
+  topGames: TopGameRow[];
 }
 
 export interface KpiSummary {
@@ -140,24 +141,30 @@ export function topGenresByRetention(
 }
 
 export function sessionCohorts(snapshot: Snapshot): CohortRow[] {
-  const counts: Record<SessionBucket, { count: number; totalPlaying: number }> = {
-    "<5m": { count: 0, totalPlaying: 0 },
-    "5-15m": { count: 0, totalPlaying: 0 },
-    "15-30m": { count: 0, totalPlaying: 0 },
-    "30m+": { count: 0, totalPlaying: 0 },
+  const bucketGames: Record<SessionBucket, SnapshotGame[]> = {
+    "<5m": [],
+    "5-15m": [],
+    "15-30m": [],
+    "30m+": [],
   };
   for (const g of snapshot.games) {
     const minutes = gameSessionMinutes(g);
-    const bucket = sessionBucket(minutes);
-    if (!bucket) continue;
-    counts[bucket].count += 1;
-    counts[bucket].totalPlaying += g.playing;
+    const b = sessionBucket(minutes);
+    if (!b) continue;
+    bucketGames[b].push(g);
   }
-  return SESSION_BUCKETS.map((b) => ({
-    bucket: b,
-    count: counts[b].count,
-    totalPlaying: counts[b].totalPlaying,
-  }));
+  return SESSION_BUCKETS.map((b) => {
+    const gs = bucketGames[b];
+    return {
+      bucket: b,
+      count: gs.length,
+      totalPlaying: gs.reduce((a, g) => a + g.playing, 0),
+      topGames: [...gs]
+        .sort((a, c) => gameRetentionProxy(c) - gameRetentionProxy(a))
+        .slice(0, 8)
+        .map(toTopGameRow),
+    };
+  });
 }
 
 export function summarise(snapshot: Snapshot): KpiSummary {
@@ -188,6 +195,7 @@ export interface TopGameRow {
   visits: number;
   retentionProxy: number;
   canonicalUrlPath: string;
+  sessionBucket: SessionBucket | null;
 }
 
 function toTopGameRow(g: SnapshotGame): TopGameRow {
@@ -200,6 +208,7 @@ function toTopGameRow(g: SnapshotGame): TopGameRow {
     visits: g.visits,
     retentionProxy: gameRetentionProxy(g),
     canonicalUrlPath: g.canonicalUrlPath,
+    sessionBucket: sessionBucket(gameSessionMinutes(g)),
   };
 }
 
