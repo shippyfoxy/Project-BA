@@ -13,6 +13,7 @@ export interface GenreRow {
   retentionProxy: number;
   totalPlaying: number;
   totalVisits: number;
+  topGames: TopGameRow[];
 }
 
 export interface CohortRow {
@@ -127,6 +128,10 @@ export function topGenresByRetention(
       retentionProxy: mean(gs.map(gameRetentionProxy)),
       totalPlaying: gs.reduce((a, b) => a + b.playing, 0),
       totalVisits: gs.reduce((a, b) => a + b.visits, 0),
+      topGames: [...gs]
+        .sort((a, b) => gameRetentionProxy(b) - gameRetentionProxy(a))
+        .slice(0, 8)
+        .map(toTopGameRow),
     });
   }
 
@@ -302,6 +307,7 @@ export interface GenreAgeRow {
   // Share of total concurrent players across the catalogue (0..1). Lets
   // executives see niche-vs-mainstream alongside the retention score.
   shareOfPlayers: number;
+  topGames: TopGameRow[];
   // UTC hour (0-23) when combined concurrent players in this combo is highest
   // across all sample history. Null when fewer than 2 distinct hours are recorded.
   peakHourUTC: number | null;
@@ -364,6 +370,10 @@ export function retentionByGenreAndAge(
         sessionValues.length === 0 ? null : mean(sessionValues),
       totalPlaying,
       shareOfPlayers: totalPlayers === 0 ? 0 : totalPlaying / totalPlayers,
+      topGames: [...gs]
+        .sort((a, b) => gameRetentionProxy(b) - gameRetentionProxy(a))
+        .slice(0, 8)
+        .map(toTopGameRow),
       peakHourUTC: groupPeakHourUTC(gs),
     });
   }

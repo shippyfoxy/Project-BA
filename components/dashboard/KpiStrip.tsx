@@ -20,12 +20,22 @@ function Kpi({ label, value, hint }: { label: string; value: string; hint?: stri
   );
 }
 
+function nextRefreshUTC(generatedAt: string): string {
+  const thirtyMin = 30 * 60 * 1000;
+  const next = new Date(
+    Math.ceil((new Date(generatedAt).getTime() + 1) / thirtyMin) * thirtyMin,
+  );
+  return next.toISOString().slice(11, 16) + " UTC";
+}
+
 export function KpiStrip({ kpi }: Props) {
   const generated = new Date(kpi.generatedAt);
-  const generatedLabel = generated.toLocaleString("en-GB", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+  const utcTime =
+    generated.toISOString().slice(0, 10) +
+    " " +
+    generated.toISOString().slice(11, 16) +
+    " UTC";
+  const nextRefresh = nextRefreshUTC(kpi.generatedAt);
   return (
     <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
       <Kpi
@@ -45,8 +55,8 @@ export function KpiStrip({ kpi }: Props) {
       />
       <Kpi
         label="Snapshot taken"
-        value={generatedLabel}
-        hint={`cohort coverage ${Math.round(kpi.cohortCoverage * 100)}%`}
+        value={utcTime}
+        hint={`next refresh ~${nextRefresh} · cohort coverage ${Math.round(kpi.cohortCoverage * 100)}%`}
       />
     </section>
   );
