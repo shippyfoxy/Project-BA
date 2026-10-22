@@ -44,7 +44,11 @@
       "Bash(curl -s -o /tmp/method.html -w \"HTTP %{http_code}\\\\n\" http://localhost:3003/methodology)",
       "Bash(pnpm test *)",
       "Bash(command -v vercel)",
-      "Bash(vercel --version)"
+      "Bash(vercel --version)",
+      "Bash(git rev-list *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
