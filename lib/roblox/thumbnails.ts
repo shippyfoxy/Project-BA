@@ -26,3 +26,22 @@ export async function getGameIcons(universeIds: number[]): Promise<Map<number, s
   }
   return icons;
 }
+
+// Up to three in-game screenshots for one game, largest first-party size.
+export async function getGameScreenshots(universeId: number): Promise<string[]> {
+  const url =
+    "https://thumbnails.roblox.com/v1/games/multiget/thumbnails" +
+    `?universeIds=${universeId}&countPerUniverse=3&size=768x432&format=Png&defaults=true`;
+  try {
+    const res = await fetch(url, { headers: { "User-Agent": UA }, next: { revalidate: 3600 } });
+    if (!res.ok) return [];
+    const body = (await res.json()) as {
+      data?: { thumbnails?: { state: string; imageUrl: string | null }[] }[];
+    };
+    return (body.data?.[0]?.thumbnails ?? [])
+      .filter((t) => t.state === "Completed" && t.imageUrl?.startsWith("https://tr.rbxcdn.com/"))
+      .map((t) => t.imageUrl!);
+  } catch {
+    return [];
+  }
+}

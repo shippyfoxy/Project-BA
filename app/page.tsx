@@ -31,18 +31,11 @@ const PODIUM = [
   { place: "3rd", ring: "#c98b55" },
 ];
 
-function robloxUrl(g: HomeGame): string | undefined {
-  return g.canonicalUrlPath ? `https://www.roblox.com${g.canonicalUrlPath}` : undefined;
-}
-
 function GameLink({ game, className, children }: { game: HomeGame; className: string; children: React.ReactNode }) {
-  const href = robloxUrl(game);
-  if (!href) return <div className={className}>{children}</div>;
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+    <Link href={`/games/${game.universeId}`} className={className}>
       {children}
-      <span className="sr-only"> (opens on Roblox)</span>
-    </a>
+    </Link>
   );
 }
 

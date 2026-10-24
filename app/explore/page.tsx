@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getSiteDb } from "@/lib/db/site";
 import { parseSearch, searchGames, type SearchHit } from "@/lib/trends/search";
 import { displayName } from "@/lib/trends/names";
@@ -77,21 +78,15 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
               <tbody>
                 {hits.map((h) => {
                   const name = displayName(h.name);
-                  const href = h.canonicalUrlPath ? `https://www.roblox.com${h.canonicalUrlPath}` : undefined;
                   return (
                     <tr key={h.universeId} className="border-t border-[#1b2028]">
                       <th scope="row" className="px-4 py-2.5 text-left font-medium">
                         <span className="flex items-center gap-3">
                           <GameIcon url={icons.get(h.universeId)} name={name} size={40} />
                           <span className="min-w-0">
-                            {href ? (
-                              <a href={href} target="_blank" rel="noopener noreferrer" className="block hover:text-link">
-                                {name}
-                                <span className="sr-only"> (opens on Roblox)</span>
-                              </a>
-                            ) : (
-                              <span className="block">{name}</span>
-                            )}
+                            <Link href={`/games/${h.universeId}`} className="block hover:text-link">
+                              {name}
+                            </Link>
                             <span className="block text-xs font-normal text-muted-foreground">
                               {h.creatorName} · ID {h.universeId}
                             </span>
