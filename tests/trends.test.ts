@@ -92,6 +92,7 @@ describe("trends queries", () => {
     expect(fading?.matches.map((g) => g.name)).toEqual(["Sunset"]);
     expect((await screenGames(db, { ...any, min: 10_000 }))?.matches.map((g) => g.name)).toEqual(["Rocket", "Sunset"]);
     expect((await screenGames(db, { ...any, q: "plat" }))?.matches).toHaveLength(1);
+    expect((await screenGames(db, { ...any, order: "asc" }))?.matches.map((g) => g.name)).toEqual(["Plateau", "Sunset", "Rocket"]);
     const plateau = all!.matches.find((g) => g.name === "Plateau")!;
     expect(plateau.session).toBeCloseTo(384, 0);
     expect(plateau.favsPer1k).toBeCloseTo((1_000 * 5_000) / (2_000_000 + 20 * 30_000), 3);

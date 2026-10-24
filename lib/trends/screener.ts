@@ -22,6 +22,7 @@ export interface ScreenerFilters {
   country: string | null;
   device: string | null;
   sort: SortKey;
+  order: "desc" | "asc";
   limit: number;
 }
 
@@ -34,6 +35,7 @@ export const DEFAULT_FILTERS: ScreenerFilters = {
   country: null,
   device: null,
   sort: "players",
+  order: "desc",
   limit: PAGE_SIZE,
 };
 
@@ -86,6 +88,7 @@ export function parseFilters(sp: Params): ScreenerFilters {
     country: (COUNTRIES as readonly string[]).includes(country ?? "") ? country! : null,
     device: (DEVICES as readonly string[]).includes(device ?? "") ? device! : null,
     sort: pick(SORTS, first(sp.sort), DEFAULT_FILTERS.sort),
+    order: first(sp.order) === "asc" ? "asc" : "desc",
     limit: Number.isInteger(limit) && limit > 0 ? Math.min(limit, 500) : PAGE_SIZE,
   };
 }
@@ -102,18 +105,32 @@ export function filtersToQuery(f: ScreenerFilters, overrides: Partial<ScreenerFi
   if (v.country) p.set("country", v.country);
   if (v.device) p.set("device", v.device);
   if (v.sort !== DEFAULT_FILTERS.sort) p.set("sort", v.sort);
+  if (v.order !== DEFAULT_FILTERS.order) p.set("order", v.order);
   if (v.limit !== PAGE_SIZE) p.set("n", String(v.limit));
   const s = p.toString();
   return s ? `?${s}` : "";
 }
 
-const SORTERS: Record<SortKey, (a: ScreenerRow, b: ScreenerRow) => number> = {
-  players: (a, b) => b.cur7 - a.cur7,
-  wow: (a, b) => (b.wowPct ?? -Infinity) - (a.wowPct ?? -Infinity) || b.cur7 - a.cur7,
-  session: (a, b) => (b.session ?? -1) - (a.session ?? -1) || b.cur7 - a.cur7,
-  favs: (a, b) => (b.favsPer1k ?? -1) - (a.favsPer1k ?? -1) || b.cur7 - a.cur7,
-  newest: (a, b) => (b.createdMs ?? 0) - (a.createdMs ?? 0),
+const SORT_VALUES: Record<SortKey, (r: ScreenerRow) => number | null> = {
+  players: (r) => r.cur7,
+  wow: (r) => r.wowPct,
+  session: (r) => r.session,
+  favs: (r) => r.favsPer1k,
+  newest: (r) => r.createdMs,
 };
+
+// Games without a value (too new for week on week, say) go last either way;
+// ties fall back to more players first.
+function sorter(f: ScreenerFilters) {
+  const value = SORT_VALUES[f.sort];
+  const dir = f.order === "asc" ? 1 : -1;
+  return (a: ScreenerRow, b: ScreenerRow) => {
+    const va = value(a);
+    const vb = value(b);
+    if (va === null || vb === null) return va === vb ? b.cur7 - a.cur7 : va === null ? 1 : -1;
+    return dir * (va - vb) || b.cur7 - a.cur7;
+  };
+}
 
 // Genre and stage are filtered here rather than in SQL so their option counts
 // can be worked out from the same rows.
@@ -127,7 +144,7 @@ export function applyFilters(rows: ScreenerRow[], f: ScreenerFilters): Omit<Scre
   for (const r of rows) if (genreOk(r)) stageCounts[r.stage]++;
 
   return {
-    matches: rows.filter((r) => genreOk(r) && stageOk(r)).sort(SORTERS[f.sort]),
+    matches: rows.filter((r) => genreOk(r) && stageOk(r)).sort(sorter(f)),
     genreCounts: [...genreCounts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])),
     stageCounts,
   };

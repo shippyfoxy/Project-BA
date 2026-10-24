@@ -57,7 +57,7 @@ const SORT_LABELS: Record<SortKey, string> = {
   wow: "Week on week",
   session: "Estimated session",
   favs: "Favourites per 1k visits",
-  newest: "Newest",
+  newest: "Launch date",
 };
 
 const PRESETS: { label: string; href: string }[] = [
@@ -66,6 +66,7 @@ const PRESETS: { label: string; href: string }[] = [
   { label: "Rising this week", href: "/explore?launched=any&min=1000&stage=rising&sort=wow" },
   { label: "Long sessions", href: "/explore?launched=any&min=1000&sort=session" },
   { label: "Fading", href: "/explore?launched=any&min=1000&stage=fading" },
+  { label: "Every game, least played first", href: "/explore?launched=any&order=asc" },
 ];
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -305,6 +306,13 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
                 {SORT_LABELS[s]}
               </option>
             ))}
+          </select>
+          <label htmlFor="f-order" className="sr-only">
+            Order
+          </label>
+          <select id="f-order" name="order" form={FORM_ID} defaultValue={f.order} className={selectClass}>
+            <option value="desc">{f.sort === "newest" ? "Newest first" : "High to low"}</option>
+            <option value="asc">{f.sort === "newest" ? "Oldest first" : "Low to high"}</option>
           </select>
           {matches.length > 0 ? (
             <a
