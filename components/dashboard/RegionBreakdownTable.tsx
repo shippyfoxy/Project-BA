@@ -132,9 +132,7 @@ function GameList({ games }: { games: RegionRow["topGames"] }) {
       {games.map((g) => (
         <li key={g.universeId} className="flex items-baseline justify-between gap-3">
           <a
-            href={`https://www.roblox.com${g.canonicalUrlPath}`}
-            target="_blank"
-            rel="noreferrer"
+            href={`/games/${g.universeId}`}
             className="truncate font-medium text-foreground hover:underline"
             title={`${g.name} — ${g.creatorName}`}
           >

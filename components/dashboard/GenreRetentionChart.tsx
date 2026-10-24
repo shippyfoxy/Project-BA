@@ -86,9 +86,7 @@ function TopGamesPanel({ genre, games }: { genre: string; games: TopGameRow[] })
                 </td>
                 <td className="py-1.5 pr-4">
                   <a
-                    href={`https://www.roblox.com${g.canonicalUrlPath}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={`/games/${g.universeId}`}
                     className="text-foreground hover:text-primary hover:underline"
                   >
                     {g.name}

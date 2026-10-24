@@ -105,9 +105,7 @@ export function TopGamesPanel({ rows, defaultSort = "retention", limit = 10 }: P
                   </TableCell>
                   <TableCell>
                     <a
-                      href={`https://www.roblox.com${r.canonicalUrlPath}`}
-                      target="_blank"
-                      rel="noreferrer"
+                      href={`/games/${r.universeId}`}
                       className="font-medium text-foreground hover:underline"
                     >
                       {r.name}
