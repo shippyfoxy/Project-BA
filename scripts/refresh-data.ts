@@ -133,6 +133,13 @@ async function main() {
     `[refresh] enriched: ${games.length} games, ${votes.length} vote records`,
   );
 
+  // Deleted or moderated games still come back, as placeholders with id 0 and
+  // "[TITLE UNAVAILABLE]". Polling every known game makes these routine.
+  const available = games.filter((g) => Number.isInteger(g.id) && g.id > 0);
+  if (available.length < games.length) {
+    console.log(`[refresh] dropped ${games.length - available.length} unavailable games`);
+  }
+
   const voteMap = new Map(votes.map((v) => [v.id, v]));
   const previous = await readPreviousSnapshot();
   const prevMap = new Map(
@@ -140,7 +147,7 @@ async function main() {
   );
 
   const ts = Date.now();
-  const merged: SnapshotGame[] = games.map((g) => {
+  const merged: SnapshotGame[] = available.map((g) => {
     const v = voteMap.get(g.id);
     const hit = hits.get(g.id);
     const sample: SnapshotSample = { ts, playing: g.playing, visits: g.visits };
