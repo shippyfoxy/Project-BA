@@ -8,6 +8,7 @@ import { getCachedWeekAggregates } from "@/lib/trends/cached";
 import { getGameHistory, type GameHistory } from "@/lib/trends/game";
 import { genreStyle } from "@/lib/trends/genres";
 import { displayName } from "@/lib/trends/names";
+import { DEVICE_LABELS } from "@/lib/trends/labels";
 import { getGameIcons, getGameScreenshots } from "@/lib/roblox/thumbnails";
 import { fmtCompact, fmtDay, fmtInt, fmtPct, fmtTimeUtc, fmtWeekdayDay } from "@/lib/format";
 import { niceMax } from "@/lib/stats";
@@ -47,16 +48,6 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     description: `Daily concurrent players, visits and genre benchmarks for ${name} on Roblox, tracked since ${fmtDay(g.daily[0].dayMs)}.`,
   };
 }
-
-const DEVICE_LABELS: Record<string, string> = {
-  computer: "Computer",
-  high_end_phone: "Phone",
-  low_end_phone: "Entry-level phone",
-  high_end_tablet: "Tablet",
-  low_end_tablet: "Entry-level tablet",
-  console: "Console",
-  vr: "VR",
-};
 
 const ordinal = (n: number) => {
   const r = Math.round(n);

@@ -6,6 +6,7 @@ import { recordSnapshot } from "@/lib/db/live";
 import type { IngestGame } from "@/lib/db/ingest";
 import { getActiveGames, getTrendsHome } from "@/lib/trends/home";
 import { getGameHistory, loadWeekAggregates } from "@/lib/trends/game";
+import { DEFAULT_FILTERS, filtersToQuery, parseFilters, screenGames } from "@/lib/trends/screener";
 
 const DAY = 86_400_000;
 const START = Date.parse("2026-06-01T12:00:00Z");
@@ -73,5 +74,43 @@ describe("trends queries", () => {
     expect(g?.stage).toBe("fading");
     expect(g?.rank).toBe(2); // about 12,400 last week, ahead of Plateau at 8,000
     expect(await getGameHistory(db, 999)).toBeNull();
+  });
+
+  it("screens games by launch window, players, genre and stage", async () => {
+    // Every test game was created in 2025, so the default 30-day window is empty.
+    expect((await screenGames(db, DEFAULT_FILTERS))?.matches).toHaveLength(0);
+    const any = { ...DEFAULT_FILTERS, launched: "any" as const };
+    const all = await screenGames(db, any);
+    expect(all?.matches.map((g) => g.name)).toEqual(["Rocket", "Sunset", "Plateau"]);
+    expect(all?.genreCounts).toEqual([["Simulation", 2], ["Action", 1]]);
+    const action = await screenGames(db, { ...any, genres: ["Action"] });
+    expect(action?.matches.map((g) => g.name)).toEqual(["Plateau"]);
+    expect(action?.stageCounts.peaking).toBe(1);
+    // Genre counts ignore the genre filter itself.
+    expect(action?.genreCounts).toEqual([["Simulation", 2], ["Action", 1]]);
+    const fading = await screenGames(db, { ...any, stages: ["fading"] });
+    expect(fading?.matches.map((g) => g.name)).toEqual(["Sunset"]);
+    expect((await screenGames(db, { ...any, min: 10_000 }))?.matches.map((g) => g.name)).toEqual(["Rocket", "Sunset"]);
+    expect((await screenGames(db, { ...any, q: "plat" }))?.matches).toHaveLength(1);
+    const plateau = all!.matches.find((g) => g.name === "Plateau")!;
+    expect(plateau.session).toBeCloseTo(384, 0);
+    expect(plateau.favsPer1k).toBeCloseTo((1_000 * 5_000) / (2_000_000 + 20 * 30_000), 3);
+  });
+});
+
+describe("explore filters", () => {
+  it("parses and round-trips query strings", () => {
+    expect(parseFilters({})).toEqual(DEFAULT_FILTERS);
+    const f = parseFilters({ launched: "60", min: "10000", genre: ["Action", "Action", "RPG"], stage: ["rising", "bogus"], sort: "wow", country: "zz" });
+    expect(f).toMatchObject({ launched: "60", min: 10_000, genres: ["Action", "RPG"], stages: ["rising"], sort: "wow", country: null });
+    expect(parseFilters(Object.fromEntries(new URLSearchParams(filtersToQuery(f)).entries()))).toMatchObject({ launched: "60", sort: "wow" });
+    expect(filtersToQuery(DEFAULT_FILTERS)).toBe("");
+    expect(parseFilters({ min: "123", n: "99999" })).toMatchObject({ min: 0, limit: 500 });
+  });
+
+  it("searches across every launch date unless a window is picked", () => {
+    expect(parseFilters({ q: "egg" }).launched).toBe("any");
+    expect(parseFilters({ q: "egg", launched: "30" }).launched).toBe("30");
+    expect(filtersToQuery(parseFilters({ q: "egg" }))).toBe("?q=egg");
   });
 });

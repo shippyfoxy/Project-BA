@@ -435,7 +435,7 @@ export interface RegionRow {
 
 // ISO-2 → display name. Only the countries we currently fan out to, plus the
 // fallback for anything else that might appear later.
-const COUNTRY_NAMES: Record<string, string> = {
+export const COUNTRY_NAMES: Record<string, string> = {
   us: "United States",
   gb: "United Kingdom",
   br: "Brazil",

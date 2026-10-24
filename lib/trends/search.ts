@@ -26,19 +26,18 @@ export function parseSearch(raw: string): SearchQuery | null {
   return { kind: "text", text: q.slice(0, 100) };
 }
 
+// A where clause over `games g` for one search, using parameter $n.
+export function searchWhere(query: SearchQuery, n: number): { sql: string; param: string } {
+  if (query.kind === "place") return { sql: `g.root_place_id = $${n}::bigint`, param: query.placeId };
+  if (query.kind === "id") return { sql: `(g.universe_id = $${n}::bigint or g.root_place_id = $${n}::bigint)`, param: query.id };
+  return {
+    sql: `(g.name ilike $${n} escape '\\' or g.creator_name ilike $${n} escape '\\')`,
+    param: `%${query.text.replace(/[\\%_]/g, (c) => `\\${c}`)}%`,
+  };
+}
+
 export async function searchGames(db: Db, query: SearchQuery, limit = 50): Promise<SearchHit[]> {
-  let where: string;
-  let param: string;
-  if (query.kind === "place") {
-    where = "g.root_place_id = $1::bigint";
-    param = query.placeId;
-  } else if (query.kind === "id") {
-    where = "(g.universe_id = $1::bigint or g.root_place_id = $1::bigint)";
-    param = query.id;
-  } else {
-    where = "(g.name ilike $1 escape '\\' or g.creator_name ilike $1 escape '\\')";
-    param = `%${query.text.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
-  }
+  const { sql: where, param } = searchWhere(query, 1);
   const rows = await db.query<{
     universe_id: number;
     name: string;
