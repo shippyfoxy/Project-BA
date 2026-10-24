@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local PGlite databases (pnpm db:backfill --pglite)
+/.pglite*/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
