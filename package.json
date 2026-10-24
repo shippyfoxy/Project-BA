@@ -11,8 +11,8 @@
     "test:watch": "vitest",
     "refresh-data": "tsx scripts/refresh-data.ts",
     "validate-snapshot": "tsx scripts/validate-snapshot.ts",
-    "db:migrate": "tsx scripts/db-migrate.ts",
-    "db:backfill": "tsx scripts/db-backfill.ts"
+    "db:migrate": "tsx --env-file-if-exists=.env.local scripts/db-migrate.ts",
+    "db:backfill": "tsx --env-file-if-exists=.env.local scripts/db-backfill.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
