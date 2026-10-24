@@ -1,6 +1,11 @@
 // Generates data/snapshots/latest.json from live Roblox endpoints.
-// Run via `pnpm refresh-data`. Reuses the previous snapshot to preserve the
-// rolling `samples` array per game, which feeds the session-length proxy.
+// Run via `pnpm refresh-data`. Games come from Roblox's discovery lists plus,
+// when a database is configured, every game already recorded there, so games
+// stay tracked after they drop out of discovery. Reuses the previous snapshot
+// to preserve the rolling `samples` array per game.
+//
+//   pnpm refresh-data                     # discovery + all known games
+//   pnpm refresh-data --known-limit 300   # cap known games (local testing)
 
 import { randomUUID } from "node:crypto";
 import { promises as fs } from "node:fs";
@@ -11,6 +16,7 @@ import {
   getVotes,
   type SeedVariant,
 } from "../lib/roblox/client";
+import { connectPostgres } from "../lib/db/postgres";
 import type { Snapshot, SnapshotGame, SnapshotSample } from "../lib/snapshot/schema";
 
 const SNAPSHOT_PATH = path.resolve(process.cwd(), "data/snapshots/latest.json");
@@ -57,6 +63,31 @@ async function readPreviousSnapshot(): Promise<Snapshot | null> {
   }
 }
 
+// Every game the database knows about, most recently seen first.
+async function loadKnownIds(limit: number): Promise<number[]> {
+  const url = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
+  if (!url) {
+    console.log("[refresh] no database configured; tracking discovery games only");
+    return [];
+  }
+  const db = connectPostgres(url);
+  try {
+    const rows = await db.query<{ id: number }>(
+      "select universe_id::float8 as id from games order by last_seen desc limit $1",
+      [Number.isFinite(limit) ? limit : null],
+    );
+    return rows.map((r) => r.id);
+  } finally {
+    await db.close();
+  }
+}
+
+function argNumber(name: string): number {
+  const i = process.argv.indexOf(name);
+  const n = i === -1 ? NaN : Number(process.argv[i + 1]);
+  return Number.isFinite(n) && n >= 0 ? n : Infinity;
+}
+
 function dedupeIds(input: number[]): number[] {
   return [...new Set(input.filter((n) => Number.isInteger(n) && n > 0))];
 }
@@ -80,6 +111,13 @@ async function main() {
     throw new Error("explore-api returned no games — refusing to overwrite snapshot");
   }
 
+  const knownIds = await loadKnownIds(argNumber("--known-limit"));
+  const allIds = dedupeIds([...seedIds, ...knownIds]);
+  console.log(
+    `[refresh] tracking ${allIds.length} games: ${seedIds.length} in discovery today, ` +
+      `${allIds.length - seedIds.length} more already known (${knownIds.length} known in total)`,
+  );
+
   // Brief pause between seed phase and enrichment phase. On GitHub Actions
   // (fresh IP per run) this isn't strictly needed, but a small buffer guards
   // against any sliding-window overlap at the host level.
@@ -88,8 +126,8 @@ async function main() {
   await new Promise((r) => setTimeout(r, COOLDOWN_MS));
 
   const [games, votes] = await Promise.all([
-    getGames(seedIds),
-    getVotes(seedIds),
+    getGames(allIds),
+    getVotes(allIds),
   ]);
   console.log(
     `[refresh] enriched: ${games.length} games, ${votes.length} vote records`,
@@ -139,7 +177,8 @@ async function main() {
   };
 
   await fs.mkdir(path.dirname(SNAPSHOT_PATH), { recursive: true });
-  await fs.writeFile(SNAPSHOT_PATH, JSON.stringify(snapshot, null, 2));
+  // Compact: with every known game the snapshot is tens of megabytes.
+  await fs.writeFile(SNAPSHOT_PATH, JSON.stringify(snapshot));
 
   const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
   console.log(

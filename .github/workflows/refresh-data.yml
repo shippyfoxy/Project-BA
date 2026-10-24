@@ -25,7 +25,8 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Polling every known game takes a few minutes at our 2 requests a second.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -40,8 +41,12 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Reads the list of known games from the database, then polls them all
+      # alongside the discovery lists.
       - name: Refresh snapshot
         run: pnpm refresh-data
+        env:
+          DATABASE_URL_UNPOOLED: ${{ secrets.DATABASE_URL_UNPOOLED }}
 
       - name: Validate snapshot
         run: pnpm validate-snapshot
