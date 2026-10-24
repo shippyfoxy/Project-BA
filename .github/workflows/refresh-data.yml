@@ -1,10 +1,11 @@
 name: Refresh snapshot
 
-# Pulls a fresh data/snapshots/latest.json from Roblox's public APIs every
-# 30 minutes and commits it back to master. Each runner gets a fresh public
+# Every 30 minutes: pull a fresh snapshot from Roblox's public APIs, validate
+# it, then record it in the Neon database. The site reads from Neon, so
+# nothing is committed back to the repository. Each runner gets a fresh public
 # IP, so per-IP rate-limit lockouts (the failure mode we hit locally) do not
-# apply here. The validate-snapshot script gates the commit — broken data
-# fails the run instead of being committed.
+# apply here. validate-snapshot gates the write: broken data fails the run
+# instead of reaching the database.
 
 on:
   schedule:
@@ -12,9 +13,8 @@ on:
     - cron: "*/30 * * * *"
   workflow_dispatch: {}
 
-# Required so the bot commit can be pushed back.
 permissions:
-  contents: write
+  contents: read
 
 # If a previous run is still going, let it finish but don't queue more than one
 # pending run on top of it.
@@ -28,9 +28,6 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-        with:
-          # Need write access to push the snapshot back.
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: pnpm/action-setup@v4
         with:
@@ -49,17 +46,7 @@ jobs:
       - name: Validate snapshot
         run: pnpm validate-snapshot
 
-      - name: Commit if changed
-        run: |
-          if git diff --quiet -- data/snapshots/latest.json; then
-            echo "No snapshot changes — skipping commit."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/snapshots/latest.json
-          git commit -m "chore(data): refresh snapshot $(date -u +'%Y-%m-%dT%H:%MZ')"
-          # Rebase on remote in case anything was pushed since checkout —
-          # avoids a 'non-fast-forward' rejection without force-pushing.
-          git pull --rebase origin master
-          git push origin master
+      - name: Record in database
+        run: pnpm db:ingest
+        env:
+          DATABASE_URL_UNPOOLED: ${{ secrets.DATABASE_URL_UNPOOLED }}

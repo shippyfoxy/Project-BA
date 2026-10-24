@@ -20,7 +20,7 @@ the formulas, assumptions, and what they don't measure.
 - Tailwind v4 + shadcn/ui (slate)
 - Recharts for charts
 - Vitest for unit tests
-- No database — `data/snapshots/latest.json` is committed and read at request time
+- Neon Postgres (free tier) for history; `data/snapshots/latest.json` stays committed as a fallback
 
 ## Running it
 
@@ -43,15 +43,19 @@ games.roblox.com/v1/games?universeIds=...     (50 IDs/batch)
 games.roblox.com/v1/games/votes?universeIds=. (50 IDs/batch)
         |
         v
-data/snapshots/latest.json   (committed; appends a (ts, playing, visits) sample per refresh)
+data/snapshots/latest.json   (validated by pnpm validate-snapshot)
         |
         v
-Server Components render KPIs / genre chart / cohort chart / top-games table
+Neon Postgres                (pnpm db:ingest: raw readings + daily rollups)
+        |
+        v
+Server Components render KPIs / charts / tables, regenerated hourly
 ```
 
-The dashboard never calls the Roblox API at request time — it reads the
-snapshot file. The deployed site stays fast and works on cold start
-regardless of Roblox's availability or rate-limit posture.
+The dashboard never calls the Roblox API at request time. It reads the latest
+refresh from Neon (`DATABASE_URL`, the pooled endpoint) and falls back to the
+committed `data/snapshots/latest.json` if the database is unreachable or not
+configured, so the site still renders on a cold start or offline.
 
 ## Refreshing
 
@@ -62,6 +66,13 @@ Each `pnpm refresh-data` run:
 - Appends a `{ts, playing, visits}` sample to each game's rolling history
   (last 12 samples kept).
 - Writes `data/snapshots/latest.json` atomically.
+
+The GitHub Actions workflow ([`.github/workflows/refresh-data.yml`](.github/workflows/refresh-data.yml))
+runs every 30 minutes: `pnpm refresh-data`, then `pnpm validate-snapshot`,
+then `pnpm db:ingest`, which records the snapshot in Neon, recomputes the
+daily rollup for yesterday and today, and prunes raw readings older than 14
+days. Nothing is committed back to the repository. The workflow needs the
+`DATABASE_URL_UNPOOLED` repository secret.
 
 The session-length cohort chart needs at least two refreshes spaced a few
 minutes apart so visit velocity can be computed.
@@ -145,7 +156,7 @@ tests/
 
 ## Deploy
 
-Vercel — `pnpm build` runs cleanly with Turbopack. Pre-rendering is fine
-because the page reads from a committed JSON file. Schedule a daily GitHub
-Action calling `pnpm refresh-data && git commit && git push` to keep the
-snapshot fresh.
+Vercel — `pnpm build` runs cleanly with Turbopack. Pages are pre-rendered and
+regenerated hourly from Neon; the Neon integration sets `DATABASE_URL` in every
+Vercel environment. Because refreshes no longer create commits, the site is
+only redeployed when the code changes.
