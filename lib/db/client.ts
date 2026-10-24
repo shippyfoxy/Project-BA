@@ -1,7 +1,8 @@
-import postgres from "postgres";
-
-// One query surface for both Neon (postgres.js) and PGlite (tests, local
-// backfill runs), so ingest SQL is exercised identically in both places.
+// One query surface for both Neon (postgres.js, lib/db/postgres.ts) and PGlite
+// (tests and local backfill runs, lib/db/pglite.ts), so ingest SQL is
+// exercised identically in both places. They live in separate files so the
+// website bundle never pulls in PGlite.
+//
 // Bulk writes pass rows as one JSON string cast with `$1::text::jsonb`:
 // array parameters differ between the drivers, and postgres.js re-encodes a
 // parameter typed jsonb, so the text cast keeps the string untouched.
@@ -16,60 +17,4 @@ export interface Db extends Queryable {
   // connections after 30-60 minutes without knowing a transaction is open.
   transaction<T>(fn: (tx: Queryable) => Promise<T>): Promise<T>;
   close(): Promise<void>;
-}
-
-function postgresQueryable(sql: Pick<postgres.Sql, "unsafe">): Queryable {
-  return {
-    async query<T>(text: string, params: unknown[] = []) {
-      return (await sql.unsafe(text, params as never[])) as unknown as T[];
-    },
-    async exec(text: string) {
-      await sql.unsafe(text);
-    },
-  };
-}
-
-export function connectPostgres(url: string): Db {
-  // prepare: false is required behind Neon's pooled (PgBouncer) endpoint.
-  const sql = postgres(url, {
-    max: 1,
-    prepare: false,
-    onnotice: () => {},
-    connection: { TimeZone: "UTC" },
-  });
-  return {
-    ...postgresQueryable(sql),
-    async transaction<T>(fn: (tx: Queryable) => Promise<T>) {
-      return (await sql.begin((tx) => fn(postgresQueryable(tx)))) as T;
-    },
-    close: () => sql.end(),
-  };
-}
-
-export async function connectPglite(dataDir?: string): Promise<Db> {
-  const { PGlite } = await import("@electric-sql/pglite");
-  const pg = new PGlite(dataDir);
-  // PGlite inherits the host's time zone; match Neon's UTC.
-  await pg.exec("set timezone = 'UTC'");
-  return {
-    async query<T>(text: string, params: unknown[] = []) {
-      return (await pg.query<T>(text, params)).rows;
-    },
-    async exec(text: string) {
-      await pg.exec(text);
-    },
-    transaction<T>(fn: (tx: Queryable) => Promise<T>) {
-      return pg.transaction((tx) =>
-        fn({
-          async query<R>(text: string, params: unknown[] = []) {
-            return (await tx.query<R>(text, params)).rows;
-          },
-          async exec(text: string) {
-            await tx.exec(text);
-          },
-        }),
-      );
-    },
-    close: () => pg.close(),
-  };
 }

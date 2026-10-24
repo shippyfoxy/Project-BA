@@ -12,7 +12,8 @@
     "refresh-data": "tsx scripts/refresh-data.ts",
     "validate-snapshot": "tsx scripts/validate-snapshot.ts",
     "db:migrate": "tsx --env-file-if-exists=.env.local scripts/db-migrate.ts",
-    "db:backfill": "tsx --env-file-if-exists=.env.local scripts/db-backfill.ts"
+    "db:backfill": "tsx --env-file-if-exists=.env.local scripts/db-backfill.ts",
+    "db:ingest": "tsx --env-file-if-exists=.env.local scripts/db-ingest-latest.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",

@@ -1,6 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { connectPglite, type Db } from "@/lib/db/client";
+import type { Db } from "@/lib/db/client";
+import { connectPglite } from "@/lib/db/pglite";
 import { applyMigrations } from "@/lib/db/migrate";
+import { recordSnapshot } from "@/lib/db/live";
+import { loadSnapshotFromDb } from "@/lib/db/read";
 import {
   ingestSnapshot,
   pruneObservations,
@@ -207,5 +210,62 @@ describe("rollupDays and pruneObservations", () => {
     expect(left.n).toBe(1);
     const kept = await one<{ n: number }>("select count(*)::int as n from game_daily");
     expect(kept.n).toBe(2);
+  });
+});
+
+describe("recordSnapshot", () => {
+  it("stores only the live reading, rolls up the day and prunes old raw rows", async () => {
+    const old = Date.parse("2026-05-01T12:00:00Z");
+    await ingestSnapshot(db, snap(old, [game()]));
+    const now = Date.parse("2026-06-01T12:00:00Z");
+    const res = await recordSnapshot(
+      db,
+      snap(now, [game({ samples: [{ ts: now - 30 * MIN, playing: 5, visits: 5 }] })]),
+      now,
+    );
+    expect(res).toMatchObject({ skipped: false, observations: 1, rolledUpRows: 1, prunedRows: 1 });
+    const daily = await one<{ day: string }>("select day::text from game_daily");
+    expect(daily.day).toBe("2026-06-01");
+    expect((await recordSnapshot(db, snap(now, [game()]), now)).skipped).toBe(true);
+  });
+});
+
+describe("loadSnapshotFromDb", () => {
+  it("returns null for an empty database", async () => {
+    expect(await loadSnapshotFromDb(db)).toBeNull();
+  });
+
+  it("rebuilds the latest snapshot with history as samples", async () => {
+    await ingestSnapshot(db, snap(T0, [game({ playing: 900, visits: 49_000 })]));
+    await ingestSnapshot(
+      db,
+      snap(T0 + 30 * MIN, [
+        game({ minimumAge: 9, ageRecommendation: "Maturity: Mild", popularInCountries: ["us"], popularOnDevices: ["computer"] }),
+        game({ universeId: 101, rootPlaceId: 901, name: "Second" }),
+      ]),
+    );
+    const s = await loadSnapshotFromDb(db);
+    expect(s?.generatedAtMs).toBe(T0 + 30 * MIN);
+    expect(s?.games).toHaveLength(2);
+    const g = s!.games.find((x) => x.universeId === 100)!;
+    expect(g).toMatchObject({
+      rootPlaceId: 900,
+      name: "Test Game",
+      genreL1: "Simulation",
+      playing: 1000,
+      visits: 50_000,
+      favoritedCount: 300,
+      upVotes: 90,
+      minimumAge: 9,
+      ageRecommendation: "Maturity: Mild",
+      popularInCountries: ["us"],
+      popularOnDevices: ["computer"],
+      created: "2025-01-01T00:00:00.000Z",
+    });
+    expect(g.samples).toEqual([
+      { ts: T0, playing: 900, visits: 49_000 },
+      { ts: T0 + 30 * MIN, playing: 1000, visits: 50_000 },
+    ]);
+    expect(typeof g.universeId).toBe("number");
   });
 });

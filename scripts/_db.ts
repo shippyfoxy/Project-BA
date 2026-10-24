@@ -1,4 +1,6 @@
-import { connectPglite, connectPostgres, type Db } from "../lib/db/client";
+import type { Db } from "../lib/db/client";
+import { connectPglite } from "../lib/db/pglite";
+import { connectPostgres } from "../lib/db/postgres";
 
 export function argValue(name: string): string | undefined {
   const i = process.argv.indexOf(name);
