@@ -3,6 +3,7 @@ import type { Db } from "@/lib/db/client";
 import { connectPglite } from "@/lib/db/pglite";
 import { applyMigrations } from "@/lib/db/migrate";
 import { recordSnapshot } from "@/lib/db/live";
+import { refreshPeaks } from "@/lib/db/ingest";
 import { loadSnapshotFromDb } from "@/lib/db/read";
 import {
   ingestSnapshot,
@@ -55,7 +56,7 @@ describe("applyMigrations", () => {
   it("is a no-op the second time", async () => {
     expect(await applyMigrations(db)).toEqual([]);
     const r = await one<{ n: number }>("select count(*)::int as n from schema_migrations");
-    expect(r.n).toBe(1);
+    expect(r.n).toBe(2);
   });
 });
 
@@ -267,5 +268,43 @@ describe("loadSnapshotFromDb", () => {
       { ts: T0 + 30 * MIN, playing: 1000, visits: 50_000 },
     ]);
     expect(typeof g.universeId).toBe("number");
+  });
+});
+
+describe("refreshPeaks", () => {
+  it("tracks the best 7-day average, the first 1M day and days tracked, and never lowers a peak", async () => {
+    const day = (d: number) => Date.parse(`2026-06-${String(d).padStart(2, "0")}T12:00:00Z`);
+    const players = [500_000, 1_500_000, 1_600_000, 200_000];
+    for (let i = 0; i < players.length; i++) {
+      await ingestSnapshot(db, snap(day(i + 1), [game({ playing: players[i], visits: 1_000_000 + i })]));
+    }
+    await rollupDays(db, "2026-06-01", "2026-06-05");
+    expect(await refreshPeaks(db, "2026-06-01", "2026-06-05")).toBe(1);
+    const p = await one<{ peak7: number; peak7_day: string; first_million_day: string; days_tracked: number }>(
+      "select peak7, peak7_day::text, first_million_day::text, days_tracked from game_peaks",
+    );
+    // 7-day averages by day: 500k, 1M, 1.2M, 950k
+    expect(p.peak7).toBeCloseTo(1_200_000, -2);
+    expect(p).toMatchObject({ peak7_day: "2026-06-03", first_million_day: "2026-06-02", days_tracked: 4 });
+
+    // Re-running over only the quiet last day keeps the earlier peak.
+    await refreshPeaks(db, "2026-06-04", "2026-06-05");
+    const again = await one<{ peak7: number; peak7_day: string }>("select peak7, peak7_day::text from game_peaks");
+    expect(again.peak7).toBeCloseTo(1_200_000, -2);
+    expect(again.peak7_day).toBe("2026-06-03");
+  });
+});
+
+describe("idle readings", () => {
+  it("are skipped by live recording but still counted", async () => {
+    const now = Date.parse("2026-06-01T12:00:00Z");
+    const res = await recordSnapshot(
+      db,
+      snap(now, [game(), game({ universeId: 101, rootPlaceId: 901, name: "Empty", playing: 0 })]),
+      now,
+    );
+    expect(res).toMatchObject({ observations: 1, idle: 1, games: 2, peaksUpdated: 1 });
+    const g = await one<{ n: number }>("select count(*)::int as n from games");
+    expect(g.n).toBe(2);
   });
 });

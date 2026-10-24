@@ -22,10 +22,17 @@ async function main() {
       console.log(`[ingest] ${label}: snapshot ${snap.generatedAt} already recorded, nothing to do`);
     } else {
       console.log(
-        `[ingest] ${label}: recorded ${snap.generatedAt}: ${r.games} games, ${r.observations} readings, ` +
-          `${r.droppedInvalid} malformed rows dropped; rolled up ${r.rolledUpRows} daily rows, pruned ${r.prunedRows} old readings`,
+        `[ingest] ${label}: recorded ${snap.generatedAt}: ${r.games} games, ${r.observations} readings ` +
+          `(${r.idle} idle games skipped, ${r.droppedInvalid} malformed rows dropped); ` +
+          `rolled up ${r.rolledUpRows} daily rows, updated ${r.peaksUpdated} peaks, pruned ${r.prunedRows} old readings`,
       );
     }
+    // Neon's free tier allows 1 GB; warn well before it fills.
+    const [size] = await db.query<{ mb: number }>("select pg_database_size(current_database()) / 1e6 as mb");
+    const mb = Number(size.mb);
+    const msg = `[ingest] database size ${mb.toFixed(0)} MB of the 1,000 MB free tier`;
+    if (mb > 800) console.warn(`::warning::${msg}`);
+    else console.log(msg);
   } finally {
     await db.close();
   }

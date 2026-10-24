@@ -44,6 +44,9 @@ export interface IngestOptions {
   // Readings older than this are dropped: their day is already rolled up and
   // its raw rows pruned, so re-inserting them would corrupt the next rollup.
   minTs?: number;
+  // Skip readings with nobody playing. Most known games are idle at any
+  // moment, and storing their zeros would fill the free-tier database.
+  skipIdle?: boolean;
 }
 
 export interface IngestResult {
@@ -52,6 +55,7 @@ export interface IngestResult {
   games: number;
   observations: number;
   droppedInvalid: number;
+  idle: number; // readings skipped because nobody was playing
   // Oldest reading written, so callers can re-roll days it touched.
   earliestTs: number | null;
 }
@@ -150,11 +154,12 @@ export async function ingestSnapshot(
 
   const existing = await db.query("select 1 from snapshots where ts = $1", [tsIso]);
   if (existing.length > 0) {
-    return { skipped: true, ts, games: 0, observations: 0, droppedInvalid: 0, earliestTs: null };
+    return { skipped: true, ts, games: 0, observations: 0, droppedInvalid: 0, idle: 0, earliestTs: null };
   }
 
   const games = new Map<number, IngestGame>();
   let droppedInvalid = 0;
+  let idle = 0;
   for (const g of snap.games ?? []) {
     if (!isId(g.universeId) || !isId(g.rootPlaceId) || !g.name) {
       droppedInvalid++;
@@ -188,6 +193,8 @@ export async function ingestSnapshot(
     const visits = count(g.visits);
     if (playing === null || visits === null) {
       droppedInvalid++;
+    } else if (opts.skipIdle && playing === 0) {
+      idle++;
     } else if (ts >= minTs) {
       obs.set(`${g.universeId}:${ts}`, {
         universe_id: g.universeId,
@@ -248,6 +255,7 @@ export async function ingestSnapshot(
     games: games.size,
     observations: obsRows.length,
     droppedInvalid,
+    idle,
     earliestTs,
   };
 }
@@ -294,6 +302,46 @@ export async function rollupDays(db: Db, fromDay: string, toDay: string): Promis
          favorites_last = excluded.favorites_last,
          up_votes_last = excluded.up_votes_last,
          down_votes_last = excluded.down_votes_last
+       returning 1
+     )
+     select count(*)::int as n from up`,
+    [fromDay, toDay],
+  );
+  return Number(rows[0]?.n ?? 0);
+}
+
+// Updates game_peaks for every game with data in [fromDay, toDay). The 7-day
+// window needs the six days before fromDay too. Peaks only ever go up, and
+// days_tracked is recounted for the games touched.
+export async function refreshPeaks(db: Db, fromDay: string, toDay: string): Promise<number> {
+  const rows = await db.query<{ n: number }>(
+    `with rolled as (
+       select universe_id, day,
+              avg(playing_avg) over (partition by universe_id order by day
+                range between interval '6 days' preceding and current row) as r7
+       from game_daily
+       where day >= $1::date - 6 and day < $2::date
+     ), best as (
+       select universe_id,
+              (array_agg(r7 order by r7 desc, day))[1] as peak7,
+              (array_agg(day order by r7 desc, day))[1] as peak7_day,
+              min(day) filter (where r7 >= 1000000) as first_million_day
+       from rolled where day >= $1::date
+       group by universe_id
+     ), counts as (
+       select universe_id, count(*)::int as n
+       from game_daily
+       where universe_id in (select universe_id from best)
+       group by universe_id
+     ), up as (
+       insert into game_peaks (universe_id, peak7, peak7_day, first_million_day, days_tracked)
+       select b.universe_id, b.peak7, b.peak7_day, b.first_million_day, c.n
+       from best b join counts c using (universe_id)
+       on conflict (universe_id) do update set
+         peak7 = greatest(game_peaks.peak7, excluded.peak7),
+         peak7_day = case when excluded.peak7 > game_peaks.peak7 then excluded.peak7_day else game_peaks.peak7_day end,
+         first_million_day = least(game_peaks.first_million_day, excluded.first_million_day),
+         days_tracked = excluded.days_tracked
        returning 1
      )
      select count(*)::int as n from up`,

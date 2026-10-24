@@ -14,6 +14,7 @@ import {
   DAY_MS,
   ingestSnapshot,
   pruneObservations,
+  refreshPeaks,
   retentionCutoff,
   rollupDays,
   snapshotTs,
@@ -205,6 +206,9 @@ async function main() {
     for (const t of seen) newest = Math.max(newest, t);
     const finalPrune = Math.min(cutoff, startOfUtcDay(newest) - DAY_MS);
     if (finalPrune > watermark) await pruneObservations(db, finalPrune);
+    // Peaks over the whole daily history; cheap enough once per backfill.
+    const [range] = await db.query<{ first: string | null }>("select min(day)::text as first from game_daily");
+    if (range?.first) await refreshPeaks(db, range.first, utcDay(startOfUtcDay(Date.now()) + 2 * DAY_MS));
     await db.exec("vacuum analyze");
   }
 
