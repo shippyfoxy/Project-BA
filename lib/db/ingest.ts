@@ -99,7 +99,7 @@ const GAME_COLS = [
 const GAME_UPSERT = `
   insert into games (universe_id, ${GAME_COLS.map(([c]) => c).join(", ")}, first_seen, last_seen)
   select universe_id, ${GAME_COLS.map(([c]) => c).join(", ")}, $2::timestamptz, $2::timestamptz
-  from jsonb_to_recordset($1::jsonb) as x(
+  from jsonb_to_recordset($1::text::jsonb) as x(
     universe_id bigint, root_place_id bigint, name text, creator_name text,
     genre_l1 text, genre_l2 text, created_at timestamptz, canonical_url_path text,
     minimum_age smallint, age_recommendation text
@@ -116,7 +116,7 @@ const GAME_UPSERT = `
 const OBS_UPSERT = `
   insert into observations (universe_id, ts, playing, visits, favorites, up_votes, down_votes)
   select universe_id, ts, playing, visits, favorites, up_votes, down_votes
-  from jsonb_to_recordset($1::jsonb) as x(
+  from jsonb_to_recordset($1::text::jsonb) as x(
     universe_id bigint, ts timestamptz, playing integer, visits bigint,
     favorites integer, up_votes integer, down_votes integer
   )
@@ -129,7 +129,7 @@ const OBS_UPSERT = `
 const PRESENCE_UPSERT = `
   insert into game_presence_daily (universe_id, day, countries, devices)
   select universe_id, $2::date, countries, devices
-  from jsonb_to_recordset($1::jsonb) as x(universe_id bigint, countries text[], devices text[])
+  from jsonb_to_recordset($1::text::jsonb) as x(universe_id bigint, countries text[], devices text[])
   on conflict (universe_id, day) do update set
     countries = array(select distinct unnest(game_presence_daily.countries || excluded.countries) order by 1),
     devices = array(select distinct unnest(game_presence_daily.devices || excluded.devices) order by 1)

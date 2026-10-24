@@ -2,8 +2,9 @@ import postgres from "postgres";
 
 // One query surface for both Neon (postgres.js) and PGlite (tests, local
 // backfill runs), so ingest SQL is exercised identically in both places.
-// Bulk writes pass rows as a single jsonb parameter for the same reason:
-// array parameter handling differs between the two drivers, jsonb does not.
+// Bulk writes pass rows as one JSON string cast with `$1::text::jsonb`:
+// array parameters differ between the drivers, and postgres.js re-encodes a
+// parameter typed jsonb, so the text cast keeps the string untouched.
 export interface Db {
   query<T = Record<string, unknown>>(text: string, params?: unknown[]): Promise<T[]>;
   exec(text: string): Promise<void>;
