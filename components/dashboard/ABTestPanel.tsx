@@ -36,6 +36,7 @@ import {
   type MetricDelta,
   type DeviceFilter,
 } from "@/lib/snapshot/compare";
+import { fmtCompact as compactNumber } from "@/lib/format";
 
 // ---- Helpers ---------------------------------------------------------------
 
@@ -48,11 +49,7 @@ const fmtNum = {
   dp1: (n: number) => n.toFixed(1),
   pct: (n: number) => `${n.toFixed(1)}%`,
   int: (n: number) => Math.round(n).toLocaleString("en-GB"),
-  compact: (n: number) =>
-    new Intl.NumberFormat("en-GB", {
-      notation: "compact",
-      maximumFractionDigits: 1,
-    }).format(n),
+  compact: (n: number) => compactNumber(n, 1),
 };
 
 function DeltaCell({ delta }: { delta: MetricDelta }) {

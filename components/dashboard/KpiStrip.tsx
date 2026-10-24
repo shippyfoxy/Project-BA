@@ -1,11 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import type { KpiSummary } from "@/lib/snapshot/aggregate";
+import { fmtCompact as compactNumber } from "@/lib/format";
 
 const fmt = new Intl.NumberFormat("en-GB");
-const fmtCompact = new Intl.NumberFormat("en-GB", {
-  notation: "compact",
-  maximumFractionDigits: 1,
-});
+const fmtCompact = { format: (n: number) => compactNumber(n, 1) };
 
 interface Props {
   kpi: KpiSummary;

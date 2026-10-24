@@ -20,16 +20,14 @@ import {
 } from "@/components/ui/card";
 import { ClientOnly } from "@/components/dashboard/ClientOnly";
 import type { CohortRow, TopGameRow } from "@/lib/snapshot/aggregate";
+import { fmtCompact as compactNumber } from "@/lib/format";
 
 interface Props {
   rows: CohortRow[];
   hasCohortData: boolean;
 }
 
-const fmtCompact = new Intl.NumberFormat("en-GB", {
-  notation: "compact",
-  maximumFractionDigits: 1,
-});
+const fmtCompact = { format: (n: number) => compactNumber(n, 1) };
 
 function CohortTooltip({
   active,

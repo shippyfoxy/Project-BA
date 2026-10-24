@@ -19,12 +19,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { UnifiedGameRow } from "@/lib/snapshot/aggregate";
+import { fmtCompact as compactNumber } from "@/lib/format";
 
 const fmt = new Intl.NumberFormat("en-GB");
-const fmtCompact = new Intl.NumberFormat("en-GB", {
-  notation: "compact",
-  maximumFractionDigits: 1,
-});
+const fmtCompact = { format: (n: number) => compactNumber(n, 1) };
 
 type SortKey = "retention" | "concurrent" | "visits" | "trend";
 

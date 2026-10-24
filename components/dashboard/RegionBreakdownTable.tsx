@@ -7,12 +7,10 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { RegionRow } from "@/lib/snapshot/aggregate";
+import { fmtCompact as compactNumber } from "@/lib/format";
 
 const fmt = new Intl.NumberFormat("en-GB");
-const fmtCompact = new Intl.NumberFormat("en-GB", {
-  notation: "compact",
-  maximumFractionDigits: 1,
-});
+const fmtCompact = { format: (n: number) => compactNumber(n, 1) };
 
 interface Props {
   rows: RegionRow[];
