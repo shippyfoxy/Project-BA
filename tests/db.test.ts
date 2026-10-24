@@ -56,6 +56,19 @@ describe("applyMigrations", () => {
   });
 });
 
+describe("Db.transaction", () => {
+  it("rolls back every statement when the callback throws", async () => {
+    await expect(
+      db.transaction(async (tx) => {
+        await tx.query("insert into snapshots (ts, game_count, source) values (now(), 1, 'test')");
+        throw new Error("boom");
+      }),
+    ).rejects.toThrow("boom");
+    const r = await one<{ n: number }>("select count(*)::int as n from snapshots");
+    expect(r.n).toBe(0);
+  });
+});
+
 describe("ingestSnapshot", () => {
   it("writes games, one observation per game and a snapshot marker", async () => {
     const res = await ingestSnapshot(db, snap(T0, [game(), game({ universeId: 101, rootPlaceId: 901 })]), {

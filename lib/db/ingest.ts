@@ -1,4 +1,4 @@
-import { transaction, type Db } from "./client";
+import type { Db } from "./client";
 
 // Raw 30-minute readings older than this are pruned once rolled up into
 // game_daily. 14 days of ~1,200 games is roughly 100 MB on Neon.
@@ -225,18 +225,18 @@ export async function ingestSnapshot(
     if (earliestTs === null || t < earliestTs) earliestTs = t;
   }
 
-  await transaction(db, async () => {
+  await db.transaction(async (tx) => {
     for (const rows of chunks(gameRows)) {
-      await db.query(GAME_UPSERT, [JSON.stringify(rows), tsIso]);
+      await tx.query(GAME_UPSERT, [JSON.stringify(rows), tsIso]);
     }
     for (const rows of chunks(obsRows)) {
-      await db.query(OBS_UPSERT, [JSON.stringify(rows)]);
+      await tx.query(OBS_UPSERT, [JSON.stringify(rows)]);
     }
     for (const rows of chunks(presence)) {
-      await db.query(PRESENCE_UPSERT, [JSON.stringify(rows), utcDay(ts)]);
+      await tx.query(PRESENCE_UPSERT, [JSON.stringify(rows), utcDay(ts)]);
     }
     // Written last so a crash mid-ingest leaves no marker and the snapshot is retried.
-    await db.query(
+    await tx.query(
       "insert into snapshots (ts, game_count, source, git_sha) values ($1, $2, $3, $4)",
       [tsIso, games.size, snap.source ?? "explore-api+games-api", opts.gitSha ?? null],
     );

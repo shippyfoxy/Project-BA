@@ -1,6 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { transaction, type Db } from "./client";
+import type { Db } from "./client";
 
 const MIGRATIONS_DIR = path.resolve(process.cwd(), "db/migrations");
 const NAME_RE = /^\d{4}_[a-z0-9_]+\.sql$/;
@@ -21,9 +21,9 @@ export async function applyMigrations(db: Db, dir = MIGRATIONS_DIR): Promise<str
   for (const file of files) {
     if (done.has(file)) continue;
     const sql = await fs.readFile(path.join(dir, file), "utf8");
-    await transaction(db, async () => {
-      await db.exec(sql);
-      await db.query("insert into schema_migrations (name) values ($1)", [file]);
+    await db.transaction(async (tx) => {
+      await tx.exec(sql);
+      await tx.query("insert into schema_migrations (name) values ($1)", [file]);
     });
     applied.push(file);
   }
