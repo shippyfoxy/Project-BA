@@ -20,6 +20,17 @@ export interface HomeGame {
   peak7: number;
   wowPct: number | null;
   stage: Stage;
+  createdMs: number | null;
+  daysTracked: number;
+}
+
+// Every game averaging 1,000+ players over the last 7 days, with its stage.
+// Shared by the home page and the stage pages so their counts always agree.
+export interface ActiveGames {
+  asOfMs: number;
+  day: string; // latest UTC day with data
+  games: HomeGame[];
+  fastestToMillion: { name: string; days: number } | null;
 }
 
 export interface Mover extends HomeGame {
@@ -74,7 +85,7 @@ interface GameRow {
   days_to_1m: number | null;
 }
 
-export async function getTrendsHome(db: Db): Promise<TrendsHome | null> {
+export async function getActiveGames(db: Db): Promise<ActiveGames | null> {
   const [latest] = await db.query<{ as_of_ms: number | null; day: string | null }>(
     `select extract(epoch from max(ts))::float8 * 1000 as as_of_ms,
             ((max(ts) at time zone 'UTC')::date)::text as day
@@ -82,17 +93,6 @@ export async function getTrendsHome(db: Db): Promise<TrendsHome | null> {
   );
   if (!latest?.as_of_ms || !latest.day) return null;
   const day = latest.day;
-
-  const [totals] = await db.query<{ games: number; days: number; readings: number }>(
-    `select (select count(*) from games)::int as games,
-            count(distinct day)::int as days,
-            coalesce(sum(samples), 0)::float8 as readings
-     from game_daily`,
-  );
-  const [now] = await db.query<{ n: number; total: number }>(
-    `select count(*)::int as n, coalesce(sum(playing), 0)::float8 as total
-     from observations where ts = (select max(ts) from snapshots)`,
-  );
 
   const rows = await db.query<GameRow>(
     `with ${ROLL},
@@ -144,10 +144,56 @@ export async function getTrendsHome(db: Db): Promise<TrendsHome | null> {
       daysTracked: r.days_tracked,
       nowMs: asOfMs,
     }),
+    createdMs: r.created_ms,
+    daysTracked: r.days_tracked,
   }));
 
-  const stageCounts = Object.fromEntries(STAGES.map((s) => [s, 0])) as Record<Stage, number>;
-  for (const g of games) stageCounts[g.stage]++;
+  return {
+    asOfMs,
+    day,
+    games,
+    fastestToMillion: fastest ? { name: fastest.name, days: fastest.days_to_1m! } : null,
+  };
+}
+
+// Daily average players over the last 30 days, oldest first, per game.
+export async function getSparklines(db: Db, universeIds: number[], day: string): Promise<Map<number, number[]>> {
+  const sparks = new Map<number, number[]>();
+  if (universeIds.length === 0) return sparks;
+  const rows = await db.query<{ universe_id: number; v: number }>(
+    `select universe_id::float8 as universe_id, playing_avg::float8 as v from game_daily
+     where universe_id in (select unnest(string_to_array($1, ','))::bigint)
+       and day > $2::date - 30
+     order by universe_id, day`,
+    [universeIds.join(","), day],
+  );
+  for (const r of rows) sparks.set(r.universe_id, [...(sparks.get(r.universe_id) ?? []), r.v]);
+  return sparks;
+}
+
+export function countStages(games: HomeGame[]): Record<Stage, number> {
+  const counts = Object.fromEntries(STAGES.map((s) => [s, 0])) as Record<Stage, number>;
+  for (const g of games) counts[g.stage]++;
+  return counts;
+}
+
+export async function getTrendsHome(db: Db, opts: { active?: ActiveGames | null } = {}): Promise<TrendsHome | null> {
+  const active = opts.active ?? (await getActiveGames(db));
+  if (!active) return null;
+  const { asOfMs, day, games } = active;
+
+  const [totals] = await db.query<{ games: number; days: number; readings: number }>(
+    `select (select count(*) from games)::int as games,
+            count(distinct day)::int as days,
+            coalesce(sum(samples), 0)::float8 as readings
+     from game_daily`,
+  );
+  const [now] = await db.query<{ n: number; total: number }>(
+    `select count(*)::int as n, coalesce(sum(playing), 0)::float8 as total
+     from observations where ts = (select max(ts) from snapshots)`,
+  );
+
+  const stageCounts = countStages(games);
 
   const byPlayers = [...games].sort((a, b) => b.cur7 - a.cur7);
   const movers = games.filter((g) => g.prev7 !== null && g.prev7 >= MOVER_MIN_PREV && g.wowPct !== null);
@@ -155,18 +201,7 @@ export async function getTrendsHome(db: Db): Promise<TrendsHome | null> {
   const risers = movers.slice(0, 4).filter((g) => g.wowPct! > 0);
   const fallers = movers.slice(-4).reverse().filter((g) => g.wowPct! < 0);
 
-  const sparkIds = [...risers, ...fallers].map((g) => g.universeId);
-  const sparkRows = sparkIds.length
-    ? await db.query<{ universe_id: number; v: number }>(
-        `select universe_id::float8 as universe_id, playing_avg::float8 as v from game_daily
-         where universe_id in (select unnest(string_to_array($1, ','))::bigint)
-           and day > $2::date - 30
-         order by universe_id, day`,
-        [sparkIds.join(","), day],
-      )
-    : [];
-  const sparks = new Map<number, number[]>();
-  for (const r of sparkRows) sparks.set(r.universe_id, [...(sparks.get(r.universe_id) ?? []), r.v]);
+  const sparks = await getSparklines(db, [...risers, ...fallers].map((g) => g.universeId), day);
   const withSpark = (g: HomeGame): Mover => ({ ...g, spark: sparks.get(g.universeId) ?? [] });
 
   const [biggest] = await db.query<{ name: string; v: number; at_ms: number }>(
@@ -229,7 +264,7 @@ export async function getTrendsHome(db: Db): Promise<TrendsHome | null> {
     fallers: fallers.map(withSpark),
     records: {
       biggestReading: biggest ? { name: biggest.name, players: biggest.v, atMs: biggest.at_ms } : null,
-      fastestToMillion: fastest ? { name: fastest.name, days: fastest.days_to_1m! } : null,
+      fastestToMillion: active.fastestToMillion,
       alwaysTop10: { names: alwaysTop10.map((r) => r.name), days: totals.days },
       biggestShare: share ? { name: share.name, pct: share.pct, weekStart: share.wk } : null,
     },

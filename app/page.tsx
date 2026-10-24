@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getSiteDb } from "@/lib/db/site";
+import { getCachedActiveGames } from "@/lib/trends/cached";
 import { getTrendsHome, type HomeGame, type Mover } from "@/lib/trends/home";
 import { displayName } from "@/lib/trends/names";
 import type { Stage } from "@/lib/trends/stage";
@@ -8,7 +9,7 @@ import { fmtCompact, fmtDay, fmtInt, fmtPct, fmtTimeUtc, fmtWeekdayDay } from "@
 import { GameIcon } from "@/components/v2/GameIcon";
 import { GenreChip } from "@/components/v2/GenreChip";
 import { Sparkline } from "@/components/v2/Sparkline";
-import { StageBadge } from "@/components/v2/StageBadge";
+import { StageBadge, stageLabel } from "@/components/v2/StageBadge";
 import { WeeklyRhythm } from "@/components/v2/WeeklyRhythm";
 
 export const revalidate = 3600;
@@ -94,7 +95,7 @@ export default async function TrendsHomePage() {
   let data = null;
   if (db) {
     try {
-      data = await getTrendsHome(db);
+      data = await getTrendsHome(db, { active: await getCachedActiveGames() });
     } catch (err) {
       console.error("[home] trends query failed:", err);
     }
@@ -175,12 +176,18 @@ export default async function TrendsHomePage() {
           </SectionTitle>
           <ul className="flex flex-wrap gap-2.5">
             {PULSE.map((p) => (
-              <li key={p.stage} className="flex flex-[1_1_128px] flex-col gap-1.5 rounded-[14px] border border-border bg-card px-3.5 py-3.5">
-                <span className="self-start">
-                  <StageBadge stage={p.stage} />
-                </span>
-                <span className="font-heading text-3xl font-bold tabular-nums">{fmtInt(data.stageCounts[p.stage])}</span>
-                <span className="text-xs text-muted-foreground">{p.note}</span>
+              <li key={p.stage} className="flex flex-[1_1_128px]">
+                <Link
+                  href={`/stages/${p.stage}`}
+                  className="flex w-full flex-col gap-1.5 rounded-[14px] border border-border bg-card px-3.5 py-3.5 hover:border-input hover:bg-surface-2"
+                >
+                  <span className="self-start">
+                    <StageBadge stage={p.stage} />
+                  </span>
+                  <span className="font-heading text-3xl font-bold tabular-nums">{fmtInt(data.stageCounts[p.stage])}</span>
+                  <span className="text-xs text-muted-foreground">{p.note}</span>
+                  <span className="sr-only">See all {stageLabel(p.stage)} games</span>
+                </Link>
               </li>
             ))}
           </ul>
