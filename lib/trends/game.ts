@@ -83,25 +83,23 @@ const FAV_COHORTS: { min: number; label: string }[] = [
 // Every game seen this week (plus one requested game), for rank and genre
 // benchmarks. The same for every game page, so the site caches it hourly.
 export function loadWeekAggregates(db: Db, day: string, universeId?: number): Promise<AggRow[]> {
-  // Session length is players divided by visits per minute, using the real
-  // minutes between the last readings of consecutive days (today is still a
-  // partial day).
+  // Only the last two weeks of daily rows are read; peaks and history length
+  // come from game_peaks. Session length is players divided by visits per
+  // minute, using the real minutes between the last readings of consecutive
+  // days (today is still a partial day).
   return db.query<AggRow>(
     `with base as (
        select universe_id, day, playing_avg, visits_last, favorites_last,
-         avg(playing_avg) over w7 as r7,
          visits_last - lag(visits_last) over w as nv,
          extract(epoch from last_ts - lag(last_ts) over w) / 60 as mins,
          day - lag(day) over w as gap
        from game_daily
-       window w as (partition by universe_id order by day),
-              w7 as (partition by universe_id order by day range between interval '6 days' preceding and current row)
+       where day > $1::date - 15
+       window w as (partition by universe_id order by day)
      ), agg as (
        select universe_id,
          avg(playing_avg) filter (where day > $1::date - 7) as cur7,
          avg(playing_avg) filter (where day <= $1::date - 7 and day > $1::date - 14) as prev7,
-         max(r7) as peak7,
-         count(*) as days_tracked,
          avg(playing_avg) filter (where day > $1::date - 7 and gap = 1 and nv > 0 and mins > 0) as cm,
          sum(nv) filter (where day > $1::date - 7 and gap = 1 and nv > 0 and mins > 0)
            / nullif(sum(mins) filter (where day > $1::date - 7 and gap = 1 and nv > 0 and mins > 0), 0) as vpm,
@@ -109,11 +107,13 @@ export function loadWeekAggregates(db: Db, day: string, universeId?: number): Pr
          (array_agg(visits_last order by day desc))[1] as vis
        from base group by universe_id
      )
-     select a.universe_id::float8 as universe_id, coalesce(g.genre_l1, 'Other') as genre,
-            a.cur7::float8 as cur7, a.prev7::float8 as prev7, a.peak7::float8 as peak7, a.days_tracked::int as days_tracked,
+     select p.universe_id::float8 as universe_id, coalesce(g.genre_l1, 'Other') as genre,
+            a.cur7::float8 as cur7, a.prev7::float8 as prev7, p.peak7::float8 as peak7, p.days_tracked as days_tracked,
             (a.cm / nullif(a.vpm, 0))::float8 as session, a.fav::float8 as fav, a.vis::float8 as vis
-     from agg a join games g using (universe_id)
-     where a.cur7 is not null or a.universe_id = $2::bigint`,
+     from game_peaks p
+     join games g using (universe_id)
+     left join agg a using (universe_id)
+     where a.cur7 is not null or p.universe_id = $2::bigint`,
     [day, universeId ?? null],
   );
 }
@@ -192,7 +192,19 @@ export async function getGameHistory(
 
   const all = await (opts.loadAggregates ?? ((day: string) => loadWeekAggregates(db, day)))(latest.day);
   const known = all.find((r) => r.universe_id === universeId);
-  const me = known ?? (await loadWeekAggregates(db, latest.day, universeId)).find((r) => r.universe_id === universeId)!;
+  const me: AggRow = known ??
+    (await loadWeekAggregates(db, latest.day, universeId)).find((r) => r.universe_id === universeId) ?? {
+      // No game_peaks row yet: fall back to this game's own history.
+      universe_id: universeId,
+      genre: game.genre,
+      cur7: null,
+      prev7: null,
+      peak7: Math.max(...daily.map((d) => d.r7)),
+      days_tracked: daily.length,
+      session: null,
+      fav: null,
+      vis: null,
+    };
   const seenThisWeek = all.filter((r) => r.cur7 !== null);
   const cur7 = me.cur7;
   const peak7 = Math.max(me.peak7, cur7 ?? 0);

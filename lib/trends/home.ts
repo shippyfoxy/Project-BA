@@ -62,15 +62,6 @@ export interface TrendsHome {
   studiosWithSeveralHits: number;
 }
 
-// Rolling 7-day average per game and day, the basis for peaks.
-const ROLL = `
-  roll as (
-    select universe_id, day, playing_avg,
-      avg(playing_avg) over (partition by universe_id order by day
-        range between interval '6 days' preceding and current row) as r7
-    from game_daily
-  )`;
-
 interface GameRow {
   universe_id: number;
   name: string;
@@ -94,29 +85,31 @@ export async function getActiveGames(db: Db): Promise<ActiveGames | null> {
   if (!latest?.as_of_ms || !latest.day) return null;
   const day = latest.day;
 
+  // Peaks and history length come from game_peaks (kept current at refresh),
+  // so only the last two weeks of daily rows are read here.
   const rows = await db.query<GameRow>(
-    `with ${ROLL},
-     agg as (
+    `with recent as (
        select universe_id,
          avg(playing_avg) filter (where day > $1::date - 7) as cur7,
-         avg(playing_avg) filter (where day <= $1::date - 7 and day > $1::date - 14) as prev7,
-         max(r7) as peak7,
-         count(*) as days_tracked,
-         min(day) filter (where r7 >= 1000000) as d1m
-       from roll group by universe_id
+         avg(playing_avg) filter (where day <= $1::date - 7) as prev7
+       from game_daily
+       where day > $1::date - 14
+       group by universe_id
      )
-     select a.universe_id::float8 as universe_id, g.name, g.creator_name,
+     select p.universe_id::float8 as universe_id, g.name, g.creator_name,
             coalesce(g.genre_l1, 'Other') as genre, g.canonical_url_path,
-            coalesce(a.cur7, 0)::float8 as cur7, a.prev7::float8 as prev7, a.peak7::float8 as peak7,
-            a.days_tracked::int as days_tracked,
+            coalesce(r.cur7, 0)::float8 as cur7, r.prev7::float8 as prev7, p.peak7::float8 as peak7,
+            p.days_tracked as days_tracked,
             extract(epoch from g.created_at)::float8 * 1000 as created_ms,
             -- Days from creation to a 1M 7-day average, only for launches we saw
             -- from the start (created after tracking began, seen within 14 days).
             case when g.created_at >= (select min(day) from game_daily)
                   and g.first_seen::date - g.created_at::date <= 14
-                 then (a.d1m - g.created_at::date) end::int as days_to_1m
-     from agg a join games g using (universe_id)
-     where a.cur7 >= $2 or a.d1m is not null`,
+                 then (p.first_million_day - g.created_at::date) end::int as days_to_1m
+     from game_peaks p
+     join games g using (universe_id)
+     left join recent r using (universe_id)
+     where r.cur7 >= $2 or p.first_million_day is not null`,
     [day, ACTIVE_MIN_PLAYERS],
   );
   const activeRows = rows.filter((r) => r.cur7 >= ACTIVE_MIN_PLAYERS);
