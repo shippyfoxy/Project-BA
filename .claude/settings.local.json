@@ -51,7 +51,21 @@
       "Bash(git push *)",
       "Bash(git fetch *)",
       "Bash(git pull *)",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}  %{time_total}s\\\\n\" https://pulse.shipfox.me/)",
+      "Bash(curl -sI https://pulse.shipfox.me/)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" https://pulse.shipfox.me/_vercel/insights/script.js)",
+      "Bash(psql --version)",
+      "Bash(pg_ctl --version)",
+      "Bash(docker --version)",
+      "Bash(pnpm db:backfill --dry-run --limit 120)",
+      "Bash(pnpm db:backfill --dry-run)",
+      "Bash(rm -rf .pglite-backfill)",
+      "Bash(pnpm db:backfill --pglite .pglite-backfill)",
+      "Bash(pnpm db:backfill --pglite .pglite-clean)",
+      "Bash(pnpm db:backfill --pglite .pglite-resumed --limit 1000)",
+      "Bash(pnpm db:backfill --pglite .pglite-resumed)",
+      "Bash(git commit -q -m ' *)"
     ]
   }
 }
