@@ -10,6 +10,7 @@ const NAV = [
   { href: "/revenue", label: "Revenue", pro: true },
   { href: "/compare", label: "Compare" },
   { href: "/genres", label: "Genres" },
+  { href: "/updates", label: "Updates" },
   { href: "/api", label: "API" },
 ];
 

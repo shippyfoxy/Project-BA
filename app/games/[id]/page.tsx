@@ -11,6 +11,7 @@ import { displayName } from "@/lib/trends/names";
 import { DEVICE_LABELS } from "@/lib/trends/labels";
 import { genreColor } from "@/lib/trends/genres";
 import { getEarningRanks, type EarningRanks } from "@/lib/trends/earnings";
+import { getGameUpdates, type GameUpdates } from "@/lib/trends/updates";
 import { ProOnly, Usd } from "@/components/pro/Pro";
 import { getGameIcons, getGameScreenshots } from "@/lib/roblox/thumbnails";
 import { fmtCompact, fmtDay, fmtInt, fmtPct, fmtTimeUtc, fmtWeekdayDay } from "@/lib/format";
@@ -38,6 +39,11 @@ const loadGame = cache(async (id: number): Promise<GameHistory | null> => {
 const loadEarning = cache(async (id: number): Promise<EarningRanks | null> => {
   const db = getSiteDb();
   return db ? getEarningRanks(db, id) : null;
+});
+
+const loadUpdates = cache(async (id: number): Promise<GameUpdates | null> => {
+  const db = getSiteDb();
+  return db ? getGameUpdates(db, id).catch(() => null) : null;
 });
 
 function parseId(raw: string): number | null {
@@ -113,7 +119,12 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
   const g = await loadGame(id);
   if (!g) notFound();
 
-  const [icons, shots, earning] = await Promise.all([getGameIcons([g.universeId]), getGameScreenshots(g.universeId), loadEarning(g.universeId)]);
+  const [icons, shots, earning, updates] = await Promise.all([
+    getGameIcons([g.universeId]),
+    getGameScreenshots(g.universeId),
+    loadEarning(g.universeId),
+    loadUpdates(g.universeId),
+  ]);
   const name = displayName(g.name);
   const robloxHref = g.canonicalUrlPath ? `https://www.roblox.com${g.canonicalUrlPath}` : null;
   const first = g.daily[0];
@@ -539,6 +550,47 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
               <li key={n}>{n}</li>
             ))}
           </ul>
+        </section>
+      ) : null}
+
+      {updates && (updates.lastPublishMs || updates.announced.length) ? (
+        <section aria-labelledby="updates" className="flex flex-col gap-3 rounded-2xl border border-border bg-card px-6 py-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="updates" className="font-heading text-[22px] font-bold">
+              Updates
+            </h2>
+            <Link href="/updates" className="text-sm text-link hover:underline">
+              Do updates bring players back?
+            </Link>
+          </div>
+          <p className="text-sm text-text-2">
+            {updates.lastPublishMs ? `Last published ${fmtDay(updates.lastPublishMs)}` : "No publishes recorded"}
+            {updates.publishes30 ? `, on ${updates.publishes30} of the last 30 days.` : "."}
+          </p>
+          {updates.announced.length ? (
+            <ul className="flex flex-col">
+              {updates.announced.map((a) => (
+                <li key={a.dayMs} className="flex flex-wrap items-baseline justify-between gap-3 border-t border-[#1b2028] py-2.5 text-sm first:border-t-0">
+                  <span className="min-w-0">
+                    <span className="mr-2 text-muted-foreground">{fmtDay(a.dayMs)}</span>
+                    {a.name}
+                  </span>
+                  <span className="tabular-nums">
+                    {a.lift === null ? (
+                      <span className="text-muted-foreground">too few players to measure</span>
+                    ) : (
+                      <>
+                        <span className={a.lift >= 0 ? "text-rise" : "text-fall"}>{fmtPct(a.lift * 100)}</span>
+                        <span className="text-muted-foreground"> two days after, against a week earlier</span>
+                      </>
+                    )}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-[13px] text-muted-foreground">No announced updates (new title tags) spotted since tracking began.</p>
+          )}
         </section>
       ) : null}
 

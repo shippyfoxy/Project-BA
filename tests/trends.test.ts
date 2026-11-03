@@ -182,6 +182,24 @@ describe("top earning ranks and revenue estimates", () => {
   });
 });
 
+describe("publishes and titles", () => {
+  it("records each publish once and each title change with when the old title was last seen", async () => {
+    const t1 = Date.parse("2026-06-22T10:00:00Z");
+    const t2 = t1 + 3_600_000;
+    const withUpdate = (ts: number, name: string) =>
+      gamesOn(21).map((g) => (g.universeId === 3 ? { ...g, name, updated: "2026-06-22T09:30:00Z" } : g));
+    await recordSnapshot(db, { generatedAt: new Date(t1).toISOString(), generatedAtMs: t1, games: withUpdate(t1, "Plateau") }, t1);
+    await recordSnapshot(db, { generatedAt: new Date(t2).toISOString(), generatedAtMs: t2, games: withUpdate(t2, "[UPD 2] Plateau") }, t2);
+    const updates = await db.query<{ n: number }>(`select count(*)::int as n from game_updates where universe_id = 3`);
+    expect(updates[0].n).toBe(1);
+    const names = await db.query<{ name: string; prev_ms: number | null }>(
+      `select name, extract(epoch from prev_seen)::float8 * 1000 as prev_ms from game_names where universe_id = 3 order by first_seen`,
+    );
+    expect(names.map((n) => n.name)).toEqual(["Plateau", "[UPD 2] Plateau"]);
+    expect(names[1].prev_ms).toBe(t1);
+  });
+});
+
 describe("explore filters", () => {
   it("parses and round-trips query strings", () => {
     expect(parseFilters({})).toEqual(DEFAULT_FILTERS);

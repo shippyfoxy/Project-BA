@@ -4,6 +4,7 @@ import { loadWeekAggregates, type AggRow } from "./game";
 import { getActiveGames, type ActiveGames } from "./home";
 import { getGenreTrends, type GenreTrends } from "./genreTrends";
 import { getRevenuePage, type RevenuePage } from "./revenuePage";
+import { getUpdateImpact, type UpdateImpact } from "./updates";
 
 // Shared across every game page and refreshed at most hourly, so opening a
 // game for the first time doesn't recompute every game's week.
@@ -60,5 +61,15 @@ export const getCachedRevenuePage = unstable_cache(
     return db ? getRevenuePage(db) : null;
   },
   ["revenue-page-v1"],
+  { revalidate: 3600 },
+);
+
+// Update impact across every game since May: a heavy query, refreshed hourly.
+export const getCachedUpdateImpact = unstable_cache(
+  async (): Promise<UpdateImpact | null> => {
+    const db = getSiteDb();
+    return db ? getUpdateImpact(db) : null;
+  },
+  ["update-impact-v1"],
   { revalidate: 3600 },
 );

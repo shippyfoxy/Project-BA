@@ -16,6 +16,7 @@ export interface IngestGame {
   genreL1?: string | null;
   genreL2?: string | null;
   created?: string | null;
+  updated?: string | null;
   canonicalUrlPath?: string | null;
   minimumAge?: number | null;
   ageRecommendation?: string | null;
@@ -132,6 +133,29 @@ const OBS_UPSERT = `
     down_votes = coalesce(excluded.down_votes, observations.down_votes)
 `;
 
+// A publish is new only once per (game, time). Exported for the git backfill.
+export const UPDATES_INSERT = `
+  insert into game_updates (universe_id, updated_at, seen_at)
+  select r.universe_id, r.updated_at, $2::timestamptz
+  from jsonb_to_recordset($1::text::jsonb) as r(universe_id bigint, updated_at timestamptz)
+  join games g using (universe_id)
+  on conflict do nothing
+`;
+
+// A title is recorded only when it differs from the game's latest one. Without
+// a known prev_seen, the game's last reading before this snapshot stands in.
+export const NAMES_INSERT = `
+  insert into game_names (universe_id, name, first_seen, prev_seen)
+  select r.universe_id, r.name, $2::timestamptz,
+         coalesce(r.prev_seen, (select max(o.ts) from observations o where o.universe_id = r.universe_id and o.ts < $2::timestamptz))
+  from jsonb_to_recordset($1::text::jsonb) as r(universe_id bigint, name text, prev_seen timestamptz)
+  join games g using (universe_id)
+  where r.name is distinct from (
+    select n.name from game_names n where n.universe_id = r.universe_id order by n.first_seen desc limit 1
+  )
+  on conflict do nothing
+`;
+
 // Only games already in the games table: an earner the games API could not
 // describe this run has nothing to join to yet.
 const EARNING_UPSERT = `
@@ -239,6 +263,10 @@ export async function ingestSnapshot(
     age_recommendation: g.ageRecommendation ?? null,
   }));
   const obsRows = [...obs.values()];
+  const updates = [...games.values()]
+    .filter((g) => g.updated && Number.isFinite(Date.parse(g.updated)))
+    .map((g) => ({ universe_id: g.universeId, updated_at: g.updated }));
+  const names = [...games.values()].map((g) => ({ universe_id: g.universeId, name: g.name, prev_seen: null }));
   const earning = (snap.topEarning ?? [])
     .filter((r) => isId(r.universeId) && Number.isInteger(r.rank) && r.rank > 0 && r.rank < 32_768)
     .map((r) => ({ universe_id: r.universeId, rank: r.rank }));
@@ -257,6 +285,12 @@ export async function ingestSnapshot(
     }
     for (const rows of chunks(presence)) {
       await tx.query(PRESENCE_UPSERT, [JSON.stringify(rows), utcDay(ts)]);
+    }
+    for (const rows of chunks(updates)) {
+      await tx.query(UPDATES_INSERT, [JSON.stringify(rows), tsIso]);
+    }
+    for (const rows of chunks(names)) {
+      await tx.query(NAMES_INSERT, [JSON.stringify(rows), tsIso]);
     }
     if (earning.length > 0) {
       await tx.query(EARNING_UPSERT, [JSON.stringify(earning), utcDay(ts), tsIso]);
