@@ -10,7 +10,10 @@ export type Launched = (typeof LAUNCHED)[number];
 export const MIN_PLAYERS = [0, 100, 1_000, 10_000, 100_000] as const;
 export const SORTS = ["players", "wow", "session", "favs", "earnings", "newest"] as const;
 export type SortKey = (typeof SORTS)[number];
-export const COUNTRIES = ["us", "br", "id", "in", "ph", "gb", "de", "ru", "kr", "mx", "tr", "jp"] as const;
+export const COUNTRIES = [
+  "us", "br", "id", "in", "ph", "gb", "de", "ru", "kr", "mx", "tr", "jp",
+  "ca", "au", "fr", "es", "it", "pl", "nl", "vn", "th", "my", "sa", "ar",
+] as const;
 export const DEVICES = ["computer", "high_end_phone", "low_end_phone", "high_end_tablet", "console"] as const;
 export const PAGE_SIZE = 50;
 

@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ProStar } from "@/components/pro/Pro";
 import { paywallOn } from "@/lib/paywall";
+import { COUNTRIES } from "@/lib/trends/screener";
 
 export const metadata: Metadata = {
   title: "API: Roblox Pulse",
@@ -94,8 +95,14 @@ const EXPLORE_PARAMS: Row[] = [
   [
     "country",
     <>
-      In that country&apos;s discovery lists in the last 7 days: <C>us</C>, <C>br</C>, <C>id</C>, <C>in</C>, <C>ph</C>, <C>gb</C>,{" "}
-      <C>de</C>, <C>ru</C>, <C>kr</C>, <C>mx</C>, <C>tr</C> or <C>jp</C>.
+      In that country&apos;s discovery lists in the last 7 days, by two-letter code:{" "}
+      {COUNTRIES.map((c, i) => (
+        <span key={c}>
+          {i ? (i === COUNTRIES.length - 1 ? " or " : ", ") : null}
+          <C>{c}</C>
+        </span>
+      ))}
+      .
     </>,
   ],
   [
@@ -235,7 +242,7 @@ function Table({ rows, mono = true }: { rows: Row[]; mono?: boolean }) {
       <table className="w-full min-w-[560px] border-collapse text-sm">
         <tbody>
           {rows.map(([k, v], i) => (
-            <tr key={i} className={i ? "border-t border-[#1b2028]" : undefined}>
+            <tr key={i} className={i ? "border-t border-rule" : undefined}>
               <th
                 scope="row"
                 className={`w-[34%] px-5 py-3 text-left align-top ${mono ? "font-mono text-[13px] font-medium" : "font-semibold"}`}
@@ -364,7 +371,7 @@ export default function ApiPage() {
           <ul className="flex list-disc flex-col gap-2 pl-5 text-text-2">
             <li>Daily history starts on 7 May 2026. Raw readings are kept for 14 days and rolled up into the daily figures above.</li>
             <li>
-              The refresh runs hourly. Each run reads Roblox&apos;s discovery lists for 12 countries and 5 device types, then
+              The refresh runs hourly. Each run reads Roblox&apos;s discovery lists for 24 countries and 5 device types, then
               re-reads every game it has ever found there, so a game stays tracked after it drops out of the lists (since 25 October 2026;
               before that, only games in that day&apos;s lists were read).
             </li>

@@ -47,6 +47,20 @@ const SEED_VARIANTS: SeedVariant[] = [
   { country: "mx" },
   { country: "id" },
   { country: "tr" },
+  // More of Roblox's large markets: each surfaces regional games the others
+  // miss, and every game found stays tracked from then on.
+  { country: "ca" },
+  { country: "au" },
+  { country: "fr" },
+  { country: "es" },
+  { country: "it" },
+  { country: "pl" },
+  { country: "nl" },
+  { country: "vn" },
+  { country: "th" },
+  { country: "my" },
+  { country: "sa" },
+  { country: "ar" },
   // Cross-device variants for high-mobile regions — surface phone-first titles
   // that don't appear in the desktop or US slices
   { country: "br", device: "high_end_phone" },
@@ -64,7 +78,9 @@ async function readPreviousSnapshot(): Promise<Snapshot | null> {
   }
 }
 
-// Every game the database knows about, most recently seen first.
+// Every game the database knows about, most recently seen first. Games with no
+// players for 30 days are only re-checked in the midnight UTC run, which keeps
+// hourly runs on games that are actually being played.
 async function loadKnownIds(limit: number): Promise<number[]> {
   const url = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
   if (!url) {
@@ -74,7 +90,11 @@ async function loadKnownIds(limit: number): Promise<number[]> {
   const db = connectPostgres(url);
   try {
     const rows = await db.query<{ id: number }>(
-      "select universe_id::float8 as id from games order by last_seen desc limit $1",
+      `select universe_id::float8 as id from games g
+       where extract(hour from now() at time zone 'UTC') = 0
+          or g.first_seen > now() - interval '30 days'
+          or exists (select 1 from game_daily d where d.universe_id = g.universe_id and d.day > current_date - 30)
+       order by last_seen desc limit $1`,
       [Number.isFinite(limit) ? limit : null],
     );
     return rows.map((r) => r.id);

@@ -448,6 +448,18 @@ export const COUNTRY_NAMES: Record<string, string> = {
   mx: "Mexico",
   id: "Indonesia",
   tr: "Turkey",
+  ca: "Canada",
+  au: "Australia",
+  fr: "France",
+  es: "Spain",
+  it: "Italy",
+  pl: "Poland",
+  nl: "Netherlands",
+  vn: "Vietnam",
+  th: "Thailand",
+  my: "Malaysia",
+  sa: "Saudi Arabia",
+  ar: "Argentina",
 };
 
 function genreShares(
