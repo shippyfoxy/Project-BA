@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSiteDb } from "@/lib/db/site";
-import { ageDays, parseFilters, screenGames } from "@/lib/trends/screener";
+import { ageDays, parseFilters, screenGames, windowAverages } from "@/lib/trends/screener";
+import { estMonthlyDevEx } from "@/lib/trends/revenue";
 import { displayName } from "@/lib/trends/names";
 
 const METHODOLOGY = "https://pulse.shipfox.me/methodology";
@@ -27,7 +28,16 @@ export async function GET(req: NextRequest) {
   const result = db ? await screenGames(db, f) : null;
   if (!result) return NextResponse.json({ error: "The database is not available." }, { status: 503 });
 
-  const games = result.matches.map((g) => ({
+  const [windows, [list]] = await Promise.all([
+    windowAverages(db!, result.day, result.matches.map((g) => g.universeId)),
+    db!.query<{ day: string | null }>(`select max(day)::text as day from earning_ranks`),
+  ]);
+  const thousands = (v: number | null | undefined) => (v === null || v === undefined ? null : Math.round(v / 1_000) * 1_000);
+
+  const games = result.matches.map((g) => {
+    const w = windows.get(g.universeId);
+    const est = estMonthlyDevEx(g.earningRank);
+    return {
     universe_id: g.universeId,
     // The same cleaned name the site shows; roblox_name keeps the raw title.
     name: displayName(g.name),
@@ -37,16 +47,23 @@ export async function GET(req: NextRequest) {
     stage: g.stage,
     created: g.createdMs === null ? null : new Date(g.createdMs).toISOString().slice(0, 10),
     age_days: ageDays(g.createdMs, result.asOfMs),
+    players_1d_avg: round(w?.d1 ?? null),
     players_7d_avg: round(g.cur7),
     players_prev_7d_avg: round(g.prev7),
+    players_30d_avg: round(w?.d30 ?? null),
+    players_90d_avg: round(w?.d90 ?? null),
     week_on_week_pct: round(g.wowPct, 1),
     peak_7d_avg: round(g.peak7),
     est_session_min: round(g.session, 1),
     favourites_per_1k_visits: round(g.favsPer1k, 2),
     top_earning_rank: g.earningRank,
-    // MODELLED from the rank: see /methodology#revenue.
-    est_monthly_devex_usd: g.estMonthly === null ? null : Math.round(g.estMonthly / 1_000) * 1_000,
-  }));
+    top_earning_day: g.earningRank === null ? null : list?.day ?? null,
+    // MODELLED from the rank, the same figures the site shows: see /methodology#revenue.
+    est_monthly_devex_usd: thousands(est?.mid),
+    est_monthly_devex_low_usd: thousands(est?.low),
+    est_monthly_devex_high_usd: thousands(est?.high),
+    };
+  });
 
   const headers = { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" };
   if (format === "csv") {
@@ -61,7 +78,7 @@ export async function GET(req: NextRequest) {
     });
   }
   return NextResponse.json(
-    { as_of: new Date(result.asOfMs).toISOString(), week_to: result.day, methodology: METHODOLOGY, count: games.length, games },
+    { as_of: new Date(result.asOfMs).toISOString(), week_to: result.day, revenue_estimated: true, methodology: METHODOLOGY, count: games.length, games },
     { headers },
   );
 }

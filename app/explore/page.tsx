@@ -444,6 +444,19 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
         </div>
       ) : null}
 
+      <p className="text-[13px] text-muted-foreground">
+        The CSV has every match, not just this page, with 1, 7, 30 and 90-day average players and the Top Earning rank with its modelled revenue
+        range. For every game day by day, download{" "}
+        <a href="/api/v1/daily?format=csv" className="text-link underline">
+          yesterday&apos;s full daily file
+        </a>{" "}
+        or pick any day through{" "}
+        <Link href="/api#endpoints" className="text-link underline">
+          the API
+        </Link>
+        .
+      </p>
+
       <aside className="mt-4 rounded-2xl border border-border bg-card p-5 text-sm text-text-2">
         <h3 className="font-heading text-base font-bold text-foreground">Note on calculation</h3>
         <p className="mt-2">

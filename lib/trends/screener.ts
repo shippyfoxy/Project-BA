@@ -277,3 +277,29 @@ export async function screenGames(db: Db, f: ScreenerFilters): Promise<ScreenerR
 
 export const ageDays = (createdMs: number | null, nowMs: number) =>
   createdMs === null ? null : Math.max(0, Math.round((nowMs - createdMs) / DAY_MS));
+
+export interface WindowAverages {
+  d1: number | null; // the last complete UTC day
+  d30: number | null;
+  d90: number | null;
+}
+
+// Extra player windows for exports, over days with readings like the 7-day
+// average. Kept out of screenGames so the page itself stays quick.
+export async function windowAverages(db: Db, day: string, ids: number[]): Promise<Map<number, WindowAverages>> {
+  const out = new Map<number, WindowAverages>();
+  if (ids.length === 0) return out;
+  const rows = await db.query<{ universe_id: number; d1: number | null; d30: number | null; d90: number | null }>(
+    `select universe_id::float8 as universe_id,
+            avg(playing_avg) filter (where day = $1::date - 1)::float8 as d1,
+            avg(playing_avg) filter (where day > $1::date - 30)::float8 as d30,
+            avg(playing_avg)::float8 as d90
+     from game_daily
+     where day > $1::date - 90
+       and universe_id in (select unnest(string_to_array($2, ','))::bigint)
+     group by universe_id`,
+    [day, ids.join(",")],
+  );
+  for (const r of rows) out.set(r.universe_id, { d1: r.d1, d30: r.d30, d90: r.d90 });
+  return out;
+}

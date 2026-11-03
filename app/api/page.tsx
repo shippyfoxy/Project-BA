@@ -37,8 +37,16 @@ const ENDPOINTS: Row[] = [
   [
     "GET /api/v1/games/{id}/history",
     <>
-      Daily player, visit and vote history for one game by its universe ID. Defaults to the last 30 days; set <C>from</C> and{" "}
+      Player, visit, vote and Top Earning history for one game by its universe ID. <C>resolution</C> is <C>daily</C> (default),{" "}
+      <C>weekly</C> (Monday to Sunday) or <C>monthly</C>. Defaults to the last 30 days, 26 weeks or all months; set <C>from</C> and{" "}
       <C>to</C> (YYYY-MM-DD) for any range back to 7 May 2026. JSON or <C>format=csv</C>.
+    </>,
+  ],
+  [
+    "GET /api/v1/daily",
+    <>
+      Every tracked game for one UTC day, about 7,000 rows: the bulk export. <C>day</C> (YYYY-MM-DD) defaults to the last complete day;{" "}
+      <C>min</C> keeps games averaging at least that many players. JSON or <C>format=csv</C>.
     </>,
   ],
   ["GET /api/v1/status", "Where the data comes from and when it was last refreshed."],
@@ -124,11 +132,20 @@ const EXPLORE_FIELDS: Row[] = [
   ["stage", "Lifecycle stage, in lower case (see Definitions)."],
   ["created, age_days", "Roblox's creation date and days since, as of the latest refresh."],
   ["players_7d_avg, players_prev_7d_avg", "Average concurrent players over the last 7 days and the 7 before."],
+  [
+    "players_1d_avg, players_30d_avg, players_90d_avg",
+    "Average concurrent players on the last complete day, and over the last 30 and 90 days. Exports only; the page uses the 7-day figures.",
+  ],
   ["week_on_week_pct", "Change between those two weeks. Null when the game has no readings in the earlier week."],
   ["peak_7d_avg", "Best 7-day average since tracking began."],
   ["est_session_min", "Estimated session length in minutes. Null until there are two consecutive days of readings."],
   ["favourites_per_1k_visits", "Lifetime favourites per 1,000 lifetime visits."],
   ["top_earning_rank", "Position in Roblox's Top Earning list (7-day Robux spend) on the latest day recorded. Null if not listed."],
+  ["top_earning_day", "The day of that list."],
+  [
+    "est_monthly_devex_low_usd, est_monthly_devex_high_usd",
+    "The modelled range around est_monthly_devex_usd, 0.7 to 1.5 times it: the same range game pages show.",
+  ],
   [
     "est_monthly_devex_usd",
     <>
@@ -154,6 +171,16 @@ const HISTORY_FIELDS: Row[] = [
   ["visits", "Lifetime visits at the day's last reading. Subtract the previous day's value for new visits."],
   ["favorites, up_votes, down_votes", "Totals at the day's last reading that included them. Null if none did."],
   ["samples", "How many readings the day is based on. Treat days with 1 or 2 with care."],
+  ["new_visits", "Visits gained since the previous day's last reading. Null when the day before has no reading."],
+  ["top_earning_rank, est_monthly_devex_usd", "That day's Top Earning rank and the payout modelled from it. Null when not listed."],
+  [
+    "Weekly and monthly",
+    <>
+      Rows have <C>period_start</C>, <C>period_end</C> and <C>days</C> with readings. <C>playing_avg</C> is the mean of the daily
+      averages, min and max are the period&apos;s, visits and votes are at its last reading, <C>new_visits</C> is summed, and revenue is
+      the mean daily estimate over <C>ranked_days</C>, with <C>best_top_earning_rank</C>.
+    </>,
+  ],
 ];
 
 const DEFINITIONS: Row[] = [

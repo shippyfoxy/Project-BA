@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSiteDb } from "@/lib/db/site";
 import { displayName } from "@/lib/trends/names";
+import { RESOLUTIONS, rollUp, toCsv, toDaily, type DayRow, type Resolution } from "@/lib/trends/history";
 
 
 const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -8,18 +9,6 @@ const METHODOLOGY = "https://pulse.shipfox.me/methodology";
 // Data changes a few times a day; the API page promises at most 30 minutes stale.
 const CACHE = { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" };
 
-interface Row {
-  day: string;
-  playing_avg: number;
-  playing_min: number;
-  playing_max: number;
-  playing_max_at: string;
-  visits: number;
-  favorites: number | null;
-  up_votes: number | null;
-  down_votes: number | null;
-  samples: number;
-}
 
 function bad(message: string, status = 400) {
   return NextResponse.json({ error: message }, { status });
@@ -32,6 +21,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const from = sp.get("from");
   const to = sp.get("to");
   const format = sp.get("format") ?? "json";
+  const resolution = (sp.get("resolution") ?? "daily") as Resolution;
+  if (!(RESOLUTIONS as readonly string[]).includes(resolution)) return bad("resolution must be daily, weekly or monthly.");
   if ((from && !DAY_RE.test(from)) || (to && !DAY_RE.test(to))) return bad("Dates must be YYYY-MM-DD.");
   if (format !== "json" && format !== "csv") return bad("format must be json or csv.");
 
@@ -44,42 +35,48 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   );
   if (!game) return bad("No tracked game with that universe ID.", 404);
 
-  // Defaults to the last 30 days of the game's own history.
-  const rows = await db.query<Row>(
+  // Defaults to the last 30 days (daily), 26 weeks (weekly) or all history (monthly).
+  const span = resolution === "daily" ? 29 : resolution === "weekly" ? 181 : 100_000;
+  const rows = await db.query<DayRow>(
     `with bounds as (
        select coalesce($2::date, max(day)) as to_day from game_daily where universe_id = $1::bigint
      )
      select d.day::text as day, round(d.playing_avg)::float8 as playing_avg, d.playing_min, d.playing_max,
             to_char(d.playing_max_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"') as playing_max_at,
             d.visits_last::float8 as visits, d.favorites_last as favorites,
-            d.up_votes_last as up_votes, d.down_votes_last as down_votes, d.samples::int as samples
-     from game_daily d, bounds
+            d.up_votes_last as up_votes, d.down_votes_last as down_votes, d.samples::int as samples,
+            e.rank as top_earning_rank,
+            d.day >= coalesce($3::date, bounds.to_day - $4::int) as in_range
+     from game_daily d
+     cross join bounds
+     left join earning_ranks e on e.universe_id = d.universe_id and e.day = d.day
      where d.universe_id = $1::bigint
        and d.day <= bounds.to_day
-       and d.day >= coalesce($3::date, bounds.to_day - 29)
+       and d.day >= coalesce($3::date, bounds.to_day - $4::int) - 1
      order by d.day`,
-    [id, to, from],
+    [id, to, from, span],
   );
+  const data = resolution === "daily" ? toDaily(rows) : rollUp(rows, resolution);
 
   if (format === "csv") {
-    const header = "day,playing_avg,playing_min,playing_max,playing_max_at,visits,favorites,up_votes,down_votes,samples";
-    const lines = rows.map((r) =>
-      [r.day, r.playing_avg, r.playing_min, r.playing_max, r.playing_max_at, r.visits, r.favorites ?? "", r.up_votes ?? "", r.down_votes ?? "", r.samples].join(","),
-    );
-    return new NextResponse([header, ...lines].join("\n") + "\n", {
+    const cols = (data.length ? Object.keys(data[0]) : ["day"]) as (keyof (typeof data)[number])[];
+    return new NextResponse(toCsv(data as object[], cols as never), {
       headers: {
         ...CACHE,
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="roblox-pulse-${id}-history.csv"`,
+        "Content-Disposition": `attachment; filename="roblox-pulse-${id}-${resolution}.csv"`,
       },
     });
   }
 
-  return NextResponse.json({
-    game: { universe_id: game.universe_id, name: displayName(game.name), roblox_name: game.name, genre: game.genre },
-    resolution: "daily",
-    estimated: true,
-    methodology: METHODOLOGY,
-    data: rows,
-  }, { headers: CACHE });
+  return NextResponse.json(
+    {
+      game: { universe_id: game.universe_id, name: displayName(game.name), roblox_name: game.name, genre: game.genre },
+      resolution,
+      estimated: true,
+      methodology: METHODOLOGY,
+      data,
+    },
+    { headers: CACHE },
+  );
 }

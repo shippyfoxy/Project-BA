@@ -184,8 +184,11 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
                 Open on Roblox<span className="sr-only"> (opens Roblox)</span>
               </a>
             ) : null}
-            <a href={`/api/v1/games/${g.universeId}/history`} className="inline-flex h-11 items-center rounded-xl bg-rise px-4 text-sm font-bold text-background hover:brightness-110">
-              Get the data
+            <a
+              href={`/api/v1/games/${g.universeId}/history?from=2026-05-01&format=csv`}
+              className="inline-flex h-11 items-center rounded-xl bg-rise px-4 text-sm font-bold text-background hover:brightness-110"
+            >
+              Download daily CSV
             </a>
           </div>
         </div>
@@ -239,6 +242,25 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
           </Link>
         </p>
       ) : null}
+
+      <p className="-mt-3 text-[13px] text-muted-foreground">
+        All history as CSV:{" "}
+        <a href={`/api/v1/games/${g.universeId}/history?from=2026-05-01&format=csv`} className="text-link underline">
+          daily
+        </a>
+        ,{" "}
+        <a href={`/api/v1/games/${g.universeId}/history?resolution=weekly&from=2026-05-01&format=csv`} className="text-link underline">
+          weekly
+        </a>{" "}
+        or{" "}
+        <a href={`/api/v1/games/${g.universeId}/history?resolution=monthly&format=csv`} className="text-link underline">
+          monthly
+        </a>
+        , with Top Earning rank and modelled revenue.{" "}
+        <Link href="/api#history-fields" className="text-link underline">
+          Fields
+        </Link>
+      </p>
 
       <section aria-labelledby="players" className="flex flex-col gap-3 rounded-2xl border border-border bg-card px-6 pb-4 pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
