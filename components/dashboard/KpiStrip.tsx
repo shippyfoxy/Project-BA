@@ -67,7 +67,7 @@ export function KpiStrip({ kpi }: Props) {
       <Kpi
         label="Top genre (proxy)"
         value={kpi.topGenre}
-        hints={["highest mean retention proxy"]}
+        hints={["highest mean appeal score"]}
       />
       <Kpi
         label="Snapshot taken"

@@ -43,7 +43,7 @@ function DrillDown({ games }: { games: TopGameRow[] }) {
           <tr className="border-b border-border text-left text-muted-foreground">
             <th className="pb-1 pr-3 font-medium">#</th>
             <th className="pb-1 pr-3 font-medium">Game</th>
-            <th className="pb-1 pr-3 text-right font-medium">Retention</th>
+            <th className="pb-1 pr-3 text-right font-medium">Appeal</th>
             <th className="pb-1 text-right font-medium">Concurrent</th>
           </tr>
         </thead>
@@ -90,10 +90,10 @@ export function GenreAgeRecommendationTable({ rows }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Where retention is strongest</CardTitle>
+        <CardTitle>Where appeal is strongest</CardTitle>
         <CardDescription>
           Genre × age-rating combinations ranked by an{" "}
-          <strong>adjusted</strong> retention score that pulls small-sample
+          <strong>adjusted</strong> appeal score that pulls small-sample
           combos toward the catalogue mean &mdash; so a 7-game combo can&rsquo;t
           beat a 200-game combo on the strength of two outliers. Combos with
           fewer than ten games are filtered out entirely. The{" "}
@@ -122,7 +122,7 @@ export function GenreAgeRecommendationTable({ rows }: Props) {
                   <TableHead className="text-right">Player share</TableHead>
                   <TableHead className="text-right">Avg session (min)</TableHead>
                   <TableHead className="text-right">Peak hour</TableHead>
-                  <TableHead className="text-right">Adjusted retention</TableHead>
+                  <TableHead className="text-right">Adjusted appeal</TableHead>
                   <TableHead className="text-right">Raw mean</TableHead>
                 </TableRow>
               </TableHeader>

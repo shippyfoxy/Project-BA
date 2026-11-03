@@ -29,15 +29,15 @@ export default function ResultsPage() {
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p className="text-foreground">
-            Three questions, side-by-side, refreshed hourly:
+            Three questions, side-by-side, refreshed several times a day:
           </p>
           <ol className="list-decimal space-y-2 pl-5">
             <li>
               <strong className="text-foreground">Where is engagement strongest?</strong>{" "}
-              The genre × age-rating table ranks combinations by retention
-              quality and average session length, so you can see which
-              audience is sticking around — not just which audience is
-              biggest.
+              The genre × age-rating table ranks combinations by appeal
+              (how well liked and favourited their games are) and estimated
+              session length, so you can see which audiences are engaged, not
+              just which are biggest.
             </li>
             <li>
               <strong className="text-foreground">Which regions matter for which content?</strong>{" "}
@@ -49,7 +49,7 @@ export default function ResultsPage() {
             <li>
               <strong className="text-foreground">Who is winning right now, and who is winning quietly?</strong>{" "}
               Two leaderboards run in parallel — raw concurrent players and
-              retention quality. Games that rank high on both are entrenched
+              appeal score. Games that rank high on both are entrenched
               leaders; games that rank high on quality but modest on size
               are the ones competitive teams should be watching.
             </li>
@@ -66,7 +66,7 @@ export default function ResultsPage() {
             <h3 className="font-semibold text-foreground">Studio &amp; product leads</h3>
             <p className="text-muted-foreground">
               Use the genre × age table to validate where to invest next. If
-              your title sits in a combination with weak retention but high
+              your title sits in a combination with weak appeal but high
               concurrency, you are buying attention — not earning it. Pivot
               the design brief towards combinations that score well on both.
             </p>
@@ -78,16 +78,16 @@ export default function ResultsPage() {
               under-indexes. If your game is a Survival title, the rows where
               Survival is the top genre are your highest-conversion markets;
               the rows where it isn&rsquo;t are either expansion opportunities or
-              graveyard spend, and the retention column tells you which.
+              graveyard spend, and the appeal column hints at which.
             </p>
           </div>
           <div>
             <h3 className="font-semibold text-foreground">Publishers &amp; investors</h3>
             <p className="text-muted-foreground">
               The two leaderboards form a quick screening 2×2: high players +
-              high retention is an entrenched leader (defensible asset);
-              high players + low retention is a churn risk priced as a hit;
-              low players + high retention is an under-marketed sleeper
+              high appeal is an entrenched leader (defensible asset);
+              high players + low appeal is a churn risk priced as a hit;
+              low players + high appeal is an under-marketed sleeper
               (acquisition target). Triage at a glance, then go deep on the
               names that catch the eye.
             </p>
@@ -97,7 +97,7 @@ export default function ResultsPage() {
             <p className="text-muted-foreground">
               Before committing months to a concept, look at how existing
               titles in the same genre × age combination are performing. A
-              category clustered at the bottom of the retention table is
+              category clustered at the bottom of the appeal table is
               telling you about its ceiling, not just its floor.
             </p>
           </div>
@@ -111,17 +111,16 @@ export default function ResultsPage() {
         <CardContent className="space-y-2 text-sm text-muted-foreground">
           <ul className="list-disc space-y-1.5 pl-5">
             <li>
-              <strong className="text-foreground">Retention here is an estimate, not a true cohort metric.</strong>{" "}
+              <strong className="text-foreground">The appeal score is not retention.</strong>{" "}
               Roblox doesn&rsquo;t expose per-user data, so we infer engagement
-              from public signals (likes, favourites, current players,
-              lifetime visits). It&rsquo;s a directional smell test — directional
+              from public signals (likes, favourites and current players). It&rsquo;s a directional smell test — directional
               enough to make decisions on, not precise enough to set targets
               by.
             </li>
             <li>
               <strong className="text-foreground">The dataset over-represents currently popular games.</strong>{" "}
-              We seed from Roblox&rsquo;s discovery surface, so anything Roblox
-              isn&rsquo;t actively promoting is invisible. Long-tail and niche
+              We find games through Roblox&rsquo;s discovery surface, so a game
+              Roblox has never promoted is invisible. Long-tail and niche
               titles aren&rsquo;t in the picture.
             </li>
             <li>

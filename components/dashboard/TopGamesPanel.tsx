@@ -27,7 +27,7 @@ const fmtCompact = { format: (n: number) => compactNumber(n, 1) };
 type SortKey = "retention" | "concurrent" | "visits" | "trend";
 
 const SORT_OPTIONS: Array<{ key: SortKey; label: string; help: string }> = [
-  { key: "retention", label: "Retention score", help: "Quality × fandom × current activity" },
+  { key: "retention", label: "Appeal score", help: "Quality × fandom × current activity" },
   { key: "concurrent", label: "Concurrent players", help: "Live players right now" },
   { key: "visits", label: "Lifetime visits", help: "Cumulative sessions ever" },
   { key: "trend", label: "Rising fastest", help: "Largest concurrent player gain across the rolling sample window" },
@@ -94,7 +94,7 @@ export function TopGamesPanel({ rows, defaultSort = "retention", limit = 10 }: P
                 <TableHead className="text-right">Concurrent</TableHead>
                 <TableHead>12h trend</TableHead>
                 <TableHead className="text-right">Lifetime visits</TableHead>
-                <TableHead className="text-right">Retention score</TableHead>
+                <TableHead className="text-right">Appeal score</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

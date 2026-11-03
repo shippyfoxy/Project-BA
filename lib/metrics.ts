@@ -35,6 +35,7 @@ export function likeRatio(upVotes: number, downVotes: number): number {
   return total === 0 ? 0 : upVotes / total;
 }
 
+// Shown on the site as the "appeal score"; the code keeps its original name.
 export function retentionProxy(g: RetentionInputs): number {
   // v2 formula (2026-05-10). The previous version divided by `visits / 24`,
   // which for established games (e.g. Brookhaven at 82B visits) collapsed

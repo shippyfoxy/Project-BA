@@ -41,7 +41,7 @@ function GenreTooltip({
     <div className="rounded-md border border-border bg-popover/95 px-3 py-2 text-xs shadow-lg backdrop-blur">
       <div className="font-medium text-foreground">{r.genre}</div>
       <div className="mt-1 text-muted-foreground">
-        retention proxy:{" "}
+        appeal score:{" "}
         <span className="text-foreground tabular-nums">
           {r.retentionProxy.toFixed(2)}
         </span>
@@ -73,7 +73,7 @@ function TopGamesPanel({ genre, games }: { genre: string; games: TopGameRow[] })
             <tr className="border-b border-border text-left text-muted-foreground">
               <th className="pb-1 pr-4 font-medium">#</th>
               <th className="pb-1 pr-4 font-medium">Game</th>
-              <th className="pb-1 pr-4 text-right font-medium">Retention</th>
+              <th className="pb-1 pr-4 text-right font-medium">Appeal</th>
               <th className="pb-1 pr-4 text-right font-medium">Concurrent</th>
               <th className="pb-1 text-right font-medium">Session</th>
             </tr>
@@ -125,7 +125,7 @@ export function GenreRetentionChart({ rows }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Estimated retention by genre</CardTitle>
+        <CardTitle>Appeal score by genre</CardTitle>
         <CardDescription>
           Proxied from like-ratio × log₁₀(favourites + 1) × log₁₀(concurrent + 1).
           Higher means more players are concentrated relative to engagement

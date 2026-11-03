@@ -66,7 +66,7 @@ function RegionDetail({ row }: { row: RegionRow }) {
         </div>
         <div className="hidden text-right text-xs text-muted-foreground md:block">
           <div className="tabular-nums text-foreground">{row.meanRetentionProxy.toFixed(3)}</div>
-          <div>avg retention</div>
+          <div>avg appeal</div>
         </div>
       </summary>
       <div className="grid grid-cols-1 gap-6 bg-muted/20 px-6 py-5 md:grid-cols-3">

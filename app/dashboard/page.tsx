@@ -18,7 +18,7 @@ export const revalidate = 3600;
 
 export const metadata = {
   title: "Classic dashboard: Roblox Pulse",
-  description: "The original Roblox Pulse dashboard: retention and session-length proxies by genre, age rating and region.",
+  description: "The original Roblox Pulse dashboard: appeal score and session-length proxies by genre, age rating and region.",
 };
 
 export default async function DashboardPage() {

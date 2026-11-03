@@ -355,7 +355,7 @@ export default async function TrendsHomePage() {
           </Link>
           <Link href="/dashboard" className="flex flex-[1_1_260px] flex-col gap-1.5 rounded-2xl border border-border bg-card px-6 py-5 hover:bg-surface-2">
             <span className="font-heading text-xl font-bold">Classic dashboard</span>
-            <span className="text-sm text-text-2">Retention and session-length proxies by genre, age rating and region.</span>
+            <span className="text-sm text-text-2">Appeal score and session-length proxies by genre, age rating and region.</span>
           </Link>
           <Link href="/methodology" className="flex flex-[1_1_260px] flex-col gap-1.5 rounded-2xl border border-border bg-card px-6 py-5 hover:bg-surface-2">
             <span className="font-heading text-xl font-bold">How we measure</span>

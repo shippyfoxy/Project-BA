@@ -204,13 +204,13 @@ function ComparisonSummary({ comparison }: { comparison: ComparisonResult }) {
 
   const rows: MetricRowSpec[] = [
     {
-      label: "Retention proxy (mean)",
+      label: "Appeal score (mean)",
       aStr: a.gameCount ? fmtNum.dp2(a.retentionMean) : dash,
       bStr: b.gameCount ? fmtNum.dp2(b.retentionMean) : dash,
       delta: deltas.retentionMean,
     },
     {
-      label: "Retention proxy (median)",
+      label: "Appeal score (median)",
       aStr: a.gameCount ? fmtNum.dp2(a.retentionMedian) : dash,
       bStr: b.gameCount ? fmtNum.dp2(b.retentionMedian) : dash,
       delta: deltas.retentionMedian,
@@ -329,8 +329,8 @@ function ComparisonChart({ comparison }: { comparison: ComparisonResult }) {
   const { a, b } = comparison;
 
   const specs: TooltipEntry[] = [
-    { metric: "Retention (mean)", rawA: a.retentionMean, rawB: b.retentionMean, fmtFn: fmtNum.dp2 },
-    { metric: "Retention (median)", rawA: a.retentionMedian, rawB: b.retentionMedian, fmtFn: fmtNum.dp2 },
+    { metric: "Appeal score (mean)", rawA: a.retentionMean, rawB: b.retentionMean, fmtFn: fmtNum.dp2 },
+    { metric: "Appeal score (median)", rawA: a.retentionMedian, rawB: b.retentionMedian, fmtFn: fmtNum.dp2 },
     { metric: "Session (min)", rawA: a.sessionMean ?? 0, rawB: b.sessionMean ?? 0, fmtFn: fmtNum.dp1 },
     { metric: "Vote ratio %", rawA: a.voteRatioPct, rawB: b.voteRatioPct, fmtFn: fmtNum.pct },
     { metric: "Concurrent (median)", rawA: a.concurrentMedian, rawB: b.concurrentMedian, fmtFn: fmtNum.int },

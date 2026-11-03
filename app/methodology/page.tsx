@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export const metadata = {
   title: "Methodology — Roblox Pulse",
   description:
-    "How the retention and session-length proxies are computed, what they don't measure, and the limitations of inferring engagement from public Roblox data.",
+    "How the appeal score and session-length proxy are computed, what they don't measure, and the limitations of inferring engagement from public Roblox data.",
 };
 
 export default function MethodologyPage() {
@@ -25,11 +25,11 @@ export default function MethodologyPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Retention proxy (v2)</CardTitle>
+          <CardTitle>Appeal score (v2, formerly the retention proxy)</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           <pre className="overflow-x-auto rounded-md border border-border bg-muted/40 p-3 font-mono text-xs">
-{`retentionProxy =
+{`appealScore =
     (upVotes / (upVotes + downVotes))
   × log10(favoritedCount + 1)
   × log10(playing + 1)`}
@@ -52,10 +52,15 @@ export default function MethodologyPage() {
             </li>
           </ul>
           <p className="text-muted-foreground">
+            <strong>Why the name:</strong> this measures how well liked and
+            popular a game is right now. It cannot measure whether players come
+            back, so it was renamed from &ldquo;retention proxy&rdquo; to avoid
+            being read as D1 or D7 retention.
+          </p>
+          <p className="text-muted-foreground">
             <strong>Why v2:</strong> the v1 formula divided by{" "}
             <code>visits / 24</code>, which collapsed established games like
-            Brookhaven (82B lifetime visits) to a near-zero score —
-            backwards from the business meaning of retention. v2 drops the
+            Brookhaven (82B lifetime visits) to a near-zero score. v2 drops the
             visits-as-denominator term entirely and rewards
             quality × fandom × current activity. Lifetime visits no longer
             penalise the score; if anything, they correlate with all three
@@ -107,15 +112,16 @@ export default function MethodologyPage() {
               AFK accounts and bots. There is no public way to net these out.
             </li>
             <li>
-              <strong>Game age.</strong> Lifetime visits are heavily biased
-              towards older games; the visit-velocity normalisation in the
-              retention proxy partially &mdash; but not fully &mdash; corrects
-              for this.
+              <strong>Game age.</strong> Favourites are lifetime totals, so
+              older games score higher on the appeal score; the log scale
+              softens this but does not remove it.
             </li>
             <li>
-              <strong>Discovery sampling bias.</strong> Seeds come from the
-              <code> explore-api</code> sorts (Top Trending, Top Playing Now,
-              etc.), so the dataset over-represents currently-popular games.
+              <strong>Discovery sampling bias.</strong> Games are found
+              through the <code> explore-api</code> sorts (Top Trending, Top
+              Playing Now, etc.). Since 25 October 2026 every game found there
+              is re-read on each refresh, but a game that never reaches those
+              lists is never tracked.
             </li>
           </ul>
         </CardContent>

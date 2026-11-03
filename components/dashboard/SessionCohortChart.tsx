@@ -82,7 +82,7 @@ function TopGamesPanel({
             <tr className="border-b border-border text-left text-muted-foreground">
               <th className="pb-1 pr-4 font-medium">#</th>
               <th className="pb-1 pr-4 font-medium">Game</th>
-              <th className="pb-1 pr-4 text-right font-medium">Retention</th>
+              <th className="pb-1 pr-4 text-right font-medium">Appeal</th>
               <th className="pb-1 text-right font-medium">Concurrent</th>
             </tr>
           </thead>
