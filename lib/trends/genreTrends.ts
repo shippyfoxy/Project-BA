@@ -38,6 +38,7 @@ export interface GenreBenchmark {
 export interface GenreRevenue {
   genre: string;
   ranked: number;
+  ranks: number[]; // so the browser can total the estimate for Pro visitors
   est: number;
   share: number;
 }
@@ -136,10 +137,11 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
   });
   shares.sort((a, b) => b.share - a.share);
 
-  const revBy = new Map<string, { ranked: number; est: number }>();
+  const revBy = new Map<string, { ranked: number; ranks: number[]; est: number }>();
   for (const r of ranks) {
-    const cur = revBy.get(r.genre) ?? { ranked: 0, est: 0 };
+    const cur = revBy.get(r.genre) ?? { ranked: 0, ranks: [], est: 0 };
     cur.ranked++;
+    cur.ranks.push(r.rank);
     cur.est += estMonthlyDevEx(r.rank)?.mid ?? 0;
     revBy.set(r.genre, cur);
   }
@@ -147,7 +149,7 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
   const revenue = {
     listDay: ranks[0]?.day ?? null,
     genres: [...revBy]
-      .map(([genre, v]) => ({ genre, ranked: v.ranked, est: v.est, share: revTotal ? v.est / revTotal : 0 }))
+      .map(([genre, v]) => ({ genre, ranked: v.ranked, ranks: v.ranks, est: v.est, share: revTotal ? v.est / revTotal : 0 }))
       .sort((a, b) => b.est - a.est),
   };
 

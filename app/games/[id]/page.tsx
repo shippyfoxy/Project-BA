@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -10,7 +11,7 @@ import { displayName } from "@/lib/trends/names";
 import { DEVICE_LABELS } from "@/lib/trends/labels";
 import { genreColor } from "@/lib/trends/genres";
 import { getEarningRanks, type EarningRanks } from "@/lib/trends/earnings";
-import { estMonthlyDevEx, fmtUsdEstimate } from "@/lib/trends/revenue";
+import { ProOnly, Usd } from "@/components/pro/Pro";
 import { getGameIcons, getGameScreenshots } from "@/lib/roblox/thumbnails";
 import { fmtCompact, fmtDay, fmtInt, fmtPct, fmtTimeUtc, fmtWeekdayDay } from "@/lib/format";
 import { niceMax } from "@/lib/stats";
@@ -62,7 +63,7 @@ const ordinal = (n: number) => {
   return `${r}${s}`;
 };
 
-function Tile({ label, value, hint }: { label: string; value: string; hint: string }) {
+function Tile({ label, value, hint }: { label: string; value: string; hint: ReactNode }) {
   return (
     <div className="flex-[1_1_220px] rounded-2xl border border-border bg-card px-5 py-4">
       <div className="text-[13px] text-muted-foreground">{label}</div>
@@ -113,7 +114,6 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
   if (!g) notFound();
 
   const [icons, shots, earning] = await Promise.all([getGameIcons([g.universeId]), getGameScreenshots(g.universeId), loadEarning(g.universeId)]);
-  const est = estMonthlyDevEx(earning?.latest?.rank);
   const name = displayName(g.name);
   const robloxHref = g.canonicalUrlPath ? `https://www.roblox.com${g.canonicalUrlPath}` : null;
   const first = g.daily[0];
@@ -184,12 +184,14 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
                 Open on Roblox<span className="sr-only"> (opens Roblox)</span>
               </a>
             ) : null}
+            <ProOnly label="Download data">
             <a
-              href={`/api/v1/games/${g.universeId}/history?from=2026-05-01&format=csv`}
-              className="inline-flex h-11 items-center rounded-xl bg-rise px-4 text-sm font-bold text-background hover:brightness-110"
-            >
-              Download daily CSV
-            </a>
+                href={`/api/v1/games/${g.universeId}/history?from=2026-05-01&format=csv`}
+                className="inline-flex h-11 items-center rounded-xl bg-rise px-4 text-sm font-bold text-background hover:brightness-110"
+              >
+                Download daily CSV
+              </a>
+            </ProOnly>
           </div>
         </div>
       </section>
@@ -223,11 +225,15 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
           <Tile label="Tracked for" value={`${g.daily.length} days`} hint={`since ${fmtDay(first.dayMs)}`} />
         )}
         <Tile label="Highest single reading" value={fmtCompact(g.highest.players)} hint={`${fmtWeekdayDay(g.highest.atMs)}, ${fmtTimeUtc(g.highest.atMs)}`} />
-        {earning?.latest && est ? (
+        {earning?.latest ? (
           <Tile
             label="Top Earning rank"
             value={`#${earning.latest.rank}`}
-            hint={`est. ${fmtUsdEstimate(est.low)} to ${fmtUsdEstimate(est.high)} a month in payouts (modelled)`}
+            hint={
+              <>
+                <Usd rank={earning.latest.rank} kind="range" prefix="est. " suffix=" a month in payouts (modelled)" />
+              </>
+            }
           />
         ) : earning?.best ? (
           <Tile label="Top Earning rank" value="Not ranked now" hint={`best #${earning.best.rank}, ${fmtDay(earning.best.dayMs)}`} />
@@ -243,8 +249,10 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
         </p>
       ) : null}
 
-      <p className="-mt-3 text-[13px] text-muted-foreground">
-        All history as CSV:{" "}
+      <div className="-mt-3 flex flex-wrap items-center gap-2 text-[13px] text-muted-foreground">
+        <ProOnly label="Pro: all history as CSV, daily, weekly or monthly">
+          <span>
+            All history as CSV:{" "}
         <a href={`/api/v1/games/${g.universeId}/history?from=2026-05-01&format=csv`} className="text-link underline">
           daily
         </a>
@@ -260,7 +268,9 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
         <Link href="/api#history-fields" className="text-link underline">
           Fields
         </Link>
-      </p>
+          </span>
+        </ProOnly>
+      </div>
 
       <section aria-labelledby="players" className="flex flex-col gap-3 rounded-2xl border border-border bg-card px-6 pb-4 pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">

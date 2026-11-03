@@ -3,6 +3,7 @@ import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
 import { MainNav } from "@/components/v2/MainNav";
+import { ProProvider } from "@/components/pro/Pro";
 import { getCachedActiveGames } from "@/lib/trends/cached";
 import { fmtDay, fmtTimeUtc } from "@/lib/format";
 import "./globals.css";
@@ -55,10 +56,13 @@ export default async function RootLayout({
 }>) {
   // The same cached data as the Trends and stage pages, so the header never
   // disagrees with the "last refresh" they show.
-  const refreshedMs = (await getCachedActiveGames().catch(() => null))?.asOfMs ?? null;
+  // A slow database must not hold up every page, so the header gives it 4 seconds.
+  const active = await Promise.race([getCachedActiveGames().catch(() => null), new Promise<null>((r) => setTimeout(() => r(null), 4_000))]);
+  const refreshedMs = active?.asOfMs ?? null;
   return (
     <html lang="en-GB" className={`dark ${geistSans.variable} ${geistMono.variable} ${bricolage.variable}`}>
       <body className="min-h-screen bg-background text-foreground antialiased">
+        <ProProvider>
         <header className="border-b border-border">
           <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 md:px-6">
             <Link href="/" className="flex items-center gap-2.5 font-heading text-[19px] font-extrabold tracking-tight">
@@ -99,6 +103,7 @@ export default async function RootLayout({
             </span>
           </div>
         </footer>
+        </ProProvider>
         <Analytics />
       </body>
     </html>

@@ -6,7 +6,7 @@ import { genreColor } from "@/lib/trends/genres";
 import { fmtDay, fmtInt } from "@/lib/format";
 import { niceMax } from "@/lib/stats";
 import { LineChart } from "@/components/v2/LineChart";
-import { fmtUsdEstimate } from "@/lib/trends/revenue";
+import { UsdSum } from "@/components/pro/Pro";
 
 export const revalidate = 3600;
 export const maxDuration = 30;
@@ -237,7 +237,9 @@ export default async function GenresPage() {
                         </Link>
                       </th>
                       <td className="px-2 py-2.5">{fmtInt(g.ranked)}</td>
-                      <td className="px-2 py-2.5">{fmtUsdEstimate(g.est)}</td>
+                      <td className="px-2 py-2.5">
+                        <UsdSum ranks={g.ranks} />
+                      </td>
                       <td className="w-[300px] px-2 py-2.5 text-left">
                         <div className="flex flex-col gap-[3px]" role="img" aria-label={`${pct(g.share)} of estimated revenue, ${pct(players)} of players`}>
                           <span className="flex items-center gap-2">

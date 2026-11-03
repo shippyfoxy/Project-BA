@@ -25,6 +25,7 @@ import {
 import { ClientOnly } from "@/components/dashboard/ClientOnly";
 import type { SnapshotGame } from "@/lib/snapshot/schema";
 import { fmtUsdEstimate } from "@/lib/trends/revenue";
+import { ProLock, usePro } from "@/components/pro/Pro";
 import {
   applyFilter,
   availableGenres,
@@ -186,10 +187,12 @@ interface MetricRowSpec {
   aStr: string;
   bStr: string;
   delta: MetricDelta;
+  pro?: boolean; // modelled revenue: shown to Pro subscribers only
 }
 
 function ComparisonSummary({ comparison }: { comparison: ComparisonResult }) {
   const { a, b, deltas } = comparison;
+  const isPro = usePro();
 
   if (a.gameCount === 0 && b.gameCount === 0) {
     return (
@@ -253,12 +256,14 @@ function ComparisonSummary({ comparison }: { comparison: ComparisonResult }) {
       delta: deltas.rankedCount,
     },
     {
+      pro: true,
       label: "Est. monthly revenue, total (modelled)",
       aStr: a.rankedCount ? fmtUsdEstimate(a.estRevenueTotal) : dash,
       bStr: b.rankedCount ? fmtUsdEstimate(b.estRevenueTotal) : dash,
       delta: deltas.estRevenueTotal,
     },
     {
+      pro: true,
       label: "Est. monthly revenue, median ranked game (modelled)",
       aStr: a.estRevenueMedian !== null ? fmtUsdEstimate(a.estRevenueMedian) : dash,
       bStr: b.estRevenueMedian !== null ? fmtUsdEstimate(b.estRevenueMedian) : dash,
@@ -284,19 +289,28 @@ function ComparisonSummary({ comparison }: { comparison: ComparisonResult }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rows.map(({ label, aStr, bStr, delta }) => (
-              <TableRow key={label}>
-                <TableCell>{label}</TableCell>
-                <TableCell className="text-right tabular-nums">{aStr}</TableCell>
-                <TableCell className="text-right tabular-nums">{bStr}</TableCell>
-                <TableCell className="text-right tabular-nums">
-                  <DeltaCell delta={delta} />
-                </TableCell>
-                <TableCell className="text-right">
-                  <WinnerBadge winner={delta.winner} />
-                </TableCell>
-              </TableRow>
-            ))}
+            {rows.map(({ label, aStr, bStr, delta, pro }) =>
+              pro && !isPro ? (
+                <TableRow key={label}>
+                  <TableCell>{label}</TableCell>
+                  <TableCell className="text-right" colSpan={4}>
+                    <ProLock />
+                  </TableCell>
+                </TableRow>
+              ) : (
+                <TableRow key={label}>
+                  <TableCell>{label}</TableCell>
+                  <TableCell className="text-right tabular-nums">{aStr}</TableCell>
+                  <TableCell className="text-right tabular-nums">{bStr}</TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    <DeltaCell delta={delta} />
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <WinnerBadge winner={delta.winner} />
+                  </TableCell>
+                </TableRow>
+              ),
+            )}
           </TableBody>
         </Table>
       </CardContent>

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSiteDb } from "@/lib/db/site";
+import { requirePro } from "@/lib/pro";
 import { ageDays, parseFilters, screenGames, windowAverages } from "@/lib/trends/screener";
 import { estMonthlyDevEx } from "@/lib/trends/revenue";
 import { displayName } from "@/lib/trends/names";
@@ -12,6 +13,8 @@ const round = (n: number | null, digits = 0) => (n === null ? null : Number(n.to
 // Every game matching the Explore filters, with the same query parameters as
 // the page. Not paged: the full match list is a few thousand rows at most.
 export async function GET(req: NextRequest) {
+  const denied = await requirePro(req);
+  if (denied) return denied;
   const sp = req.nextUrl.searchParams;
   const format = sp.get("format") ?? "json";
   if (format !== "json" && format !== "csv") return NextResponse.json({ error: "format must be json or csv." }, { status: 400 });
@@ -61,7 +64,7 @@ export async function GET(req: NextRequest) {
     };
   });
 
-  const headers = { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" };
+  const headers = { "Cache-Control": "private, max-age=1800" };
   if (format === "csv") {
     const cols = Object.keys(games[0] ?? { universe_id: 0 }) as (keyof (typeof games)[number])[];
     const body = [cols.join(","), ...games.map((g) => cols.map((c) => csvCell(g[c])).join(","))].join("\n");

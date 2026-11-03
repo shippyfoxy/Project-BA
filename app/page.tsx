@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getSiteDb } from "@/lib/db/site";
 import { getCachedActiveGames } from "@/lib/trends/cached";
 import { getTrendsHome, type Earner, type HomeGame, type Mover } from "@/lib/trends/home";
-import { fmtUsdEstimate } from "@/lib/trends/revenue";
+import { Usd, UsdPerPlayer } from "@/components/pro/Pro";
 import { displayName } from "@/lib/trends/names";
 import type { Stage } from "@/lib/trends/stage";
 import { getGameIcons } from "@/lib/roblox/thumbnails";
@@ -74,12 +74,16 @@ function EarnerList({ title, games, icons, perPlayer }: { title: string; games: 
               <span className="text-right text-sm tabular-nums">
                 {perPlayer && g.cur7 ? (
                   <>
-                    <span className="block">est. ${(g.estMonthly / g.cur7).toFixed(0)}</span>
+                    <span className="block">
+                      <UsdPerPlayer rank={g.rank} players={g.cur7} prefix="est. " />
+                    </span>
                     <span className="block text-xs text-muted-foreground">per player a month</span>
                   </>
                 ) : (
                   <>
-                    <span className="block">est. {fmtUsdEstimate(g.estMonthly)}/mo</span>
+                    <span className="block">
+                      <Usd rank={g.rank} prefix="est. " suffix="/mo" />
+                    </span>
                     <span className="block text-xs text-muted-foreground">{g.cur7 === null ? "under 1,000 players" : `${fmtInt(g.cur7)} players`}</span>
                   </>
                 )}

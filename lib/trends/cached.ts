@@ -33,7 +33,7 @@ export const getCachedGenreTrends = unstable_cache(
     const db = getSiteDb();
     return db ? getGenreTrends(db) : null;
   },
-  ["genre-trends-v2"],
+  ["genre-trends-v3"],
   { revalidate: 3600 },
 );
 

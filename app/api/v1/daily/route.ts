@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSiteDb } from "@/lib/db/site";
+import { requirePro } from "@/lib/pro";
 import { displayName } from "@/lib/trends/names";
 import { estMonthlyDevEx } from "@/lib/trends/revenue";
 import { toCsv } from "@/lib/trends/history";
@@ -8,7 +9,7 @@ const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
 // Matches the format and is a real calendar day (2026-02-30 is not).
 const realDay = (s: string) => DAY_RE.test(s) && new Date(`${s}T00:00:00Z`).toISOString().slice(0, 10) === s;
 const METHODOLOGY = "https://pulse.shipfox.me/methodology";
-const CACHE = { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" };
+const CACHE = { "Cache-Control": "private, max-age=1800" };
 
 function bad(message: string, status = 400) {
   return NextResponse.json({ error: message }, { status });
@@ -17,6 +18,8 @@ function bad(message: string, status = 400) {
 // Every tracked game for one UTC day: the bulk export. Defaults to the last
 // complete day, since today is still filling in. A day is about 7,000 rows.
 export async function GET(req: NextRequest) {
+  const denied = await requirePro(req);
+  if (denied) return denied;
   const sp = req.nextUrl.searchParams;
   const day = sp.get("day");
   const format = sp.get("format") ?? "json";

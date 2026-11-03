@@ -1,8 +1,9 @@
 import type { Db } from "./client";
 import type { Snapshot, SnapshotGame } from "../snapshot/schema";
 
-// Matches what refresh-data kept per game in the JSON snapshot.
-const SAMPLES_PER_GAME = 48;
+// Matches what refresh-data keeps per game in the JSON snapshot: a day of
+// hourly readings, enough for the classic dashboard's peak hour and session length.
+const SAMPLES_PER_GAME = 24;
 
 interface GameRow {
   universe_id: number;

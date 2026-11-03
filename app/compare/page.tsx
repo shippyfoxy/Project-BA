@@ -7,7 +7,7 @@ import { displayName } from "@/lib/trends/names";
 import { getGameIcons } from "@/lib/roblox/thumbnails";
 import { fmtDay, fmtInt } from "@/lib/format";
 import { niceMax } from "@/lib/stats";
-import { estMonthlyDevEx, fmtUsdEstimate } from "@/lib/trends/revenue";
+import { Usd } from "@/components/pro/Pro";
 import { GameIcon } from "@/components/v2/GameIcon";
 import { GenreChip } from "@/components/v2/GenreChip";
 import { LineChart, type LineSeries } from "@/components/v2/LineChart";
@@ -316,7 +316,9 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                           ) : (
                             <>
                               #{g.earningRank}{" "}
-                              <span className="text-muted-foreground">est. {fmtUsdEstimate(estMonthlyDevEx(g.earningRank)!.mid)}/mo</span>
+                              <span className="text-muted-foreground">
+                                <Usd rank={g.earningRank} prefix="est. " suffix="/mo" />
+                              </span>
                             </>
                           )}
                         </td>

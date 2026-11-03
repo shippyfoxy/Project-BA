@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSiteDb } from "@/lib/db/site";
+import { requirePro } from "@/lib/pro";
 import { displayName } from "@/lib/trends/names";
 import { RESOLUTIONS, rollUp, toCsv, toDaily, type DayRow, type Resolution } from "@/lib/trends/history";
 
@@ -9,7 +10,7 @@ const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
 const realDay = (s: string) => DAY_RE.test(s) && new Date(`${s}T00:00:00Z`).toISOString().slice(0, 10) === s;
 const METHODOLOGY = "https://pulse.shipfox.me/methodology";
 // Data changes a few times a day; the API page promises at most 30 minutes stale.
-const CACHE = { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" };
+const CACHE = { "Cache-Control": "private, max-age=1800" };
 
 
 function bad(message: string, status = 400) {
@@ -17,6 +18,8 @@ function bad(message: string, status = 400) {
 }
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const denied = await requirePro(req);
+  if (denied) return denied;
   const { id } = await params;
   if (!/^\d{1,20}$/.test(id)) return bad("Universe ID must be a number.");
   const sp = req.nextUrl.searchParams;

@@ -9,8 +9,11 @@ import { getGameIcons } from "@/lib/roblox/thumbnails";
 import { fmtDay, fmtInt } from "@/lib/format";
 import { GameIcon } from "@/components/v2/GameIcon";
 import { GenreChip } from "@/components/v2/GenreChip";
+import { ProLock, ProStar } from "@/components/pro/Pro";
+import { isProSession } from "@/lib/pro";
 
-export const revalidate = 3600;
+// Rendered per visitor (Pro or not); the data underneath is cached hourly.
+export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
 export const metadata: Metadata = {
@@ -19,6 +22,32 @@ export const metadata: Metadata = {
 };
 
 const SHOWN = 100;
+const PREVIEW = 5;
+
+function Upgrade() {
+  return (
+    <section className="flex flex-col gap-3 rounded-2xl border border-[rgba(229,177,58,0.4)] bg-[rgba(229,177,58,0.07)] p-6">
+      <h2 className="flex items-center gap-2 font-heading text-2xl font-bold">
+        <ProStar className="size-5" />
+        Revenue is part of Roblox Pulse Pro
+      </h2>
+      <ul className="flex list-disc flex-col gap-1 pl-5 text-text-2">
+        <li>Estimated monthly payouts for all ~460 games in Roblox&apos;s Top Earning list, with ranges</li>
+        <li>Daily climbers and fallers, revenue per player and revenue by genre</li>
+        <li>Dollar figures across the site, CSV exports, 30 and 90-day windows and the full API</li>
+      </ul>
+      <div className="flex flex-wrap items-center gap-3">
+        <Link
+          href="/pro"
+          className="inline-flex h-11 items-center rounded-xl bg-gold px-5 text-sm font-bold text-background hover:brightness-110"
+        >
+          Get Pro, $5 a month
+        </Link>
+        <span className="text-[13px] text-muted-foreground">Ranks stay free everywhere on the site.</span>
+      </div>
+    </section>
+  );
+}
 
 function Tile({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
@@ -90,8 +119,9 @@ export default async function RevenuePage() {
     );
   }
 
+  const pro = await isProSession();
   const { games, listDay, prevDay, totalEst, medianEst } = data;
-  const shown = games.slice(0, SHOWN);
+  const shown = games.slice(0, pro ? SHOWN : PREVIEW);
   const top10 = games.slice(0, 10).reduce((a, g) => a + g.estMonthly, 0);
   const climbers = prevDay
     ? games
@@ -119,8 +149,8 @@ export default async function RevenuePage() {
       <header className="flex flex-col gap-3">
         <h1 className="font-heading text-5xl font-extrabold tracking-[-0.03em]">Revenue</h1>
         <p className="max-w-3xl text-text-2">
-          Roblox&apos;s own Top Earning list ranks games by Robux spent in the last 7 days. Roblox publishes the order but never the amounts, so
-          every dollar figure here is an estimate modelled from the rank.{" "}
+          Roblox&apos;s own Top Earning list ranks games by Robux spent in the last 7 days. Roblox publishes the order but never the
+          amounts, so every dollar figure here is an estimate modelled from the rank.{" "}
           <Link href="/methodology#revenue" className="text-link underline">
             How it is estimated
           </Link>
@@ -129,45 +159,53 @@ export default async function RevenuePage() {
 
       <section aria-label="Key figures" className="flex flex-wrap gap-3">
         <Tile label="Games ranked" value={fmtInt(games.length)} hint={`Top Earning list, ${fmtDay(Date.parse(listDay))}`} />
-        <Tile label="Est. payouts a month" value={fmtUsdEstimate(totalEst)} hint="across every ranked game (modelled)" />
-        <Tile label="Top 10's share" value={`${Math.round((100 * top10) / totalEst)}%`} hint="of the estimated total" />
-        <Tile label="Median ranked game" value={`${fmtUsdEstimate(medianEst)}/mo`} hint="estimated payout" />
+        {pro ? (
+          <>
+            <Tile label="Est. payouts a month" value={fmtUsdEstimate(totalEst)} hint="across every ranked game (modelled)" />
+            <Tile label="Top 10's share" value={`${Math.round((100 * top10) / totalEst)}%`} hint="of the estimated total" />
+            <Tile label="Median ranked game" value={`${fmtUsdEstimate(medianEst)}/mo`} hint="estimated payout" />
+          </>
+        ) : null}
       </section>
 
-      <section aria-labelledby="movers" className="flex flex-col gap-3.5">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id="movers" className="font-heading text-[28px] font-bold tracking-tight">
-            Biggest moves in Top Earning
-          </h2>
-          {prevDay ? (
-            <span className="text-[13px] text-muted-foreground">
-              {fmtDay(Date.parse(prevDay))} to {fmtDay(Date.parse(listDay))}, moves of 5+ places
-            </span>
-          ) : null}
-        </div>
-        {prevDay ? (
-          <>
-            <div className="flex flex-wrap gap-4">
-              <MoverCard title="Climbing" games={climbers} icons={icons} />
-              <MoverCard title="Slipping" games={fallers} icons={icons} />
-            </div>
-            {entries.length ? (
-              <p className="text-[13px] text-muted-foreground">
-                {fmtInt(entries.length)} {entries.length === 1 ? "game" : "games"} entered the list, led by{" "}
-                <Link href={`/games/${entries[0].universeId}`} className="text-link underline">
-                  {displayName(entries[0].name)}
-                </Link>{" "}
-                at #{entries[0].rank}.
-              </p>
+      {pro ? null : <Upgrade />}
+
+      {pro ? (
+        <section aria-labelledby="movers" className="flex flex-col gap-3.5">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="movers" className="font-heading text-[28px] font-bold tracking-tight">
+              Biggest moves in Top Earning
+            </h2>
+            {prevDay ? (
+              <span className="text-[13px] text-muted-foreground">
+                {fmtDay(Date.parse(prevDay))} to {fmtDay(Date.parse(listDay))}, moves of 5+ places
+              </span>
             ) : null}
-          </>
-        ) : (
-          <p className="rounded-2xl border border-border bg-card p-5 text-sm text-text-2">
-            Ranks have been recorded since {fmtDay(Date.parse(listDay))}. Daily climbers and fallers appear here once there is a second day to
-            compare.
-          </p>
-        )}
-      </section>
+          </div>
+          {prevDay ? (
+            <>
+              <div className="flex flex-wrap gap-4">
+                <MoverCard title="Climbing" games={climbers} icons={icons} />
+                <MoverCard title="Slipping" games={fallers} icons={icons} />
+              </div>
+              {entries.length ? (
+                <p className="text-[13px] text-muted-foreground">
+                  {fmtInt(entries.length)} {entries.length === 1 ? "game" : "games"} entered the list, led by{" "}
+                  <Link href={`/games/${entries[0].universeId}`} className="text-link underline">
+                    {displayName(entries[0].name)}
+                  </Link>{" "}
+                  at #{entries[0].rank}.
+                </p>
+              ) : null}
+            </>
+          ) : (
+            <p className="rounded-2xl border border-border bg-card p-5 text-sm text-text-2">
+              Ranks have been recorded since {fmtDay(Date.parse(listDay))}. Daily climbers and fallers appear here once there is a second
+              day to compare.
+            </p>
+          )}
+        </section>
+      ) : null}
 
       <section aria-labelledby="list" className="flex flex-col gap-3">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -178,22 +216,40 @@ export default async function RevenuePage() {
             <Link href="/explore?launched=any&earning=1&sort=earnings" className="text-link hover:underline">
               All {fmtInt(games.length)} in Explore
             </Link>
-            <a href="/api/v1/explore?launched=any&earning=1&sort=earnings&format=csv" className="text-link hover:underline">
-              Download CSV
-            </a>
+            {pro ? (
+              <a href="/api/v1/explore?launched=any&earning=1&sort=earnings&format=csv" className="text-link hover:underline">
+                Download CSV
+              </a>
+            ) : null}
           </span>
         </div>
         <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
           <table className="w-full min-w-[880px] border-collapse text-sm tabular-nums">
             <thead>
               <tr className="text-right text-xs text-muted-foreground">
-                <th scope="col" className="w-14 px-4 py-3 text-left font-medium">Rank</th>
-                {prevDay ? <th scope="col" className="w-14 px-2 py-3 font-medium">Move</th> : null}
-                <th scope="col" className="px-2 py-3 text-left font-medium">Game</th>
-                <th scope="col" className="px-2 py-3 font-medium">Est. per month</th>
-                <th scope="col" className="px-2 py-3 font-medium">Range</th>
-                <th scope="col" className="px-2 py-3 font-medium">7-day avg players</th>
-                <th scope="col" className="px-4 py-3 font-medium">Per player</th>
+                <th scope="col" className="w-14 px-4 py-3 text-left font-medium">
+                  Rank
+                </th>
+                {prevDay ? (
+                  <th scope="col" className="w-14 px-2 py-3 font-medium">
+                    Move
+                  </th>
+                ) : null}
+                <th scope="col" className="px-2 py-3 text-left font-medium">
+                  Game
+                </th>
+                <th scope="col" className="px-2 py-3 font-medium">
+                  Est. per month
+                </th>
+                <th scope="col" className="px-2 py-3 font-medium">
+                  Range
+                </th>
+                <th scope="col" className="px-2 py-3 font-medium">
+                  7-day avg players
+                </th>
+                <th scope="col" className="px-4 py-3 font-medium">
+                  Per player
+                </th>
               </tr>
             </thead>
             <tbody className="whitespace-nowrap text-right">
@@ -220,13 +276,19 @@ export default async function RevenuePage() {
                         </span>
                       </Link>
                     </th>
-                    <td className="px-2 py-2.5 font-semibold">{fmtUsdEstimate(est.mid)}</td>
+                    <td className="px-2 py-2.5 font-semibold">{pro ? fmtUsdEstimate(est.mid) : <ProLock />}</td>
                     <td className="px-2 py-2.5 text-text-2">
-                      {fmtUsdEstimate(est.low)} to {fmtUsdEstimate(est.high)}
+                      {pro ? `${fmtUsdEstimate(est.low)} to ${fmtUsdEstimate(est.high)}` : <ProLock />}
                     </td>
                     <td className="px-2 py-2.5">{g.cur7 === null ? <span className="text-muted-foreground">—</span> : fmtInt(g.cur7)}</td>
                     <td className="px-4 py-2.5">
-                      {g.cur7 !== null && g.cur7 >= 1_000 ? `$${(est.mid / g.cur7).toFixed(0)}` : <span className="text-muted-foreground">—</span>}
+                      {g.cur7 === null || g.cur7 < 1_000 ? (
+                        <span className="text-muted-foreground">—</span>
+                      ) : pro ? (
+                        `$${(est.mid / g.cur7).toFixed(0)}`
+                      ) : (
+                        <ProLock />
+                      )}
                     </td>
                   </tr>
                 );
@@ -235,59 +297,77 @@ export default async function RevenuePage() {
           </table>
         </div>
         <p className="text-[13px] text-muted-foreground">
-          Showing the top {SHOWN}. Per player is the estimated monthly payout divided by average concurrent players, for games averaging 1,000+.
+          {pro ? `Showing the top ${SHOWN}.` : `A preview of the top ${PREVIEW}; ranks for every game are free in Explore.`} Per player is
+          the estimated monthly payout divided by average concurrent players, for games averaging 1,000+.
         </p>
       </section>
 
-      <div className="flex flex-wrap gap-4">
-        <section aria-labelledby="per-player" className="min-w-0 flex-[1_1_440px] overflow-hidden rounded-2xl border border-border bg-card">
-          <h2 id="per-player" className="border-b border-border px-5 py-3.5 font-heading text-[20px] font-bold">
-            Most revenue per player
-          </h2>
-          <ol>
-            {perPlayer.map((g) => {
-              const name = displayName(g.name);
-              return (
-                <li key={g.universeId} className="flex items-center gap-3 border-t border-[#1b2028] px-5 py-2.5 first:border-t-0">
-                  <span className="w-9 shrink-0 text-right text-sm tabular-nums text-muted-foreground">#{g.rank}</span>
-                  <GameIcon url={icons.get(g.universeId)} name={name} size={32} />
-                  <Link href={`/games/${g.universeId}`} className="min-w-0 flex-1 truncate font-medium hover:text-link">
-                    {name}
-                  </Link>
-                  <span className="text-right text-sm tabular-nums">
-                    est. ${(g.estMonthly / g.cur7!).toFixed(0)}
-                    <span className="block text-xs text-muted-foreground">{fmtInt(g.cur7!)} players</span>
-                  </span>
-                </li>
-              );
-            })}
-          </ol>
-        </section>
-
-        <section aria-labelledby="by-genre" className="min-w-0 flex-[1_1_440px] rounded-2xl border border-border bg-card px-5 pb-4 pt-3.5">
-          <div className="flex items-baseline justify-between gap-2">
-            <h2 id="by-genre" className="font-heading text-[20px] font-bold">
-              Estimated revenue by genre
+      {pro ? (
+        <div className="flex flex-wrap gap-4">
+          <section
+            aria-labelledby="per-player"
+            className="min-w-0 flex-[1_1_440px] overflow-hidden rounded-2xl border border-border bg-card"
+          >
+            <h2 id="per-player" className="border-b border-border px-5 py-3.5 font-heading text-[20px] font-bold">
+              Most revenue per player
             </h2>
-            <Link href="/genres#revenue" className="text-sm text-link hover:underline">
-              Against players
-            </Link>
-          </div>
-          <ul className="mt-3 flex flex-col gap-2.5">
-            {genres.map((g) => (
-              <li key={g.genre} className="grid grid-cols-[150px_minmax(0,1fr)_64px] items-center gap-3 text-sm">
-                <span className="flex min-w-0 items-center gap-2">
-                  <span aria-hidden="true" className="inline-block size-2 shrink-0 rounded-full" style={{ background: genreColor(g.genre) }} />
-                  <span className="truncate">{g.genre}</span>
-                </span>
-                <span className="h-2.5 rounded-sm bg-gold" style={{ width: `${Math.max((g.share / genreMax) * 100, 1)}%` }} />
-                <span className="text-right tabular-nums text-text-2">{fmtUsdEstimate(g.est)}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-3 text-[13px] text-muted-foreground">Summed over each genre&apos;s ranked games, per month, modelled.</p>
-        </section>
-      </div>
+            <ol>
+              {perPlayer.map((g) => {
+                const name = displayName(g.name);
+                return (
+                  <li key={g.universeId} className="flex items-center gap-3 border-t border-[#1b2028] px-5 py-2.5 first:border-t-0">
+                    <span className="w-9 shrink-0 text-right text-sm tabular-nums text-muted-foreground">#{g.rank}</span>
+                    <GameIcon url={icons.get(g.universeId)} name={name} size={32} />
+                    <Link href={`/games/${g.universeId}`} className="min-w-0 flex-1 truncate font-medium hover:text-link">
+                      {name}
+                    </Link>
+                    <span className="text-right text-sm tabular-nums">
+                      est. ${(g.estMonthly / g.cur7!).toFixed(0)}
+                      <span className="block text-xs text-muted-foreground">{fmtInt(g.cur7!)} players</span>
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+
+          <section
+            aria-labelledby="by-genre"
+            className="min-w-0 flex-[1_1_440px] rounded-2xl border border-border bg-card px-5 pb-4 pt-3.5"
+          >
+            <div className="flex items-baseline justify-between gap-2">
+              <h2 id="by-genre" className="font-heading text-[20px] font-bold">
+                Estimated revenue by genre
+              </h2>
+              <Link href="/genres#revenue" className="text-sm text-link hover:underline">
+                Against players
+              </Link>
+            </div>
+            <ul className="mt-3 flex flex-col gap-2.5">
+              {genres.map((g) => (
+                <li key={g.genre} className="grid grid-cols-[150px_minmax(0,1fr)_64px] items-center gap-3 text-sm">
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span
+                      aria-hidden="true"
+                      className="inline-block size-2 shrink-0 rounded-full"
+                      style={{ background: genreColor(g.genre) }}
+                    />
+                    <span className="truncate">{g.genre}</span>
+                  </span>
+                  <span
+                    className="h-2.5 rounded-sm bg-gold"
+                    style={{
+                      width: `${Math.max((g.share / genreMax) * 100, 1)}%`,
+                    }}
+                  />
+                  <span className="text-right tabular-nums text-text-2">{fmtUsdEstimate(g.est)}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-[13px] text-muted-foreground">Summed over each genre&apos;s ranked games, per month, modelled.</p>
+          </section>
+        </div>
+      ) : null}
     </main>
   );
 }

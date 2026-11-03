@@ -29,7 +29,8 @@ function clientIp(req: NextRequest): string {
 
 export function middleware(req: NextRequest) {
   const ua = req.headers.get("user-agent") ?? "";
-  const isApi = req.nextUrl.pathname.startsWith("/api/");
+  // The Pro status check runs on every page view, so it counts as a page.
+  const isApi = req.nextUrl.pathname.startsWith("/api/") && req.nextUrl.pathname !== "/api/pro/status";
 
   if (isAiCrawler(ua)) {
     return new NextResponse("AI crawlers are not permitted on this site.\n", { status: 403, headers: { "Content-Type": "text/plain" } });

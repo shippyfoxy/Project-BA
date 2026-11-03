@@ -20,7 +20,7 @@ import {
   type SortKey,
 } from "@/lib/trends/screener";
 import { COUNTRY_NAMES } from "@/lib/snapshot/aggregate";
-import { estMonthlyDevEx, fmtUsdEstimate } from "@/lib/trends/revenue";
+import { ProOnly, Usd } from "@/components/pro/Pro";
 import { getGameIcons } from "@/lib/roblox/thumbnails";
 import { fmtDay, fmtInt, fmtPct } from "@/lib/format";
 import { ApplyButton, AutoSubmitForm } from "@/components/v2/AutoSubmitForm";
@@ -328,12 +328,14 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
             <option value="asc">{f.sort === "newest" ? "Oldest first" : "Low to high"}</option>
           </select>
           {matches.length > 0 ? (
-            <a
-              href={`/api/v1/explore${query ? `${query}&` : "?"}format=csv`}
-              className="inline-flex h-10 items-center rounded-[10px] border border-input px-3 text-sm text-text-2 hover:text-foreground"
-            >
-              Download CSV
-            </a>
+            <ProOnly label="Download CSV">
+              <a
+                href={`/api/v1/explore${query ? `${query}&` : "?"}format=csv`}
+                className="inline-flex h-10 items-center rounded-[10px] border border-input px-3 text-sm text-text-2 hover:text-foreground"
+              >
+                Download CSV
+              </a>
+            </ProOnly>
           ) : null}
         </div>
       </div>
@@ -404,7 +406,7 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
                         <span className="flex flex-col items-end leading-tight">
                           <span>#{g.earningRank}</span>
                           <span className="text-xs text-muted-foreground" title="Modelled from the rank, not measured">
-                            est. {fmtUsdEstimate(estMonthlyDevEx(g.earningRank)!.mid)}/mo
+                            <Usd rank={g.earningRank} prefix="est. " suffix="/mo" />
                           </span>
                         </span>
                       )}
@@ -445,7 +447,7 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
       ) : null}
 
       <p className="text-[13px] text-muted-foreground">
-        The CSV has every match, not just this page, with 1, 7, 30 and 90-day average players and the Top Earning rank with its modelled revenue
+        Pro: the CSV has every match, not just this page, with 1, 7, 30 and 90-day average players and the Top Earning rank with its modelled revenue
         range. For every game day by day, download{" "}
         <a href="/api/v1/daily?format=csv" className="text-link underline">
           yesterday&apos;s full daily file

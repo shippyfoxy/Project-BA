@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSiteDb } from "@/lib/db/site";
 import { getCachedActiveGames, getCachedEarningRanks } from "@/lib/trends/cached";
-import { estMonthlyDevEx, fmtUsdEstimate } from "@/lib/trends/revenue";
+import { Usd } from "@/components/pro/Pro";
 import { countStages, getSparklines, type HomeGame } from "@/lib/trends/home";
 import { displayName } from "@/lib/trends/names";
 import { STAGES, type Stage } from "@/lib/trends/stage";
@@ -186,7 +186,9 @@ export default async function StagePage({ params }: { params: Promise<{ stage: s
                         {ranks.has(g.universeId) ? (
                           <span className="flex flex-col items-end leading-tight">
                             <span>#{ranks.get(g.universeId)}</span>
-                            <span className="text-xs text-muted-foreground">est. {fmtUsdEstimate(estMonthlyDevEx(ranks.get(g.universeId))!.mid)}/mo</span>
+                            <span className="text-xs text-muted-foreground">
+                              <Usd rank={ranks.get(g.universeId) ?? null} prefix="est. " suffix="/mo" />
+                            </span>
                           </span>
                         ) : (
                           <span className="text-muted-foreground">—</span>

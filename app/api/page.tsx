@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { ProStar } from "@/components/pro/Pro";
 
 export const metadata: Metadata = {
   title: "API: Roblox Pulse",
   description:
-    "Free, read-only JSON and CSV for Roblox Pulse: every game's daily player history and the Explore screener. No key, no sign-up.",
+    "Read-only JSON and CSV for Roblox Pulse: every game's daily player history, Top Earning ranks and the Explore screener, with a Pro licence key.",
 };
 
 const BASE = "https://pulse.shipfox.me";
@@ -25,7 +26,10 @@ type Row = [ReactNode, ReactNode];
 
 const ENDPOINTS: Row[] = [
   [
-    "GET /api/v1/explore",
+    <span key="explore" className="inline-flex items-center gap-1.5">
+      <ProStar />
+      {"GET /api/v1/explore"}
+    </span>,
     <>
       Every game matching a screen, with the same filters as the{" "}
       <Link href="/explore" className="text-link underline">
@@ -35,7 +39,10 @@ const ENDPOINTS: Row[] = [
     </>,
   ],
   [
-    "GET /api/v1/games/{id}/history",
+    <span key="history" className="inline-flex items-center gap-1.5">
+      <ProStar />
+      {"GET /api/v1/games/{id}/history"}
+    </span>,
     <>
       Player, visit, vote and Top Earning history for one game by its universe ID. <C>resolution</C> is <C>daily</C> (default),{" "}
       <C>weekly</C> (Monday to Sunday) or <C>monthly</C>. Defaults to the last 30 days, 26 weeks or all months; set <C>from</C> and{" "}
@@ -43,7 +50,10 @@ const ENDPOINTS: Row[] = [
     </>,
   ],
   [
-    "GET /api/v1/daily",
+    <span key="daily" className="inline-flex items-center gap-1.5">
+      <ProStar />
+      {"GET /api/v1/daily"}
+    </span>,
     <>
       Every tracked game for one UTC day, about 7,000 rows: the bulk export. <C>day</C> (YYYY-MM-DD) defaults to the last complete day;{" "}
       <C>min</C> keeps games averaging at least that many players. JSON or <C>format=csv</C>.
@@ -267,14 +277,19 @@ export default function ApiPage() {
         <header className="flex flex-col gap-3">
           <h1 className="font-heading text-5xl font-extrabold tracking-[-0.03em]">API</h1>
           <p className="max-w-2xl text-[17px] text-text-2">
-            Free, read-only JSON and CSV for the same data the site shows. No key, no sign-up. Every figure comes from Roblox&apos;s public
-            APIs and is an estimate, not Roblox telemetry.
+            Read-only JSON and CSV for the same data the site shows. The data endpoints (starred) are part of{" "}
+            <Link href="/pro" className="text-link underline">
+              Roblox Pulse Pro
+            </Link>
+            , $5 a month: send your licence key as <C>Authorization: Bearer &lt;key&gt;</C>. Every figure comes from Roblox&apos;s public APIs
+            and is an estimate, not Roblox telemetry.
           </p>
         </header>
 
         <Section id="quick-start" title="Quick start">
           <p className="text-text-2">Daily history for one game, by its Roblox universe ID:</p>
-          <Code>{`curl "${BASE}/api/v1/games/10765288803/history?from=2026-10-30&to=2026-10-31"`}</Code>
+          <Code>{`curl -H "Authorization: Bearer $PULSE_KEY" \
+  "${BASE}/api/v1/games/10765288803/history?from=2026-10-30&to=2026-10-31"`}</Code>
           <Code muted>{`{
   "game": { "universe_id": 10765288803, "name": "Break and Steal an Egg",
             "roblox_name": "Break and Steal an Egg", "genre": "Simulation" },
@@ -289,14 +304,16 @@ export default function ApiPage() {
   ]
 }`}</Code>
           <p className="text-text-2">Launched in the last 60 days with 10,000+ players, as a spreadsheet:</p>
-          <Code>{`curl -o hits.csv "${BASE}/api/v1/explore?launched=60&min=10000&format=csv"`}</Code>
+          <Code>{`curl -H "Authorization: Bearer $PULSE_KEY" -o hits.csv \
+  "${BASE}/api/v1/explore?launched=60&min=10000&format=csv"`}</Code>
         </Section>
 
         <Section id="endpoints" title="Endpoints">
           <Table rows={ENDPOINTS} />
           <p className="text-[13px] text-muted-foreground">
-            Errors come back as JSON with an <C>error</C> message: 400 for a bad parameter, 404 for a game we have never tracked, 503 if the
-            database is unavailable.
+            Errors come back as JSON with an <C>error</C> message: 400 for a bad parameter, 402 without a valid Pro key (with an{" "}
+            <C>upgrade</C> link), 404 for a game we have never tracked, 429 over the rate limit, 503 if the database is unavailable.{" "}
+            <C>/api/v1/status</C> is free.
           </p>
         </Section>
 
@@ -335,7 +352,7 @@ export default function ApiPage() {
           <ul className="flex list-disc flex-col gap-2 pl-5 text-text-2">
             <li>Daily history starts on 7 May 2026. Raw readings are kept for 14 days and rolled up into the daily figures above.</li>
             <li>
-              The refresh runs 4 to 7 times a day. Each run reads Roblox&apos;s discovery lists for 12 countries and 5 device types, then
+              The refresh runs hourly. Each run reads Roblox&apos;s discovery lists for 12 countries and 5 device types, then
               re-reads every game it has ever found there, so a game stays tracked after it drops out of the lists (since 25 October 2026;
               before that, only games in that day&apos;s lists were read).
             </li>
@@ -349,11 +366,12 @@ export default function ApiPage() {
 
         <Section id="limits" title="Limits and credit">
           <p className="text-text-2">
-            Responses are cached for up to 30 minutes, and the data changes only a few times a day, so polling more often than every half
-            hour returns the same answer. There is no hard rate limit today; please keep automated use light so the site stays free to run.
+            Each IP address can make 30 API calls a minute; beyond that you get a 429 with a <C>Retry-After</C> header. The data refreshes
+            hourly, so polling more often than that returns the same answer. AI crawlers are not permitted anywhere on the site.
           </p>
           <p className="text-text-2">
-            Free to use in your own projects. Please credit Roblox Pulse and link to{" "}
+            Use the data in your own projects and reports; please don&apos;t resell it or share your licence key. Credit Roblox Pulse and link
+            to{" "}
             <Link href="/methodology" className="text-link underline">
               the methodology
             </Link>
