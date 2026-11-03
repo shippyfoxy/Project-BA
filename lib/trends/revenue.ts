@@ -34,7 +34,9 @@ export const robuxSpentFor = (devexUsd: number) => devexUsd / REVENUE_MODEL.deve
 
 // Two significant figures: the model is not precise enough for more.
 export function fmtUsdEstimate(v: number): string {
-  if (v >= 1e6) return `$${(v / 1e6).toPrecision(2).replace(/\.0$/, "")}M`;
-  if (v >= 1e3) return `$${Math.round(Number((v / 1e3).toPrecision(2)))}k`;
-  return `$${Number(v.toPrecision(2))}`;
+  // Round first so a value just under a boundary (996k) reads $1M, not $1000k.
+  const r = Number(v.toPrecision(2));
+  if (r >= 1e6) return `$${Number((r / 1e6).toPrecision(2))}M`;
+  if (r >= 1e3) return `$${Number((r / 1e3).toPrecision(2))}k`;
+  return `$${r}`;
 }

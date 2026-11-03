@@ -3,6 +3,7 @@ import { getSiteDb } from "@/lib/db/site";
 import { loadWeekAggregates, type AggRow } from "./game";
 import { getActiveGames, type ActiveGames } from "./home";
 import { getGenreTrends, type GenreTrends } from "./genreTrends";
+import { getRevenuePage, type RevenuePage } from "./revenuePage";
 
 // Shared across every game page and refreshed at most hourly, so opening a
 // game for the first time doesn't recompute every game's week.
@@ -49,5 +50,15 @@ export const getCachedEarningRanks = unstable_cache(
     return rows.map((r) => [r.id, r.rank]);
   },
   ["earning-ranks-v1"],
+  { revalidate: 3600 },
+);
+
+// The Top Earning list with modelled revenue, for the Revenue page.
+export const getCachedRevenuePage = unstable_cache(
+  async (): Promise<RevenuePage | null> => {
+    const db = getSiteDb();
+    return db ? getRevenuePage(db) : null;
+  },
+  ["revenue-page-v1"],
   { revalidate: 3600 },
 );

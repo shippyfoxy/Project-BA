@@ -7,8 +7,10 @@ const TAG_WITH_EMOJI = /[[(][^\])]*\p{Extended_Pictographic}[^\])]*[\])]/gu;
 const LEADING_TAG = /^\s*[[(][^\])]*[\])]\s*/u;
 
 export function displayName(raw: string): string {
-  let name = raw.replace(TAG_WITH_EMOJI, " ");
+  // Loose emoji go before leading tags are checked: "🎃 [MINIGAMES] Pet Simulator 99!"
+  // only has a leading tag once the pumpkin is gone.
+  let name = raw.replace(TAG_WITH_EMOJI, " ").replace(EMOJI, " ").trim();
   while (LEADING_TAG.test(name)) name = name.replace(LEADING_TAG, "");
-  name = name.replace(EMOJI, " ").replace(/\s+/g, " ").trim();
+  name = name.replace(/\s+/g, " ").trim();
   return name.length > 0 ? name : raw;
 }

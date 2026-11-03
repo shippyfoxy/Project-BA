@@ -15,6 +15,7 @@ describe("displayName", () => {
     ["Dress Designer [COOP]", "Dress Designer [COOP]"],
     ["Steal An Egg", "Steal An Egg"],
     ["صيد الضبّان", "صيد الضبّان"],
+    ["🎃 [MINIGAMES] Pet Simulator 99! 👻", "Pet Simulator 99!"],
   ])("%s -> %s", (raw, clean) => {
     expect(displayName(raw)).toBe(clean);
   });

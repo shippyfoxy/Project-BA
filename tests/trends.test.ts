@@ -175,6 +175,10 @@ describe("top earning ranks and revenue estimates", () => {
     expect(r100.low).toBeCloseTo(r100.mid * 0.7);
     expect(fmtUsdEstimate(r100.mid)).toBe("$110k");
     expect(fmtUsdEstimate(1_234_567)).toBe("$1.2M");
+    expect(fmtUsdEstimate(996_000)).toBe("$1M");
+    expect(fmtUsdEstimate(13_260_000)).toBe("$13M");
+    expect(fmtUsdEstimate(9_282_000)).toBe("$9.3M");
+    expect(fmtUsdEstimate(46_480)).toBe("$46k");
   });
 });
 
