@@ -92,6 +92,65 @@ export default function MethodologyPage() {
         </CardContent>
       </Card>
 
+      <Card id="revenue" className="scroll-mt-6">
+        <CardHeader>
+          <CardTitle>Estimated revenue (modelled from Top Earning rank)</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 text-sm">
+          <p className="text-muted-foreground">
+            <strong>What is measured:</strong> each refresh records every game&rsquo;s position in Roblox&rsquo;s public{" "}
+            <a href="https://www.roblox.com/charts/top-earning" className="underline">
+              Top Earning
+            </a>{" "}
+            list (computer, all locations), which Roblox describes as sorted by total Robux spent in the last 7 days. About 460 games are
+            listed. Roblox leaves a few entries out of each page, so a rank is the position in the public list, not necessarily the
+            internal one. Recording started on 3 November 2026.
+          </p>
+          <p className="text-muted-foreground">
+            <strong>What is modelled:</strong> Roblox publishes the order, never the amounts. The estimate turns a rank into a monthly
+            creator payout (DevEx, in US dollars) with a power law:
+          </p>
+          <pre className="overflow-x-auto rounded-md border border-border bg-muted/40 p-3 font-mono text-xs">
+{`monthly DevEx (USD) = 13.26M × rank^-1.041
+range shown         = 0.7× to 1.5× that figure`}
+          </pre>
+          <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
+            <li>
+              Rank 1 ≈ $13M a month, rank 10 ≈ $1.2M, rank 50 ≈ $230k, rank 100 ≈ $110k, rank 200 ≈ $53k, rank 464 ≈ $22k.
+            </li>
+            <li>
+              The curve is fitted to Roblox&rsquo;s RDC 2026 payout tiers for the year to 30 June 2026 (the top 10 creators averaged
+              $65.7M, the top 100 $10.8M, the top 1,000 $1.4M, and creators earned $1.7B through DevEx in all) and the standard DevEx rate
+              of $0.0038 per Robux. Players&rsquo; spend is roughly the payout ÷ $0.0038 ÷ 0.7, since creators keep about 70%.
+            </li>
+            <li>
+              The tiers are per creator and the curve is per game, so it reads low at the very top: the ten highest-ranked games add up to
+              about $455M a year against $657M for the top ten creators, who often own several hits.
+            </li>
+          </ul>
+          <p className="text-muted-foreground">
+            <strong>Treat it as an order of magnitude.</strong> Event weeks (Halloween, holidays) lift ranks; Robux from age-checked US
+            adults has paid 42% more since 8 June 2026, which shifts what a rank is worth; and the list is per device, so a game whose spend
+            is mostly on phones can rank lower here than its real total. Games outside the list are not estimated at all.
+          </p>
+          <p className="text-muted-foreground">
+            Sources: Roblox RDC 2026 creator payouts as reported by{" "}
+            <a href="https://www.dexerto.com/roblox/robloxs-top-creators-average-65-7-million-a-year-but-most-make-far-less-3408675/" className="underline">
+              Dexerto
+            </a>{" "}
+            and{" "}
+            <a href="https://www.ibtimes.co.uk/roblox-top-creators-devex-payouts-2026-1819403" className="underline">
+              IBTimes
+            </a>
+            ; the DevEx rate change in Roblox&rsquo;s{" "}
+            <a href="https://www.sec.gov/Archives/edgar/data/0001315098/000162828026051082/rblx-20260630.htm" className="underline">
+              Q2 2026 10-Q
+            </a>
+            . The curve follows an independent revenue study shared with us, checked here against those tiers.
+          </p>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>What this doesn&rsquo;t measure</CardTitle>

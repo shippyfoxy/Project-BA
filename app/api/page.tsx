@@ -86,11 +86,18 @@ const EXPLORE_PARAMS: Row[] = [
       <C>high_end_tablet</C> or <C>console</C>.
     </>,
   ],
+  [
+    "earning",
+    <>
+      <C>1</C> for only games in Roblox&apos;s Top Earning list.
+    </>,
+  ],
   ["q", "Name or studio text, a universe or place ID, or a pasted Roblox game link."],
   [
     "sort",
     <>
-      <C>players</C> (default), <C>wow</C>, <C>session</C>, <C>favs</C> or <C>newest</C> (launch date).
+      <C>players</C> (default), <C>wow</C>, <C>session</C>, <C>favs</C>, <C>earnings</C> (estimated revenue, so Top Earning rank) or{" "}
+      <C>newest</C> (launch date).
     </>,
   ],
   [
@@ -121,6 +128,18 @@ const EXPLORE_FIELDS: Row[] = [
   ["peak_7d_avg", "Best 7-day average since tracking began."],
   ["est_session_min", "Estimated session length in minutes. Null until there are two consecutive days of readings."],
   ["favourites_per_1k_visits", "Lifetime favourites per 1,000 lifetime visits."],
+  ["top_earning_rank", "Position in Roblox's Top Earning list (7-day Robux spend) on the latest day recorded. Null if not listed."],
+  [
+    "est_monthly_devex_usd",
+    <>
+      Modelled monthly creator payout in US dollars, rounded to the nearest thousand, from <C>top_earning_rank</C>. An estimate, not a
+      measurement; see{" "}
+      <Link href="/methodology#revenue" className="text-link underline">
+        how it is estimated
+      </Link>
+      .
+    </>,
+  ],
 ];
 
 const HISTORY_FIELDS: Row[] = [
@@ -295,7 +314,8 @@ export default function ApiPage() {
             </li>
             <li>Readings with zero players are not stored, so a quiet game can have gaps.</li>
             <li>
-              There is no revenue data. Roblox does not publish earnings, and its public charts carry no Top Earning list we can read.
+              Roblox publishes no earnings. Since 3 November 2026 each refresh records every game&apos;s position in Roblox&apos;s public Top
+              Earning list (Robux spent in the last 7 days), and revenue figures are modelled from that rank.
             </li>
           </ul>
         </Section>

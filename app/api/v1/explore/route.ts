@@ -43,6 +43,9 @@ export async function GET(req: NextRequest) {
     peak_7d_avg: round(g.peak7),
     est_session_min: round(g.session, 1),
     favourites_per_1k_visits: round(g.favsPer1k, 2),
+    top_earning_rank: g.earningRank,
+    // MODELLED from the rank: see /methodology#revenue.
+    est_monthly_devex_usd: g.estMonthly === null ? null : Math.round(g.estMonthly / 1_000) * 1_000,
   }));
 
   const headers = { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" };

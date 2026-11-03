@@ -20,6 +20,7 @@ import {
   type SortKey,
 } from "@/lib/trends/screener";
 import { COUNTRY_NAMES } from "@/lib/snapshot/aggregate";
+import { estMonthlyDevEx, fmtUsdEstimate } from "@/lib/trends/revenue";
 import { getGameIcons } from "@/lib/roblox/thumbnails";
 import { fmtDay, fmtInt, fmtPct } from "@/lib/format";
 import { ApplyButton, AutoSubmitForm } from "@/components/v2/AutoSubmitForm";
@@ -57,6 +58,7 @@ const SORT_LABELS: Record<SortKey, string> = {
   wow: "Week on week",
   session: "Estimated session",
   favs: "Favourites per 1k visits",
+  earnings: "Est. revenue (Top Earning rank)",
   newest: "Launch date",
 };
 
@@ -259,19 +261,30 @@ function Filters({ f, result }: { f: ScreenerFilters; result: ScreenerResult }) 
         <p className="text-xs text-muted-foreground">In Roblox&apos;s discovery lists for that country or device in the last 7 days.</p>
       </FieldSet>
 
+      <FieldSet legend="Revenue">
+        <Option type="checkbox" name="earning" value="1" checked={f.earning} label="In Roblox's Top Earning list" />
+        <p className="text-xs text-muted-foreground">
+          The about 460 games Roblox lists by Robux spent in the last 7 days.{" "}
+          <Link href="/methodology#revenue" className="text-link underline">
+            How revenue is estimated
+          </Link>
+        </p>
+      </FieldSet>
+
       <ApplyButton />
     </AutoSubmitForm>
   );
 }
 
 const activeCount = (f: ScreenerFilters) =>
-  (f.launched !== "any" ? 1 : 0) + (f.min ? 1 : 0) + f.genres.length + f.stages.length + (f.country ? 1 : 0) + (f.device ? 1 : 0);
+  (f.launched !== "any" ? 1 : 0) + (f.min ? 1 : 0) + f.genres.length + f.stages.length + (f.country ? 1 : 0) + (f.device ? 1 : 0) + (f.earning ? 1 : 0);
 
 function describe(f: ScreenerFilters): string {
   const parts = [f.launched === "any" ? "launched any time" : `launched in the ${LAUNCHED_LABELS[f.launched].toLowerCase()}`];
   if (f.min) parts.push(`${fmtInt(f.min)}+ players`);
   if (f.country) parts.push(`popular in ${COUNTRY_NAMES[f.country] ?? f.country}`);
   if (f.device) parts.push(`popular on ${(DEVICE_LABELS[f.device] ?? f.device).toLowerCase()}`);
+  if (f.earning) parts.push("in Top Earning");
   if (f.q) parts.push(`matching “${f.q}”`);
   return parts.join(", ");
 }
@@ -338,7 +351,7 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
         </div>
       ) : (
         <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-          <table className="w-full min-w-[960px] border-collapse text-sm tabular-nums">
+          <table className="w-full min-w-[1060px] border-collapse text-sm tabular-nums">
             <thead>
               <tr className="text-right text-xs text-muted-foreground">
                 <th scope="col" className="w-10 px-4 py-3 text-left font-medium">#</th>
@@ -349,6 +362,9 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
                 <th scope="col" className="px-2 py-3 font-medium">Week on week</th>
                 <th scope="col" className="px-2 py-3 font-medium">Est. session</th>
                 <th scope="col" className="px-2 py-3 font-medium">Favs per 1k visits</th>
+                <th scope="col" className="px-2 py-3 font-medium">
+                  <span title="Position in Roblox's Top Earning list (7-day Robux spend), with the modelled monthly creator payout">Earning rank</span>
+                </th>
                 <th scope="col" className="px-4 py-3 font-medium">Since {fmtDay(since)}</th>
               </tr>
             </thead>
@@ -381,6 +397,18 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
                       {g.session === null ? <span className="text-muted-foreground">too new</span> : `${g.session.toFixed(1)} min`}
                     </td>
                     <td className="px-2 py-2.5">{g.favsPer1k === null ? <span className="text-muted-foreground">—</span> : g.favsPer1k.toFixed(1)}</td>
+                    <td className="px-2 py-2.5">
+                      {g.earningRank === null ? (
+                        <span className="text-muted-foreground">—</span>
+                      ) : (
+                        <span className="flex flex-col items-end leading-tight">
+                          <span>#{g.earningRank}</span>
+                          <span className="text-xs text-muted-foreground" title="Modelled from the rank, not measured">
+                            est. {fmtUsdEstimate(estMonthlyDevEx(g.earningRank)!.mid)}/mo
+                          </span>
+                        </span>
+                      )}
+                    </td>
                     <td className="px-4 py-2.5">
                       <span className="inline-flex justify-end">
                         <Sparkline

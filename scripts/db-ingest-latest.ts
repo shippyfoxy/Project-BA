@@ -24,7 +24,8 @@ async function main() {
       console.log(
         `[ingest] ${label}: recorded ${snap.generatedAt}: ${r.games} games, ${r.observations} readings ` +
           `(${r.idle} idle games skipped, ${r.droppedInvalid} malformed rows dropped); ` +
-          `rolled up ${r.rolledUpRows} daily rows, updated ${r.peaksUpdated} peaks, pruned ${r.prunedRows} old readings`,
+          `rolled up ${r.rolledUpRows} daily rows, updated ${r.peaksUpdated} peaks, pruned ${r.prunedRows} old readings; ` +
+          `${r.earningRanks} Top Earning ranks`,
       );
     }
     // Neon's free tier allows 1 GB; warn well before it fills.

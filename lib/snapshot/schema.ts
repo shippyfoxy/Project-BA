@@ -42,6 +42,8 @@ export interface Snapshot {
   generatedAtMs: number;
   source: "explore-api+games-api";
   games: SnapshotGame[];
+  // Position in Roblox's Top Earning list at refresh time (7-day Robux spend).
+  topEarning?: { universeId: number; rank: number }[];
 }
 
 export const SNAPSHOT_VERSION = 1;

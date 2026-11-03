@@ -9,6 +9,8 @@ import { getGameHistory, loadWeekAggregates } from "@/lib/trends/game";
 import { DEFAULT_FILTERS, filtersToQuery, parseFilters, screenGames } from "@/lib/trends/screener";
 import { genreBenchmarks, getGenreTrends } from "@/lib/trends/genreTrends";
 import { daysSince, getCompareGames, parseIds } from "@/lib/trends/compare";
+import { getEarningRanks } from "@/lib/trends/earnings";
+import { estMonthlyDevEx, fmtUsdEstimate } from "@/lib/trends/revenue";
 
 const DAY = 86_400_000;
 const START = Date.parse("2026-06-01T12:00:00Z");
@@ -131,6 +133,48 @@ describe("genre trends and compare", () => {
     expect(sunset.points).toHaveLength(21);
     expect(sunset.peak.r7).toBeGreaterThan(sunset.latest.r7);
     expect(daysSince(Date.parse("2026-06-01T23:00:00Z"), Date.parse("2026-06-03"))).toBe(2);
+  });
+});
+
+describe("top earning ranks and revenue estimates", () => {
+  it("records ranks by day, keeping the latest reading", async () => {
+    const day = Date.parse("2026-06-21T18:00:00Z");
+    await recordSnapshot(db, { generatedAt: new Date(day).toISOString(), generatedAtMs: day, games: gamesOn(20), topEarning: [
+      { universeId: 3, rank: 1 },
+      { universeId: 1, rank: 2 },
+      { universeId: 999, rank: 3 }, // unknown game: skipped, not an error
+    ] }, day);
+    const later = day + 3_600_000;
+    await recordSnapshot(db, { generatedAt: new Date(later).toISOString(), generatedAtMs: later, games: gamesOn(20), topEarning: [
+      { universeId: 1, rank: 1 },
+      { universeId: 3, rank: 2 },
+    ] }, later);
+    const rows = await db.query<{ universe_id: number; rank: number }>(`select universe_id::float8 as universe_id, rank from earning_ranks order by rank`);
+    expect(rows).toEqual([{ universe_id: 1, rank: 1 }, { universe_id: 3, rank: 2 }]);
+
+    const rocket = await getEarningRanks(db, 1);
+    expect(rocket.latest?.rank).toBe(1);
+    expect((await getEarningRanks(db, 2)).latest).toBeNull();
+  });
+
+  it("screens and sorts by estimated revenue", async () => {
+    const any = { ...DEFAULT_FILTERS, launched: "any" as const };
+    const ranked = await screenGames(db, { ...any, earning: true });
+    expect(ranked?.matches.map((g) => g.name)).toEqual(["Rocket", "Plateau"]);
+    const byEarnings = await screenGames(db, { ...any, sort: "earnings" });
+    expect(byEarnings?.matches.map((g) => g.name)).toEqual(["Rocket", "Plateau", "Sunset"]);
+    expect(byEarnings?.matches[0].estMonthly).toBeCloseTo(13_260_000, -3);
+    expect(parseFilters({ earning: "1", sort: "earnings" })).toMatchObject({ earning: true, sort: "earnings" });
+  });
+
+  it("models payouts from rank", () => {
+    expect(estMonthlyDevEx(null)).toBeNull();
+    const r100 = estMonthlyDevEx(100)!;
+    expect(r100.mid).toBeGreaterThan(105_000);
+    expect(r100.mid).toBeLessThan(115_000);
+    expect(r100.low).toBeCloseTo(r100.mid * 0.7);
+    expect(fmtUsdEstimate(r100.mid)).toBe("$110k");
+    expect(fmtUsdEstimate(1_234_567)).toBe("$1.2M");
   });
 });
 

@@ -34,6 +34,7 @@ export interface IngestSnapshot {
   generatedAtMs?: number;
   source?: string;
   games: IngestGame[];
+  topEarning?: { universeId: number; rank: number }[];
 }
 
 export interface IngestOptions {
@@ -56,6 +57,7 @@ export interface IngestResult {
   observations: number;
   droppedInvalid: number;
   idle: number; // readings skipped because nobody was playing
+  earningRanks: number;
   // Oldest reading written, so callers can re-roll days it touched.
   earliestTs: number | null;
 }
@@ -130,6 +132,17 @@ const OBS_UPSERT = `
     down_votes = coalesce(excluded.down_votes, observations.down_votes)
 `;
 
+// Only games already in the games table: an earner the games API could not
+// describe this run has nothing to join to yet.
+const EARNING_UPSERT = `
+  insert into earning_ranks (universe_id, day, rank, ts)
+  select r.universe_id, $2::date, r.rank, $3::timestamptz
+  from jsonb_to_recordset($1::text::jsonb) as r(universe_id bigint, rank smallint)
+  join games g using (universe_id)
+  on conflict (universe_id, day) do update set rank = excluded.rank, ts = excluded.ts
+  where excluded.ts >= earning_ranks.ts
+`;
+
 const PRESENCE_UPSERT = `
   insert into game_presence_daily (universe_id, day, countries, devices)
   select universe_id, $2::date, countries, devices
@@ -154,7 +167,7 @@ export async function ingestSnapshot(
 
   const existing = await db.query("select 1 from snapshots where ts = $1", [tsIso]);
   if (existing.length > 0) {
-    return { skipped: true, ts, games: 0, observations: 0, droppedInvalid: 0, idle: 0, earliestTs: null };
+    return { skipped: true, ts, games: 0, observations: 0, droppedInvalid: 0, idle: 0, earningRanks: 0, earliestTs: null };
   }
 
   const games = new Map<number, IngestGame>();
@@ -226,6 +239,9 @@ export async function ingestSnapshot(
     age_recommendation: g.ageRecommendation ?? null,
   }));
   const obsRows = [...obs.values()];
+  const earning = (snap.topEarning ?? [])
+    .filter((r) => isId(r.universeId) && Number.isInteger(r.rank) && r.rank > 0 && r.rank < 32_768)
+    .map((r) => ({ universe_id: r.universeId, rank: r.rank }));
   let earliestTs: number | null = null;
   for (const r of obsRows) {
     const t = Date.parse(r.ts as string);
@@ -242,6 +258,9 @@ export async function ingestSnapshot(
     for (const rows of chunks(presence)) {
       await tx.query(PRESENCE_UPSERT, [JSON.stringify(rows), utcDay(ts)]);
     }
+    if (earning.length > 0) {
+      await tx.query(EARNING_UPSERT, [JSON.stringify(earning), utcDay(ts), tsIso]);
+    }
     // Written last so a crash mid-ingest leaves no marker and the snapshot is retried.
     await tx.query(
       "insert into snapshots (ts, game_count, source, git_sha) values ($1, $2, $3, $4)",
@@ -256,6 +275,7 @@ export async function ingestSnapshot(
     observations: obsRows.length,
     droppedInvalid,
     idle,
+    earningRanks: earning.length,
     earliestTs,
   };
 }

@@ -142,6 +142,19 @@ async function main() {
     validateGame(g, generatedMs);
   }
 
+  // Older snapshots have no Top Earning list; a short one is worth a look but
+  // never blocks the player data.
+  if (snapshot.topEarning) {
+    const ranked = new Set<number>();
+    snapshot.topEarning.forEach((r, i) => {
+      if (!Number.isInteger(r.universeId) || r.universeId <= 0) error("topEarning", `bad universeId at rank ${r.rank}`);
+      if (r.rank !== i + 1) error("topEarning", `rank ${r.rank} out of sequence at position ${i + 1}`, r.universeId);
+      if (ranked.has(r.universeId)) error("topEarning", `universeId ranked twice`, r.universeId);
+      ranked.add(r.universeId);
+    });
+    if (snapshot.topEarning.length < 100) warn("topEarning", `only ${snapshot.topEarning.length} ranked games`);
+  }
+
   const cohortable = snapshot.games.filter(
     (g) => gameSessionMinutes(g) !== null,
   ).length;

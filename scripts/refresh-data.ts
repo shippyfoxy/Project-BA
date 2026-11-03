@@ -13,6 +13,7 @@ import path from "node:path";
 import {
   getExpandedSeed,
   getGames,
+  getTopEarning,
   getVotes,
   type SeedVariant,
 } from "../lib/roblox/client";
@@ -111,8 +112,16 @@ async function main() {
     throw new Error("explore-api returned no games — refusing to overwrite snapshot");
   }
 
+  // A failure here should not cost the whole refresh; the ranks are an extra.
+  const topEarning = await getTopEarning(sessionId).catch((err) => {
+    console.warn(`::warning::[refresh] Top Earning list unavailable: ${err instanceof Error ? err.message : err}`);
+    return [];
+  });
+  console.log(`[refresh] Top Earning: ${topEarning.length} ranked games`);
+
   const knownIds = await loadKnownIds(argNumber("--known-limit"));
-  const allIds = dedupeIds([...seedIds, ...knownIds]);
+  // Every ranked earner is polled too, even if discovery has never shown it.
+  const allIds = dedupeIds([...seedIds, ...topEarning.map((r) => r.universeId), ...knownIds]);
   console.log(
     `[refresh] tracking ${allIds.length} games: ${seedIds.length} in discovery today, ` +
       `${allIds.length - seedIds.length} more already known (${knownIds.length} known in total)`,
@@ -181,6 +190,7 @@ async function main() {
     generatedAtMs: ts,
     source: "explore-api+games-api",
     games: merged,
+    topEarning,
   };
 
   await fs.mkdir(path.dirname(SNAPSHOT_PATH), { recursive: true });

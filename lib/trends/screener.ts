@@ -1,13 +1,14 @@
 import type { Db } from "@/lib/db/client";
 import { lifecycleStage, STAGES, type Stage } from "./stage";
 import { parseSearch, searchWhere } from "./search";
+import { estMonthlyDevEx } from "./revenue";
 
 const DAY_MS = 86_400_000;
 
 export const LAUNCHED = ["30", "60", "90", "365", "any"] as const;
 export type Launched = (typeof LAUNCHED)[number];
 export const MIN_PLAYERS = [0, 100, 1_000, 10_000, 100_000] as const;
-export const SORTS = ["players", "wow", "session", "favs", "newest"] as const;
+export const SORTS = ["players", "wow", "session", "favs", "earnings", "newest"] as const;
 export type SortKey = (typeof SORTS)[number];
 export const COUNTRIES = ["us", "br", "id", "in", "ph", "gb", "de", "ru", "kr", "mx", "tr", "jp"] as const;
 export const DEVICES = ["computer", "high_end_phone", "low_end_phone", "high_end_tablet", "console"] as const;
@@ -21,6 +22,7 @@ export interface ScreenerFilters {
   stages: Stage[];
   country: string | null;
   device: string | null;
+  earning: boolean; // only games in Roblox's Top Earning list
   sort: SortKey;
   order: "desc" | "asc";
   limit: number;
@@ -34,6 +36,7 @@ export const DEFAULT_FILTERS: ScreenerFilters = {
   stages: [],
   country: null,
   device: null,
+  earning: false,
   sort: "players",
   order: "desc",
   limit: PAGE_SIZE,
@@ -51,6 +54,8 @@ export interface ScreenerRow {
   wowPct: number | null;
   session: number | null; // estimated minutes
   favsPer1k: number | null; // favourites per 1,000 visits
+  earningRank: number | null; // position in Roblox's Top Earning list
+  estMonthly: number | null; // MODELLED monthly DevEx in USD, from earningRank
   stage: Stage;
 }
 
@@ -87,6 +92,7 @@ export function parseFilters(sp: Params): ScreenerFilters {
     stages: [...new Set(list(sp.stage))].filter((s): s is Stage => (STAGES as string[]).includes(s)),
     country: (COUNTRIES as readonly string[]).includes(country ?? "") ? country! : null,
     device: (DEVICES as readonly string[]).includes(device ?? "") ? device! : null,
+    earning: first(sp.earning) === "1",
     sort: pick(SORTS, first(sp.sort), DEFAULT_FILTERS.sort),
     order: first(sp.order) === "asc" ? "asc" : "desc",
     limit: Number.isInteger(limit) && limit > 0 ? Math.min(limit, 500) : PAGE_SIZE,
@@ -104,6 +110,7 @@ export function filtersToQuery(f: ScreenerFilters, overrides: Partial<ScreenerFi
   for (const s of v.stages) p.append("stage", s);
   if (v.country) p.set("country", v.country);
   if (v.device) p.set("device", v.device);
+  if (v.earning) p.set("earning", "1");
   if (v.sort !== DEFAULT_FILTERS.sort) p.set("sort", v.sort);
   if (v.order !== DEFAULT_FILTERS.order) p.set("order", v.order);
   if (v.limit !== PAGE_SIZE) p.set("n", String(v.limit));
@@ -116,6 +123,7 @@ const SORT_VALUES: Record<SortKey, (r: ScreenerRow) => number | null> = {
   wow: (r) => r.wowPct,
   session: (r) => r.session,
   favs: (r) => r.favsPer1k,
+  earnings: (r) => r.estMonthly,
   newest: (r) => r.createdMs,
 };
 
@@ -163,6 +171,7 @@ interface Row {
   session: number | null;
   fav: number | null;
   vis: number | null;
+  earning_rank: number | null;
 }
 
 // Every game with readings in the last 7 days that passes the SQL-side
@@ -177,6 +186,7 @@ export async function screenGames(db: Db, f: ScreenerFilters): Promise<ScreenerR
 
   const params: unknown[] = [latest.day, f.min];
   const where: string[] = ["a.cur7 is not null", "a.cur7 >= $2"];
+  if (f.earning) where.push("er.rank is not null");
   if (f.launched !== "any") {
     params.push(Number(f.launched));
     where.push(`g.created_at >= $1::date - $${params.length}::int`);
@@ -218,15 +228,19 @@ export async function screenGames(db: Db, f: ScreenerFilters): Promise<ScreenerR
          (array_agg(favorites_last order by day desc) filter (where favorites_last is not null))[1] as fav,
          (array_agg(visits_last order by day desc))[1] as vis
        from base group by universe_id
+     ), er as (
+       select universe_id, rank from earning_ranks where day = (select max(day) from earning_ranks)
      )
      select g.universe_id::float8 as universe_id, g.name, g.creator_name, coalesce(g.genre_l1, 'Other') as genre,
             extract(epoch from g.created_at)::float8 * 1000 as created_ms,
             a.cur7::float8 as cur7, a.prev7::float8 as prev7,
             coalesce(p.peak7, a.cur7)::float8 as peak7, coalesce(p.days_tracked, 1) as days_tracked,
-            (a.cm / nullif(a.vpm, 0))::float8 as session, a.fav::float8 as fav, a.vis::float8 as vis
+            (a.cm / nullif(a.vpm, 0))::float8 as session, a.fav::float8 as fav, a.vis::float8 as vis,
+            er.rank as earning_rank
      from agg a
      join games g using (universe_id)
      left join game_peaks p using (universe_id)
+     left join er using (universe_id)
      where ${where.join(" and ")}`,
     params,
   );
@@ -246,6 +260,8 @@ export async function screenGames(db: Db, f: ScreenerFilters): Promise<ScreenerR
       wowPct: r.prev7 ? (100 * (r.cur7 - r.prev7)) / r.prev7 : null,
       session: r.session,
       favsPer1k: r.fav !== null && r.vis ? (1_000 * r.fav) / r.vis : null,
+      earningRank: r.earning_rank,
+      estMonthly: estMonthlyDevEx(r.earning_rank)?.mid ?? null,
       stage: lifecycleStage({
         cur7: r.cur7,
         prev7: r.prev7,

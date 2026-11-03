@@ -9,6 +9,8 @@ import { getGameHistory, type GameHistory } from "@/lib/trends/game";
 import { displayName } from "@/lib/trends/names";
 import { DEVICE_LABELS } from "@/lib/trends/labels";
 import { genreColor } from "@/lib/trends/genres";
+import { getEarningRanks, type EarningRanks } from "@/lib/trends/earnings";
+import { estMonthlyDevEx, fmtUsdEstimate } from "@/lib/trends/revenue";
 import { getGameIcons, getGameScreenshots } from "@/lib/roblox/thumbnails";
 import { fmtCompact, fmtDay, fmtInt, fmtPct, fmtTimeUtc, fmtWeekdayDay } from "@/lib/format";
 import { niceMax } from "@/lib/stats";
@@ -30,6 +32,11 @@ const loadGame = cache(async (id: number): Promise<GameHistory | null> => {
   const db = getSiteDb();
   if (!db) return null;
   return getGameHistory(db, id, { loadAggregates: getCachedWeekAggregates });
+});
+
+const loadEarning = cache(async (id: number): Promise<EarningRanks | null> => {
+  const db = getSiteDb();
+  return db ? getEarningRanks(db, id) : null;
 });
 
 function parseId(raw: string): number | null {
@@ -105,7 +112,8 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
   const g = await loadGame(id);
   if (!g) notFound();
 
-  const [icons, shots] = await Promise.all([getGameIcons([g.universeId]), getGameScreenshots(g.universeId)]);
+  const [icons, shots, earning] = await Promise.all([getGameIcons([g.universeId]), getGameScreenshots(g.universeId), loadEarning(g.universeId)]);
+  const est = estMonthlyDevEx(earning?.latest?.rank);
   const name = displayName(g.name);
   const robloxHref = g.canonicalUrlPath ? `https://www.roblox.com${g.canonicalUrlPath}` : null;
   const first = g.daily[0];
@@ -212,7 +220,25 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
           <Tile label="Tracked for" value={`${g.daily.length} days`} hint={`since ${fmtDay(first.dayMs)}`} />
         )}
         <Tile label="Highest single reading" value={fmtCompact(g.highest.players)} hint={`${fmtWeekdayDay(g.highest.atMs)}, ${fmtTimeUtc(g.highest.atMs)}`} />
+        {earning?.latest && est ? (
+          <Tile
+            label="Top Earning rank"
+            value={`#${earning.latest.rank}`}
+            hint={`est. ${fmtUsdEstimate(est.low)} to ${fmtUsdEstimate(est.high)} a month in payouts (modelled)`}
+          />
+        ) : earning?.best ? (
+          <Tile label="Top Earning rank" value="Not ranked now" hint={`best #${earning.best.rank}, ${fmtDay(earning.best.dayMs)}`} />
+        ) : null}
       </section>
+      {earning?.latest || earning?.best ? (
+        <p className="-mt-3 text-[13px] text-muted-foreground">
+          Top Earning is Roblox&apos;s own list of games by Robux spent in the last 7 days. Roblox publishes the order, not amounts, so the payout
+          range is an estimate from the rank.{" "}
+          <Link href="/methodology#revenue" className="text-link underline">
+            How it is estimated
+          </Link>
+        </p>
+      ) : null}
 
       <section aria-labelledby="players" className="flex flex-col gap-3 rounded-2xl border border-border bg-card px-6 pb-4 pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">

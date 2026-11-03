@@ -245,6 +245,40 @@ export async function getVotes(
   return out;
 }
 
+// Roblox's Top Earning chart (roblox.com/charts/top-earning), "sorted by total
+// Robux spent in the last 7 days". Paged at about 100; Roblox leaves a few
+// entries out of each page, so a game's rank is its position in the public
+// list. Sponsored entries are ads, not earners, and are skipped.
+export interface EarningRank {
+  universeId: number;
+  rank: number;
+}
+
+export async function getTopEarning(
+  sessionId: string,
+  opts?: FetchOpts & { maxPages?: number },
+): Promise<EarningRank[]> {
+  const out: EarningRank[] = [];
+  const seen = new Set<number>();
+  let pageToken: string | undefined;
+  for (let page = 0; page < (opts?.maxPages ?? 8); page++) {
+    const params = new URLSearchParams({ sessionId, sortId: "top-earning", device: "computer", country: "all" });
+    if (pageToken) params.set("pageToken", pageToken);
+    const res = await jget<{ games?: { universeId: number; isSponsored?: boolean }[]; nextPageToken?: string }>(
+      `https://apis.roblox.com/explore-api/v1/get-sort-content?${params.toString()}`,
+      opts,
+    );
+    for (const g of res.games ?? []) {
+      if (g.isSponsored || !Number.isInteger(g.universeId) || g.universeId <= 0 || seen.has(g.universeId)) continue;
+      seen.add(g.universeId);
+      out.push({ universeId: g.universeId, rank: out.length + 1 });
+    }
+    if (!res.nextPageToken) break;
+    pageToken = res.nextPageToken;
+  }
+  return out;
+}
+
 // Servers endpoint takes placeId, not universeId. Used for live server count.
 export async function getPublicServers(
   placeId: number,
