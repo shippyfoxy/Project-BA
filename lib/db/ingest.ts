@@ -1,8 +1,10 @@
 import type { Db } from "./client";
 
 // Raw 30-minute readings older than this are pruned once rolled up into
-// game_daily. 14 days of ~1,200 games is roughly 100 MB on Neon.
-export const RAW_RETENTION_DAYS = 14;
+// game_daily. Only the last two days are ever re-rolled and the classic
+// dashboard reads the last 24 hours, so 7 days leaves a wide margin: about
+// 125 MB at hourly readings of ~6,000 games.
+export const RAW_RETENTION_DAYS = 7;
 
 const DAY_MS = 86_400_000;
 const BATCH = 5_000;

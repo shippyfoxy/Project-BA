@@ -369,7 +369,7 @@ export default function ApiPage() {
 
         <Section id="coverage" title="Coverage">
           <ul className="flex list-disc flex-col gap-2 pl-5 text-text-2">
-            <li>Daily history starts on 7 May 2026. Raw readings are kept for 14 days and rolled up into the daily figures above.</li>
+            <li>Daily history starts on 7 May 2026. Raw readings are kept for 7 days and rolled up into the daily figures above.</li>
             <li>
               The refresh runs hourly. Each run reads Roblox&apos;s discovery lists for 24 countries and 5 device types, then
               re-reads every game it has ever found there, so a game stays tracked after it drops out of the lists (since 25 October 2026;
