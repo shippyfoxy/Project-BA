@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSiteDb } from "@/lib/db/site";
+import { displayName } from "@/lib/trends/names";
 
 export const revalidate = 1800;
 
@@ -36,8 +37,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const db = getSiteDb();
   if (!db) return bad("The database is not available.", 503);
 
-  const [game] = await db.query<{ universe_id: number; name: string; genre: string | null }>(
-    `select universe_id::float8 as universe_id, name, genre_l1 as genre from games where universe_id = $1::bigint`,
+  const [game] = await db.query<{ universe_id: number; name: string; genre: string }>(
+    `select universe_id::float8 as universe_id, name, coalesce(genre_l1, 'Other') as genre from games where universe_id = $1::bigint`,
     [id],
   );
   if (!game) return bad("No tracked game with that universe ID.", 404);
@@ -73,7 +74,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 
   return NextResponse.json({
-    game: { universe_id: game.universe_id, name: game.name, genre: game.genre },
+    game: { universe_id: game.universe_id, name: displayName(game.name), roblox_name: game.name, genre: game.genre },
     resolution: "daily",
     estimated: true,
     methodology: METHODOLOGY,

@@ -6,9 +6,9 @@ import { cache } from "react";
 import { getSiteDb } from "@/lib/db/site";
 import { getCachedWeekAggregates } from "@/lib/trends/cached";
 import { getGameHistory, type GameHistory } from "@/lib/trends/game";
-import { genreStyle } from "@/lib/trends/genres";
 import { displayName } from "@/lib/trends/names";
 import { DEVICE_LABELS } from "@/lib/trends/labels";
+import { genreColor } from "@/lib/trends/genres";
 import { getGameIcons, getGameScreenshots } from "@/lib/roblox/thumbnails";
 import { fmtCompact, fmtDay, fmtInt, fmtPct, fmtTimeUtc, fmtWeekdayDay } from "@/lib/format";
 import { niceMax } from "@/lib/stats";
@@ -107,7 +107,6 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
 
   const [icons, shots] = await Promise.all([getGameIcons([g.universeId]), getGameScreenshots(g.universeId)]);
   const name = displayName(g.name);
-  const genre = genreStyle(g.genre);
   const robloxHref = g.canonicalUrlPath ? `https://www.roblox.com${g.canonicalUrlPath}` : null;
   const first = g.daily[0];
   const last = g.daily[g.daily.length - 1];
@@ -116,7 +115,8 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
   const likes = g.daily
     .filter((d) => d.upVotes !== null && d.downVotes !== null && d.upVotes + d.downVotes > 0)
     .map((d) => ({ dayMs: d.dayMs, ratio: d.upVotes! / (d.upVotes! + d.downVotes!) }));
-  const notes = takeaways(g, genre.short);
+  const notes = takeaways(g, g.genre);
+  const genreHue = genreColor(g.genre);
   const sat = g.rhythm?.find((r) => r.dow === 6);
   const b = g.bench;
 
@@ -131,7 +131,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
           Trends
         </Link>
         <span aria-hidden="true">/</span>
-        <Link href={`/explore?q=${encodeURIComponent(g.genre)}`} className="text-text-2 hover:text-foreground">
+        <Link href={`/explore?launched=any&genre=${encodeURIComponent(g.genre)}`} className="text-text-2 hover:text-foreground">
           {g.genre}
         </Link>
         <span aria-hidden="true">/</span>
@@ -151,8 +151,8 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
             <div className="flex min-w-0 flex-col gap-2">
               <div className="flex flex-wrap gap-1.5">
                 {g.stage ? <StageBadge stage={g.stage} /> : null}
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[rgba(11,13,16,0.75)] px-2.5 py-0.5 text-xs font-medium" style={{ boxShadow: `inset 0 0 0 1px ${genre.color}99` }}>
-                  <span aria-hidden="true" className="inline-block size-2 rounded-full" style={{ background: genre.color }} />
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[rgba(11,13,16,0.75)] px-2.5 py-0.5 text-xs font-medium" style={{ boxShadow: `inset 0 0 0 1px ${genreHue}99` }}>
+                  <span aria-hidden="true" className="inline-block size-2 rounded-full" style={{ background: genreHue }} />
                   {g.genre}
                   {g.genreL2 ? ` › ${g.genreL2}` : ""}
                 </span>

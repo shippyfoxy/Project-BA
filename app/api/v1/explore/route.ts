@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSiteDb } from "@/lib/db/site";
 import { ageDays, parseFilters, screenGames } from "@/lib/trends/screener";
+import { displayName } from "@/lib/trends/names";
 
 const METHODOLOGY = "https://pulse.shipfox.me/methodology";
 
@@ -28,7 +29,9 @@ export async function GET(req: NextRequest) {
 
   const games = result.matches.map((g) => ({
     universe_id: g.universeId,
-    name: g.name,
+    // The same cleaned name the site shows; roblox_name keeps the raw title.
+    name: displayName(g.name),
+    roblox_name: g.name,
     creator: g.creatorName,
     genre: g.genre,
     stage: g.stage,

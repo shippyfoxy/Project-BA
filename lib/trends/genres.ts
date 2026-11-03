@@ -1,16 +1,15 @@
-// Genre accent colours from the V2 design. Each always sits next to its
-// written label, so colour never carries meaning on its own.
-const GENRES: Record<string, { color: string; short: string }> = {
-  Simulation: { color: "#199e70", short: "Simulation" },
-  Survival: { color: "#c98500", short: "Survival" },
-  "Roleplay & Avatar Sim": { color: "#d55181", short: "Roleplay" },
-  Action: { color: "#e66767", short: "Action" },
-  Shooter: { color: "#9085e9", short: "Shooter" },
-  RPG: { color: "#8fa3bf", short: "RPG" },
+// Genre accent colours from the V2 design. Labels are always Roblox's own
+// genre names, exactly as the API and CSV exports give them, and each colour
+// sits next to that label so colour never carries meaning on its own.
+const GENRE_COLORS: Record<string, string> = {
+  Simulation: "#199e70",
+  Survival: "#c98500",
+  "Roleplay & Avatar Sim": "#d55181",
+  Action: "#e66767",
+  Shooter: "#9085e9",
+  RPG: "#8fa3bf",
 };
 
 const OTHER = "#6b7484";
 
-export function genreStyle(genre: string): { color: string; short: string } {
-  return GENRES[genre] ?? { color: OTHER, short: genre };
-}
+export const genreColor = (genre: string): string => GENRE_COLORS[genre] ?? OTHER;
