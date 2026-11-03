@@ -2,10 +2,11 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSiteDb } from "@/lib/db/site";
 import { displayName } from "@/lib/trends/names";
 
-export const revalidate = 1800;
 
 const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
 const METHODOLOGY = "https://pulse.shipfox.me/methodology";
+// Data changes a few times a day; the API page promises at most 30 minutes stale.
+const CACHE = { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" };
 
 interface Row {
   day: string;
@@ -67,6 +68,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     );
     return new NextResponse([header, ...lines].join("\n") + "\n", {
       headers: {
+        ...CACHE,
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": `attachment; filename="roblox-pulse-${id}-history.csv"`,
       },
@@ -79,5 +81,5 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     estimated: true,
     methodology: METHODOLOGY,
     data: rows,
-  });
+  }, { headers: CACHE });
 }

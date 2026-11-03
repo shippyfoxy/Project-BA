@@ -31,6 +31,7 @@ const NAV = [
   { href: "/explore", label: "Explore" },
   { href: "/dashboard", label: "Classic dashboard" },
   { href: "/ab-testing", label: "A/B compare" },
+  { href: "/api", label: "API" },
   { href: "/methodology", label: "Methodology" },
 ];
 
