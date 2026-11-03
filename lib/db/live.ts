@@ -29,7 +29,9 @@ export async function recordSnapshot(db: Db, snap: IngestSnapshot, nowMs = Date.
   const from = utcDay(ts - DAY_MS);
   const to = utcDay(ts + DAY_MS);
   const rolledUpRows = await rollupDays(db, from, to);
-  const peaksUpdated = await refreshPeaks(db, from, to);
+  // Peaks use complete days only: yesterday and the day before, since today
+  // is still filling in.
+  const peaksUpdated = await refreshPeaks(db, utcDay(ts - 2 * DAY_MS), utcDay(ts));
   const prunedRows = await pruneObservations(db, retentionCutoff(nowMs));
   return { ...res, rolledUpRows, peaksUpdated, prunedRows };
 }

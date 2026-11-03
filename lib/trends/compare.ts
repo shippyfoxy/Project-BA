@@ -1,4 +1,5 @@
 import type { Db } from "@/lib/db/client";
+import { MIN_PEAK_DAYS } from "@/lib/db/ingest";
 
 const DAY_MS = 86_400_000;
 export const MAX_COMPARE = 4;
@@ -47,13 +48,15 @@ export async function getCompareGames(db: Db, ids: number[]): Promise<CompareGam
        from games where universe_id in (select unnest(string_to_array($1, ','))::bigint)`,
       [list],
     ),
-    // The same calendar 7-day window as game_peaks, so peaks here match game pages.
-    db.query<{ universe_id: number; day_ms: number; r7: number }>(
+    // The same calendar 7-day windows as game_peaks, complete days only, so
+    // peaks here match game pages.
+    db.query<{ universe_id: number; day_ms: number; r7: number; days: number }>(
       `select universe_id::float8 as universe_id, extract(epoch from day)::float8 * 1000 as day_ms,
-              avg(playing_avg) over (partition by universe_id order by day
-                range between interval '6 days' preceding and current row)::float8 as r7
+              avg(playing_avg) over w::float8 as r7, count(*) over w::int as days
        from game_daily
        where universe_id in (select unnest(string_to_array($1, ','))::bigint)
+         and day < (select max(day) from game_daily)
+       window w as (partition by universe_id order by day range between interval '6 days' preceding and current row)
        order by universe_id, day`,
       [list],
     ),
@@ -62,9 +65,13 @@ export async function getCompareGames(db: Db, ids: number[]): Promise<CompareGam
   const out: CompareGame[] = [];
   for (const id of ids) {
     const g = byId.get(id);
-    const points = rows.filter((r) => r.universe_id === id).map((r) => ({ dayMs: r.day_ms, r7: r.r7 }));
+    const own = rows.filter((r) => r.universe_id === id);
+    const points = own.map((r) => ({ dayMs: r.day_ms, r7: r.r7 }));
     if (!g || points.length === 0) continue;
-    const peak = points.reduce((a, b) => (b.r7 > a.r7 ? b : a));
+    // A peak needs a full window (MIN_PEAK_DAYS+ days of readings) when one exists.
+    const full = own.filter((r) => r.days >= MIN_PEAK_DAYS);
+    const best = (full.length ? full : own).reduce((a, b) => (b.r7 > a.r7 ? b : a));
+    const peak = { dayMs: best.day_ms, r7: best.r7 };
     out.push({
       universeId: id,
       name: g.name,

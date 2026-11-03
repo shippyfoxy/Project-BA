@@ -51,7 +51,8 @@ export interface GenreTrends {
 }
 
 export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
-  const [latest] = await db.query<{ day: string | null }>(`select max(day)::text as day from game_daily`);
+  // The last complete UTC day: today is still filling in.
+  const [latest] = await db.query<{ day: string | null }>(`select (max(day) - 1)::text as day from game_daily`);
   if (!latest?.day) return null;
   const day = latest.day;
   const endMs = (wk: number) => Date.parse(day) - wk * 7 * DAY_MS;
@@ -61,6 +62,7 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
       `select ($1::date - d.day) / 7 as wk, coalesce(g.genre_l1, 'Other') as genre,
               sum(d.playing_avg)::float8 as s, count(distinct d.day)::int as days
        from game_daily d join games g using (universe_id)
+       where d.day <= $1::date
        group by 1, 2`,
       [day],
     ),
@@ -73,7 +75,7 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
     db.query<{ genre: string; n: number }>(
       `select coalesce(g.genre_l1, 'Other') as genre, count(distinct d.universe_id)::int as n
        from game_daily d join games g using (universe_id)
-       where d.day > $1::date - 7
+       where d.day > $1::date - 7 and d.day <= $1::date
        group by 1`,
       [day],
     ),
@@ -83,6 +85,7 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
                 row_number() over (partition by day order by playing_avg desc) as rn,
                 sum(playing_avg) over (partition by day) as tot
          from game_daily
+         where day <= $1::date
        ), daily as (
          select day, max(tot) as tot,
                 sum(playing_avg) filter (where rn <= 10) as s10,
@@ -184,6 +187,9 @@ export function genreBenchmarks(rows: AggRow[], minGames = 10): { all: GenreBenc
   };
   const groups = new Map<string, AggRow[]>();
   for (const r of active) groups.set(r.genre, [...(groups.get(r.genre) ?? []), r]);
+  // "All" is Roblox's catch-all label, not a genre, and would sit confusingly
+  // beside the "All genres" row.
+  groups.delete("All");
   const genres = [...groups]
     .filter(([, list]) => list.length >= minGames)
     .map(([g, list]) => bench(g, list))

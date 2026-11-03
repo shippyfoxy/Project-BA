@@ -202,7 +202,7 @@ export default async function UpdatesPage() {
                 <th scope="col" className="px-4 py-3 text-left font-medium">Game</th>
                 <th scope="col" className="px-2 py-3 text-left font-medium">Title change</th>
                 <th scope="col" className="px-2 py-3 font-medium">Seen</th>
-                <th scope="col" className="px-2 py-3 font-medium">Players the week before</th>
+                <th scope="col" className="px-2 py-3 font-medium">Players a week before</th>
                 <th scope="col" className="px-4 py-3 font-medium">Change</th>
               </tr>
             </thead>

@@ -42,6 +42,7 @@ export async function GET(req: NextRequest) {
     playing_max: number;
     visits: number;
     prev_visits: number | null;
+    gap_mins: number | null;
     favorites: number | null;
     up_votes: number | null;
     down_votes: number | null;
@@ -52,6 +53,7 @@ export async function GET(req: NextRequest) {
      select d.day::text as day, d.universe_id::float8 as universe_id, g.name, g.creator_name,
             coalesce(g.genre_l1, 'Other') as genre, round(d.playing_avg)::float8 as playing_avg,
             d.playing_min, d.playing_max, d.visits_last::float8 as visits, p.visits_last::float8 as prev_visits,
+            extract(epoch from d.last_ts - p.last_ts)::float8 / 60 as gap_mins,
             d.favorites_last as favorites, d.up_votes_last as up_votes, d.down_votes_last as down_votes,
             d.samples::int as samples, e.rank
      from target
@@ -77,7 +79,11 @@ export async function GET(req: NextRequest) {
       playing_min: r.playing_min,
       playing_max: r.playing_max,
       visits: r.visits,
-      new_visits: r.prev_visits === null ? null : Math.max(r.visits - r.prev_visits, 0),
+      // Scaled to 24 hours: the two last readings can be 12 to 36 hours apart.
+      new_visits:
+        r.prev_visits === null || r.gap_mins === null || r.gap_mins < 360
+          ? null
+          : Math.round((Math.max(r.visits - r.prev_visits, 0) * 1_440) / r.gap_mins),
       favorites: r.favorites,
       up_votes: r.up_votes,
       down_votes: r.down_votes,

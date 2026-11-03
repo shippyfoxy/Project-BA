@@ -248,7 +248,7 @@ export default async function RevenuePage() {
                   7-day avg players
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium">
-                  Per player
+                  Per concurrent player
                 </th>
               </tr>
             </thead>
@@ -285,7 +285,7 @@ export default async function RevenuePage() {
                       {g.cur7 === null || g.cur7 < 1_000 ? (
                         <span className="text-muted-foreground">—</span>
                       ) : pro ? (
-                        `$${(est.mid / g.cur7).toFixed(0)}`
+                        `$${Math.round(est.mid / g.cur7).toLocaleString("en-GB")}`
                       ) : (
                         <ProLock />
                       )}
@@ -309,7 +309,7 @@ export default async function RevenuePage() {
             className="min-w-0 flex-[1_1_440px] overflow-hidden rounded-2xl border border-border bg-card"
           >
             <h2 id="per-player" className="border-b border-border px-5 py-3.5 font-heading text-[20px] font-bold">
-              Most revenue per player
+              Most revenue per concurrent player
             </h2>
             <ol>
               {perPlayer.map((g) => {
@@ -322,7 +322,7 @@ export default async function RevenuePage() {
                       {name}
                     </Link>
                     <span className="text-right text-sm tabular-nums">
-                      est. ${(g.estMonthly / g.cur7!).toFixed(0)}
+                      est. ${Math.round(g.estMonthly / g.cur7!).toLocaleString("en-GB")}
                       <span className="block text-xs text-muted-foreground">{fmtInt(g.cur7!)} players</span>
                     </span>
                   </li>

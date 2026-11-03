@@ -53,7 +53,7 @@ const COPY: Record<Stage, { intro: string; sortedBy: string; sort: (a: HomeGame,
     sort: (a, b) => b.cur7 - a.cur7,
   },
   steady: {
-    intro: "Newer games holding level: not rising, peaking, cooling or fading.",
+    intro: "Holding level and tracked for under 120 days: not rising, peaking, cooling or fading.",
     sortedBy: "players",
     sort: (a, b) => b.cur7 - a.cur7,
   },

@@ -1,6 +1,7 @@
 import { sessionBucket, SESSION_BUCKETS, type SessionBucket } from "@/lib/metrics";
 import { gameRetentionProxy, gameSessionMinutes } from "@/lib/snapshot/aggregate";
 import { estMonthlyDevEx } from "@/lib/trends/revenue";
+import { quantile } from "@/lib/stats";
 import type { SnapshotGame } from "./schema";
 
 export type DeviceFilter = "Phone" | "Tablet" | "Desktop" | "Console";
@@ -101,9 +102,7 @@ export function applyFilter(games: SnapshotGame[], filter: GroupFilter): Snapsho
 }
 
 function median(sorted: number[]): number {
-  if (sorted.length === 0) return 0;
-  const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0 ? sorted[mid - 1] : sorted[mid];
+  return sorted.length === 0 ? 0 : quantile(sorted, 0.5);
 }
 
 export function computeGroupMetrics(games: SnapshotGame[]): GroupMetrics {
@@ -191,7 +190,8 @@ export function computeGroupMetrics(games: SnapshotGame[]): GroupMetrics {
 }
 
 function computeDelta(a: number | null, b: number | null): MetricDelta {
-  if (a === null && b === null) return { a, b, deltaPct: null, winner: null };
+  // A group with no data for a metric neither wins nor loses on it.
+  if (a === null || b === null) return { a, b, deltaPct: null, winner: null };
   const aVal = a ?? 0;
   const bVal = b ?? 0;
   const deltaPct = aVal === 0 ? null : ((bVal - aVal) / Math.abs(aVal)) * 100;

@@ -1,4 +1,8 @@
 import type { Db } from "@/lib/db/client";
+import { MIN_PEAK_DAYS } from "@/lib/db/ingest";
+
+// Below this, two readings are too close together to scale to a day.
+const MIN_GAP_MINS = 6 * 60;
 import { quantile, shareBelow } from "@/lib/stats";
 import { ACTIVE_MIN_PLAYERS } from "./home";
 import { lifecycleStage, type Stage } from "./stage";
@@ -94,7 +98,7 @@ export function loadWeekAggregates(db: Db, day: string, universeId?: number): Pr
          extract(epoch from last_ts - lag(last_ts) over w) / 60 as mins,
          day - lag(day) over w as gap
        from game_daily
-       where day > $1::date - 15
+       where day > $1::date - 15 and day <= $1::date
        window w as (partition by universe_id order by day)
      ), agg as (
        select universe_id,
@@ -146,7 +150,7 @@ export async function getGameHistory(
   if (!game) return null;
 
   const [latest] = await db.query<{ as_of_ms: number; day: string }>(
-    `select extract(epoch from max(ts))::float8 * 1000 as as_of_ms, ((max(ts) at time zone 'UTC')::date)::text as day from snapshots`,
+    `select extract(epoch from max(ts))::float8 * 1000 as as_of_ms, ((max(ts) at time zone 'UTC')::date - 1)::text as day from snapshots`,
   );
 
   const rows = await db.query<{
@@ -157,6 +161,8 @@ export async function getGameHistory(
     max_at_ms: number;
     visits: number;
     prev_visits: number | null;
+    gap_mins: number | null;
+    window_days: number;
     fav: number | null;
     up: number | null;
     down: number | null;
@@ -164,14 +170,18 @@ export async function getGameHistory(
   }>(
     `select extract(epoch from day::timestamp)::float8 * 1000 as day_ms,
             playing_avg::float8 as avg,
-            avg(playing_avg) over (order by day range between interval '6 days' preceding and current row)::float8 as r7,
+            avg(playing_avg) over w7::float8 as r7,
+            count(*) over w7::int as window_days,
             playing_max::float8 as max,
             extract(epoch from playing_max_at)::float8 * 1000 as max_at_ms,
             visits_last::float8 as visits,
             (lag(visits_last) over (order by day))::float8 as prev_visits,
+            extract(epoch from last_ts - lag(last_ts) over (order by day))::float8 / 60 as gap_mins,
             favorites_last::float8 as fav, up_votes_last::float8 as up, down_votes_last::float8 as down,
             samples::int as samples
-     from game_daily where universe_id = $1 order by day`,
+     from game_daily where universe_id = $1
+     window w7 as (order by day range between interval '6 days' preceding and current row)
+     order by day`,
     [universeId],
   );
   if (rows.length === 0) return null;
@@ -183,7 +193,12 @@ export async function getGameHistory(
     max: r.max,
     maxAtMs: r.max_at_ms,
     visits: r.visits,
-    newVisits: r.prev_visits === null ? null : Math.max(0, r.visits - r.prev_visits),
+    // Visits gained between the last readings of consecutive days, scaled to a
+    // true 24 hours: those readings can be anywhere from 12 to 36 hours apart.
+    newVisits:
+      r.prev_visits === null || r.gap_mins === null || r.gap_mins < MIN_GAP_MINS
+        ? null
+        : (Math.max(0, r.visits - r.prev_visits) * 1_440) / r.gap_mins,
     favorites: r.fav,
     upVotes: r.up,
     downVotes: r.down,
@@ -208,9 +223,16 @@ export async function getGameHistory(
   const seenThisWeek = all.filter((r) => r.cur7 !== null);
   const cur7 = me.cur7;
   const peak7 = Math.max(me.peak7, cur7 ?? 0);
-  const peakPoint = daily.reduce((a, b) => (b.r7 > a.r7 ? b : a), daily[0]);
+  // Peaks and the first 1M use complete days and full windows, as game_peaks does.
+  const lastComplete = Date.parse(latest.day);
+  const complete = rows.filter((r) => r.day_ms <= lastComplete);
+  const fullWindows = complete.filter((r) => r.window_days >= MIN_PEAK_DAYS);
+  const peakRows = fullWindows.length ? fullWindows : complete.length ? complete : rows;
+  const peakRow = peakRows.reduce((a, b) => (b.r7 > a.r7 ? b : a), peakRows[0]);
+  const peakPoint = { dayMs: peakRow.day_ms, r7: peakRow.r7 };
   const highest = daily.reduce((a, b) => (b.max > a.max ? b : a), daily[0]);
-  const millionDay = daily.find((d) => d.r7 >= 1_000_000);
+  const millionRow = fullWindows.find((r) => r.r7 >= 1_000_000);
+  const millionDay = millionRow ? { dayMs: millionRow.day_ms } : undefined;
   const dataStartMs = (await db.query<{ ms: number }>(`select extract(epoch from min(day)::timestamp)::float8 * 1000 as ms from game_daily`))[0].ms;
   const sawLaunch =
     game.created_ms !== null && game.created_ms >= dataStartMs && game.first_seen_ms - game.created_ms <= 14 * 86_400_000;
@@ -280,7 +302,7 @@ export async function getGameHistory(
   const rhythmRows = await db.query<{ dow: number; game: number | null; game_n: number; all: number }>(
     `with days as (
        select day, sum(playing_avg) as tot, max(playing_avg) filter (where universe_id = $2) as mine
-       from game_daily where day < $1::date and day >= $1::date - 140 group by day
+       from game_daily where day <= $1::date and day > $1::date - 140 group by day
      )
      select extract(isodow from day)::int as dow, avg(mine)::float8 as game, count(mine)::int as game_n, avg(tot)::float8 as all
      from days group by 1 order by 1`,
@@ -348,7 +370,8 @@ export async function getGameHistory(
     peak7DayMs: peakPoint.dayMs,
     stage,
     rank,
-    daysToMillion: sawLaunch && millionDay ? Math.round((millionDay.dayMs - game.created_ms!) / 86_400_000) : null,
+    // Calendar days, as the home page counts them.
+    daysToMillion: sawLaunch && millionDay ? Math.floor(millionDay.dayMs / 86_400_000) - Math.floor(game.created_ms! / 86_400_000) : null,
     highest: { players: highest.max, atMs: highest.maxAtMs },
     latest: {
       visits: last.visits,

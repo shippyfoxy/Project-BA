@@ -56,7 +56,7 @@ describe("applyMigrations", () => {
   it("is a no-op the second time", async () => {
     expect(await applyMigrations(db)).toEqual([]);
     const r = await one<{ n: number }>("select count(*)::int as n from schema_migrations");
-    expect(r.n).toBe(4);
+    expect(r.n).toBe(5);
   });
 });
 
@@ -272,26 +272,33 @@ describe("loadSnapshotFromDb", () => {
 });
 
 describe("refreshPeaks", () => {
-  it("tracks the best 7-day average, the first 1M day and days tracked, and never lowers a peak", async () => {
+  it("uses provisional peaks until a full window exists, then never lowers a full peak", async () => {
     const day = (d: number) => Date.parse(`2026-06-${String(d).padStart(2, "0")}T12:00:00Z`);
-    const players = [500_000, 1_500_000, 1_600_000, 200_000];
+    const players = [500_000, 1_500_000, 1_600_000, 200_000, 1_000_000, 1_000_000, 1_000_000, 1_000_000];
     for (let i = 0; i < players.length; i++) {
       await ingestSnapshot(db, snap(day(i + 1), [game({ playing: players[i], visits: 1_000_000 + i })]));
     }
-    await rollupDays(db, "2026-06-01", "2026-06-05");
-    expect(await refreshPeaks(db, "2026-06-01", "2026-06-05")).toBe(1);
-    const p = await one<{ peak7: number; peak7_day: string; first_million_day: string; days_tracked: number }>(
-      "select peak7, peak7_day::text, first_million_day::text, days_tracked from game_peaks",
-    );
-    // 7-day averages by day: 500k, 1M, 1.2M, 950k
-    expect(p.peak7).toBeCloseTo(1_200_000, -2);
-    expect(p).toMatchObject({ peak7_day: "2026-06-03", first_million_day: "2026-06-02", days_tracked: 4 });
+    await rollupDays(db, "2026-06-01", "2026-06-09");
 
-    // Re-running over only the quiet last day keeps the earlier peak.
-    await refreshPeaks(db, "2026-06-04", "2026-06-05");
-    const again = await one<{ peak7: number; peak7_day: string }>("select peak7, peak7_day::text from game_peaks");
-    expect(again.peak7).toBeCloseTo(1_200_000, -2);
-    expect(again.peak7_day).toBe("2026-06-03");
+    // Four days: no window has 5 days, so the peak is provisional (rolling 500k, 1M, 1.2M, 950k).
+    expect(await refreshPeaks(db, "2026-06-01", "2026-06-05")).toBe(1);
+    const p = await one<{ peak7: number; peak7_day: string; first_million_day: string | null; peak7_full: boolean }>(
+      "select peak7, peak7_day::text, first_million_day::text, peak7_full from game_peaks",
+    );
+    expect(p.peak7).toBeCloseTo(1_200_000, -2);
+    expect(p).toMatchObject({ peak7_day: "2026-06-03", first_million_day: null, peak7_full: false });
+
+    // Full windows from day 5. Best is day 8 (days 2 to 8): 7.3M / 7, about 1.043M, which replaces the higher provisional peak.
+    await refreshPeaks(db, "2026-06-05", "2026-06-09");
+    const full = await one<{ peak7: number; peak7_day: string; first_million_day: string; peak7_full: boolean; days_tracked: number }>(
+      "select peak7, peak7_day::text, first_million_day::text, peak7_full, days_tracked from game_peaks",
+    );
+    expect(full.peak7).toBeCloseTo(7_300_000 / 7, -2);
+    expect(full).toMatchObject({ peak7_day: "2026-06-08", first_million_day: "2026-06-08", peak7_full: true, days_tracked: 8 });
+
+    // A later, quieter full window does not lower it.
+    await refreshPeaks(db, "2026-06-07", "2026-06-08");
+    expect((await one<{ peak7: number }>("select peak7 from game_peaks")).peak7).toBeCloseTo(7_300_000 / 7, -2);
   });
 });
 
@@ -303,7 +310,8 @@ describe("idle readings", () => {
       snap(now, [game(), game({ universeId: 101, rootPlaceId: 901, name: "Empty", playing: 0 })]),
       now,
     );
-    expect(res).toMatchObject({ observations: 1, idle: 1, games: 2, peaksUpdated: 1 });
+    // Peaks only use complete days, and the run's own day is still in progress.
+    expect(res).toMatchObject({ observations: 1, idle: 1, games: 2, peaksUpdated: 0 });
     const g = await one<{ n: number }>("select count(*)::int as n from games");
     expect(g.n).toBe(2);
   });

@@ -69,7 +69,7 @@ function summarise(rows: { universe_id: number; lift: number }[]): LiftSummary {
 }
 
 // Before and after averages for (game, day) events, keeping games averaging
-// MIN_PLAYERS+ the week before and with readings on both sides.
+// MIN_PLAYERS+ the week before, with both days present on each side.
 const LIFT_SQL = `
   with ev as (
     select distinct r.universe_id, r.day
@@ -80,9 +80,12 @@ const LIFT_SQL = `
          avg(d.playing_avg) filter (where d.day in (ev.day + 1, ev.day + 2))::float8 as after
   from ev
   join game_daily d on d.universe_id = ev.universe_id and d.day between ev.day - 6 and ev.day + 2
+  -- The second day after must be complete, not today.
+  where ev.day + 2 < (select max(day) from game_daily)
   group by ev.universe_id, ev.day
   having avg(d.playing_avg) filter (where d.day in (ev.day - 6, ev.day - 5)) >= ${MIN_PLAYERS}
-     and avg(d.playing_avg) filter (where d.day in (ev.day + 1, ev.day + 2)) is not null`;
+     and count(*) filter (where d.day in (ev.day - 6, ev.day - 5)) = 2
+     and count(*) filter (where d.day in (ev.day + 1, ev.day + 2)) = 2`;
 
 export async function getUpdateImpact(db: Db): Promise<UpdateImpact | null> {
   const [range] = await db.query<{ first: string | null; last: string | null }>(
@@ -95,7 +98,8 @@ export async function getUpdateImpact(db: Db): Promise<UpdateImpact | null> {
     `with ev as (
        select distinct universe_id, (updated_at at time zone 'UTC')::date as day
        from game_updates
-       where (updated_at at time zone 'UTC')::date between $1::date + 6 and $2::date - 2
+       -- max(day) is today, so D + 2 must be at most yesterday.
+       where (updated_at at time zone 'UTC')::date between $1::date + 6 and $2::date - 3
      )
      select ev.universe_id::float8 as universe_id, ev.day::text as day,
             avg(d.playing_avg) filter (where d.day in (ev.day - 6, ev.day - 5))::float8 as before,
@@ -104,7 +108,8 @@ export async function getUpdateImpact(db: Db): Promise<UpdateImpact | null> {
      join game_daily d on d.universe_id = ev.universe_id and d.day between ev.day - 6 and ev.day + 2
      group by ev.universe_id, ev.day
      having avg(d.playing_avg) filter (where d.day in (ev.day - 6, ev.day - 5)) >= ${MIN_PLAYERS}
-        and avg(d.playing_avg) filter (where d.day in (ev.day + 1, ev.day + 2)) is not null`,
+        and count(*) filter (where d.day in (ev.day - 6, ev.day - 5)) = 2
+        and count(*) filter (where d.day in (ev.day + 1, ev.day + 2)) = 2`,
     [range.first, range.last],
   );
 

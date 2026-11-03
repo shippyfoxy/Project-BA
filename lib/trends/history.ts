@@ -19,10 +19,11 @@ export interface DayRow {
   samples: number;
   top_earning_rank: number | null;
   in_range?: boolean; // false for the extra day fetched only to measure new visits
+  last_ms?: number; // time of the day's last reading, to scale new visits to 24 hours
 }
 
-export interface DailyOut extends Omit<DayRow, "in_range"> {
-  new_visits: number | null; // null when the day before has no reading
+export interface DailyOut extends Omit<DayRow, "in_range" | "last_ms"> {
+  new_visits: number | null; // per 24 hours; null when the day before has no reading
   est_monthly_devex_usd: number | null; // MODELLED from the day's rank
 }
 
@@ -48,13 +49,17 @@ export interface PeriodOut {
 const thousands = (v: number | undefined) => (v === undefined ? null : Math.round(v / 1_000) * 1_000);
 
 export function toDaily(rows: DayRow[]): DailyOut[] {
-  return rows.flatMap(({ in_range, ...r }, i) => {
+  return rows.flatMap(({ in_range, last_ms, ...r }, i) => {
     if (in_range === false) return [];
     const prev = rows[i - 1];
     const consecutive = prev && Date.parse(r.day) - Date.parse(prev.day) === DAY_MS;
+    // The last readings of consecutive days can be 12 to 36 hours apart, so
+    // the gain is scaled to a true 24 hours when both times are known.
+    const gapMins = last_ms !== undefined && prev?.last_ms !== undefined ? (last_ms - prev.last_ms) / 60_000 : null;
+    const gain = consecutive ? Math.max(r.visits - prev.visits, 0) : null;
     return {
       ...r,
-      new_visits: consecutive ? Math.max(r.visits - prev.visits, 0) : null,
+      new_visits: gain === null ? null : gapMins === null ? gain : gapMins >= 360 ? Math.round((gain * 1_440) / gapMins) : null,
       est_monthly_devex_usd: thousands(estMonthlyDevEx(r.top_earning_rank)?.mid),
     };
   });

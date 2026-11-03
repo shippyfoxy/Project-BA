@@ -147,7 +147,7 @@ const EXPLORE_FIELDS: Row[] = [
   ["roblox_name", "The title exactly as Roblox returns it."],
   ["creator", "The owning user or group."],
   ["genre", "Roblox's top-level genre, or “Other” when Roblox gives none."],
-  ["stage", "Lifecycle stage, in lower case (see Definitions)."],
+  ["stage", "Lifecycle stage, in lower case (see Definitions). Blank for games averaging under 1,000 players."],
   ["created, age_days", "Roblox's creation date and days since, as of the latest refresh."],
   ["players_7d_avg, players_prev_7d_avg", "Average concurrent players over the last 7 days and the 7 before."],
   [
@@ -155,7 +155,7 @@ const EXPLORE_FIELDS: Row[] = [
     "Average concurrent players on the last complete day, and over the last 30 and 90 days. Exports only; the page uses the 7-day figures.",
   ],
   ["week_on_week_pct", "Change between those two weeks. Null when the game has no readings in the earlier week."],
-  ["peak_7d_avg", "Best 7-day average since tracking began."],
+  ["peak_7d_avg", "Best 7-day average since tracking began, from complete days with readings on at least 5 of the 7."],
   ["est_session_min", "Estimated session length in minutes. Null until there are two consecutive days of readings."],
   ["favourites_per_1k_visits", "Lifetime favourites per 1,000 lifetime visits."],
   ["top_earning_rank", "Position in Roblox's Top Earning list (7-day Robux spend) on the latest day recorded. Null if not listed."],
@@ -189,7 +189,10 @@ const HISTORY_FIELDS: Row[] = [
   ["visits", "Lifetime visits at the day's last reading. Subtract the previous day's value for new visits."],
   ["favorites, up_votes, down_votes", "Totals at the day's last reading that included them. Null if none did."],
   ["samples", "How many readings the day is based on. Treat days with 1 or 2 with care."],
-  ["new_visits", "Visits gained since the previous day's last reading. Null when the day before has no reading."],
+  [
+    "new_visits",
+    "Visits gained between the last readings of consecutive days, scaled to 24 hours (those readings can be 12 to 36 hours apart). Null when the day before has no reading.",
+  ],
   ["top_earning_rank, est_monthly_devex_usd", "That day's Top Earning rank and the payout modelled from it. Null when not listed."],
   [
     "Weekly and monthly",
@@ -208,7 +211,7 @@ const DEFINITIONS: Row[] = [
   ],
   [
     "7-day average players",
-    "The mean of each day's average concurrent players over the last 7 UTC days that have readings.",
+    "The mean of each day's average concurrent players over the last 7 complete UTC days (today is still filling in), counting days that have readings.",
   ],
   [
     "Estimated session length",

@@ -158,6 +158,12 @@ export const NAMES_INSERT = `
   on conflict do nothing
 `;
 
+// A 7-day window counts towards a peak with at least this many days of readings.
+export const MIN_PEAK_DAYS = 5;
+
+// Roblox lists about 460 games; a list this long counts as complete.
+const MIN_FULL_LIST = 300;
+
 // Only games already in the games table: an earner the games API could not
 // describe this run has nothing to join to yet.
 const EARNING_UPSERT = `
@@ -296,6 +302,12 @@ export async function ingestSnapshot(
     }
     if (earning.length > 0) {
       await tx.query(EARNING_UPSERT, [JSON.stringify(earning), utcDay(ts), tsIso]);
+      // A game that dropped out of the list since an earlier run today would
+      // otherwise keep its old rank, sharing it with the game that took it.
+      // Only a near-complete list may prune, so a short fetch never wipes ranks.
+      if (earning.length >= MIN_FULL_LIST) {
+        await tx.query("delete from earning_ranks where day = $1::date and ts < $2::timestamptz", [utcDay(ts), tsIso]);
+      }
     }
     // Written last so a crash mid-ingest leaves no marker and the snapshot is retried.
     await tx.query(
@@ -369,19 +381,26 @@ export async function rollupDays(db: Db, fromDay: string, toDay: string): Promis
 // Updates game_peaks for every game with data in [fromDay, toDay). The 7-day
 // window needs the six days before fromDay too. Peaks only ever go up, and
 // days_tracked is recounted for the games touched.
-export async function refreshPeaks(db: Db, fromDay: string, toDay: string): Promise<number> {
+// Best 7-day averages for windows ending in [fromDay, toDay), complete days
+// only. A window is full with 5+ days of readings; a game with none yet gets
+// a provisional peak from its partial windows, which any full one replaces.
+// `replace` rebuilds rather than only raising existing peaks.
+export async function refreshPeaks(db: Db, fromDay: string, toDay: string, opts: { replace?: boolean } = {}): Promise<number> {
   const rows = await db.query<{ n: number }>(
     `with rolled as (
        select universe_id, day,
-              avg(playing_avg) over (partition by universe_id order by day
-                range between interval '6 days' preceding and current row) as r7
+              avg(playing_avg) over w as r7,
+              count(*) over w as days
        from game_daily
        where day >= $1::date - 6 and day < $2::date
+       window w as (partition by universe_id order by day range between interval '6 days' preceding and current row)
      ), best as (
        select universe_id,
-              (array_agg(r7 order by r7 desc, day))[1] as peak7,
-              (array_agg(day order by r7 desc, day))[1] as peak7_day,
-              min(day) filter (where r7 >= 1000000) as first_million_day
+              bool_or(days >= ${MIN_PEAK_DAYS}) as full_window,
+              coalesce((array_agg(r7 order by r7 desc, day) filter (where days >= ${MIN_PEAK_DAYS}))[1], max(r7)) as peak7,
+              coalesce((array_agg(day order by r7 desc, day) filter (where days >= ${MIN_PEAK_DAYS}))[1],
+                       (array_agg(day order by r7 desc, day))[1]) as peak7_day,
+              min(day) filter (where r7 >= 1000000 and days >= ${MIN_PEAK_DAYS}) as first_million_day
        from rolled where day >= $1::date
        group by universe_id
      ), counts as (
@@ -390,18 +409,29 @@ export async function refreshPeaks(db: Db, fromDay: string, toDay: string): Prom
        where universe_id in (select universe_id from best)
        group by universe_id
      ), up as (
-       insert into game_peaks (universe_id, peak7, peak7_day, first_million_day, days_tracked)
-       select b.universe_id, b.peak7, b.peak7_day, b.first_million_day, c.n
+       insert into game_peaks (universe_id, peak7, peak7_day, first_million_day, days_tracked, peak7_full)
+       select b.universe_id, b.peak7, b.peak7_day, b.first_million_day, c.n, b.full_window
        from best b join counts c using (universe_id)
        on conflict (universe_id) do update set
-         peak7 = greatest(game_peaks.peak7, excluded.peak7),
-         peak7_day = case when excluded.peak7 > game_peaks.peak7 then excluded.peak7_day else game_peaks.peak7_day end,
-         first_million_day = least(game_peaks.first_million_day, excluded.first_million_day),
+         -- A full peak beats a provisional one; within the same kind, the higher wins.
+         peak7 = case
+           when $3 then excluded.peak7
+           when excluded.peak7_full and not game_peaks.peak7_full then excluded.peak7
+           when excluded.peak7_full = game_peaks.peak7_full then greatest(game_peaks.peak7, excluded.peak7)
+           else game_peaks.peak7 end,
+         peak7_day = case
+           when $3 then excluded.peak7_day
+           when excluded.peak7_full and not game_peaks.peak7_full then excluded.peak7_day
+           when excluded.peak7_full = game_peaks.peak7_full and excluded.peak7 > game_peaks.peak7 then excluded.peak7_day
+           else game_peaks.peak7_day end,
+         first_million_day = case when $3 then excluded.first_million_day
+           else least(game_peaks.first_million_day, excluded.first_million_day) end,
+         peak7_full = case when $3 then excluded.peak7_full else game_peaks.peak7_full or excluded.peak7_full end,
          days_tracked = excluded.days_tracked
        returning 1
      )
      select count(*)::int as n from up`,
-    [fromDay, toDay],
+    [fromDay, toDay, opts.replace ?? false],
   );
   return Number(rows[0]?.n ?? 0);
 }

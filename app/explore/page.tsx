@@ -220,7 +220,7 @@ function Filters({ f, result }: { f: ScreenerFilters; result: ScreenerResult }) 
         ))}
       </FieldSet>
 
-      <FieldSet legend="Lifecycle stage">
+      <FieldSet legend="Lifecycle stage (1,000+ players)">
         {STAGES.map((s) => (
           <Option
             key={s}
@@ -396,7 +396,7 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
                       </Link>
                     </th>
                     <td className="px-2 py-2.5 text-left">
-                      <StageBadge stage={g.stage} />
+                      {g.stage ? <StageBadge stage={g.stage} /> : <span className="text-muted-foreground" title="Stages are given to games averaging 1,000+ players">—</span>}
                     </td>
                     <td className="px-2 py-2.5 text-text-2">{age === null ? "—" : age >= 365 ? `${Math.floor(age / 365)} yr` : `${age} d`}</td>
                     <td className="px-2 py-2.5">{fmtInt(g.cur7)}</td>

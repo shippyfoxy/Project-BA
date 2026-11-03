@@ -208,7 +208,8 @@ async function main() {
     if (finalPrune > watermark) await pruneObservations(db, finalPrune);
     // Peaks over the whole daily history; cheap enough once per backfill.
     const [range] = await db.query<{ first: string | null }>("select min(day)::text as first from game_daily");
-    if (range?.first) await refreshPeaks(db, range.first, utcDay(startOfUtcDay(Date.now()) + 2 * DAY_MS));
+    // Today is still partial, so it is the exclusive end.
+    if (range?.first) await refreshPeaks(db, range.first, utcDay(startOfUtcDay(Date.now())), { replace: true });
     await db.exec("vacuum analyze");
   }
 

@@ -81,6 +81,8 @@ export function UsdSum({ ranks, suffix = "" }: { ranks: number[]; suffix?: strin
   );
 }
 
+const perPlayer = (v: number) => (v < 1 ? "under $1" : `$${Math.round(v).toLocaleString("en-GB")}`);
+
 // Modelled monthly payout per average concurrent player.
 export function UsdPerPlayer({ rank, players, prefix = "" }: { rank: number; players: number; prefix?: string }) {
   const pro = usePro();
@@ -89,7 +91,8 @@ export function UsdPerPlayer({ rank, players, prefix = "" }: { rank: number; pla
   if (!pro) return <ProLock />;
   return (
     <>
-      {prefix}${(est.mid / players).toFixed(0)}
+      {prefix}
+      {perPlayer(est.mid / players)}
     </>
   );
 }

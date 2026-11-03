@@ -2,6 +2,7 @@ import type { Db } from "@/lib/db/client";
 import { lifecycleStage, STAGES, type Stage } from "./stage";
 import { parseSearch, searchWhere } from "./search";
 import { estMonthlyDevEx } from "./revenue";
+import { ACTIVE_MIN_PLAYERS } from "./home";
 
 const DAY_MS = 86_400_000;
 
@@ -59,7 +60,7 @@ export interface ScreenerRow {
   favsPer1k: number | null; // favourites per 1,000 visits
   earningRank: number | null; // position in Roblox's Top Earning list
   estMonthly: number | null; // MODELLED monthly DevEx in USD, from earningRank
-  stage: Stage;
+  stage: Stage | null; // only for games averaging ACTIVE_MIN_PLAYERS+, as on every other page
 }
 
 export interface ScreenerResult {
@@ -147,12 +148,12 @@ function sorter(f: ScreenerFilters) {
 // can be worked out from the same rows.
 export function applyFilters(rows: ScreenerRow[], f: ScreenerFilters): Omit<ScreenerResult, "asOfMs" | "day"> {
   const genreOk = (r: ScreenerRow) => f.genres.length === 0 || f.genres.includes(r.genre);
-  const stageOk = (r: ScreenerRow) => f.stages.length === 0 || f.stages.includes(r.stage);
+  const stageOk = (r: ScreenerRow) => f.stages.length === 0 || (r.stage !== null && f.stages.includes(r.stage));
 
   const genreCounts = new Map<string, number>();
   for (const r of rows) if (stageOk(r)) genreCounts.set(r.genre, (genreCounts.get(r.genre) ?? 0) + 1);
   const stageCounts = Object.fromEntries(STAGES.map((s) => [s, 0])) as Record<Stage, number>;
-  for (const r of rows) if (genreOk(r)) stageCounts[r.stage]++;
+  for (const r of rows) if (genreOk(r) && r.stage) stageCounts[r.stage]++;
 
   return {
     matches: rows.filter((r) => genreOk(r) && stageOk(r)).sort(sorter(f)),
@@ -182,7 +183,7 @@ interface Row {
 export async function screenGames(db: Db, f: ScreenerFilters): Promise<ScreenerResult | null> {
   const [latest] = await db.query<{ as_of_ms: number | null; day: string | null }>(
     `select extract(epoch from max(ts))::float8 * 1000 as as_of_ms,
-            ((max(ts) at time zone 'UTC')::date)::text as day
+            ((max(ts) at time zone 'UTC')::date - 1)::text as day
      from snapshots`,
   );
   if (!latest?.as_of_ms || !latest.day) return null;
@@ -219,7 +220,7 @@ export async function screenGames(db: Db, f: ScreenerFilters): Promise<ScreenerR
          extract(epoch from last_ts - lag(last_ts) over w) / 60 as mins,
          day - lag(day) over w as gap
        from game_daily
-       where day > $1::date - 15
+       where day > $1::date - 15 and day <= $1::date
        window w as (partition by universe_id order by day)
      ), agg as (
        select universe_id,
@@ -261,18 +262,15 @@ export async function screenGames(db: Db, f: ScreenerFilters): Promise<ScreenerR
       prev7: r.prev7,
       peak7,
       wowPct: r.prev7 ? (100 * (r.cur7 - r.prev7)) / r.prev7 : null,
-      session: r.session,
+      // The same bounds as game-page benchmarks: outside them the estimate is noise.
+      session: r.session !== null && r.session >= 0.5 && r.session <= 600 ? r.session : null,
       favsPer1k: r.fav !== null && r.vis ? (1_000 * r.fav) / r.vis : null,
       earningRank: r.earning_rank,
       estMonthly: estMonthlyDevEx(r.earning_rank)?.mid ?? null,
-      stage: lifecycleStage({
-        cur7: r.cur7,
-        prev7: r.prev7,
-        peak7,
-        createdMs: r.created_ms,
-        daysTracked: r.days_tracked,
-        nowMs: asOfMs,
-      }),
+      stage:
+        r.cur7 >= ACTIVE_MIN_PLAYERS
+          ? lifecycleStage({ cur7: r.cur7, prev7: r.prev7, peak7, createdMs: r.created_ms, daysTracked: r.days_tracked, nowMs: asOfMs })
+          : null,
     };
   });
   return { asOfMs, day: latest.day, ...applyFilters(all, f) };
@@ -282,7 +280,7 @@ export const ageDays = (createdMs: number | null, nowMs: number) =>
   createdMs === null ? null : Math.max(0, Math.round((nowMs - createdMs) / DAY_MS));
 
 export interface WindowAverages {
-  d1: number | null; // the last complete UTC day
+  d1: number | null; // the last complete UTC day, which screenGames' day already is
   d30: number | null;
   d90: number | null;
 }
@@ -294,11 +292,11 @@ export async function windowAverages(db: Db, day: string, ids: number[]): Promis
   if (ids.length === 0) return out;
   const rows = await db.query<{ universe_id: number; d1: number | null; d30: number | null; d90: number | null }>(
     `select universe_id::float8 as universe_id,
-            avg(playing_avg) filter (where day = $1::date - 1)::float8 as d1,
+            avg(playing_avg) filter (where day = $1::date)::float8 as d1,
             avg(playing_avg) filter (where day > $1::date - 30)::float8 as d30,
             avg(playing_avg)::float8 as d90
      from game_daily
-     where day > $1::date - 90
+     where day > $1::date - 90 and day <= $1::date
        and universe_id in (select unnest(string_to_array($2, ','))::bigint)
      group by universe_id`,
     [day, ids.join(",")],

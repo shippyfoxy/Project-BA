@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getSiteDb } from "@/lib/db/site";
-import { getCachedActiveGames } from "@/lib/trends/cached";
+import { getCachedActiveGames, getCachedGenreTrends } from "@/lib/trends/cached";
 import { getTrendsHome, type Earner, type HomeGame, type Mover } from "@/lib/trends/home";
 import { Usd, UsdPerPlayer } from "@/components/pro/Pro";
 import { displayName } from "@/lib/trends/names";
@@ -23,8 +23,8 @@ const PULSE: { stage: Stage; note: string }[] = [
   { stage: "peaking", note: "within 10% of their best week" },
   { stage: "cooling", note: "down on last week, above half of peak" },
   { stage: "fading", note: "at half their peak or less" },
-  { stage: "evergreen", note: "holding up after 120+ days" },
-  { stage: "steady", note: "newer games holding level" },
+  { stage: "evergreen", note: "holding up, tracked 120+ days" },
+  { stage: "steady", note: "holding level, tracked under 120 days" },
 ];
 
 const PODIUM = [
@@ -77,7 +77,7 @@ function EarnerList({ title, games, icons, perPlayer }: { title: string; games: 
                     <span className="block">
                       <UsdPerPlayer rank={g.rank} players={g.cur7} prefix="est. " />
                     </span>
-                    <span className="block text-xs text-muted-foreground">per player a month</span>
+                    <span className="block text-xs text-muted-foreground">per concurrent player a month</span>
                   </>
                 ) : (
                   <>
@@ -138,9 +138,10 @@ function MoverList({ title, tone, games, icons }: { title: string; tone: "rise" 
 export default async function TrendsHomePage() {
   const db = getSiteDb();
   let data = null;
+  let trends = null;
   if (db) {
     try {
-      data = await getTrendsHome(db, { active: await getCachedActiveGames() });
+      [data, trends] = await Promise.all([getTrendsHome(db, { active: await getCachedActiveGames() }), getCachedGenreTrends().catch(() => null)]);
     } catch (err) {
       console.error("[home] trends query failed:", err);
     }
@@ -167,8 +168,11 @@ export default async function TrendsHomePage() {
   const podium = data.top.slice(0, 3);
   const rest = data.top.slice(3);
   const week = `${fmtDay(Date.parse(data.weekFrom))} to ${fmtDay(Date.parse(data.weekTo))}`;
-  const { biggestReading, fastestToMillion, alwaysTop10, biggestShare } = data.records;
-  const topStudiosOneHit = data.studios.every((s) => s.bigGames <= 1);
+  const { biggestReading, fastestToMillion, alwaysTop10 } = data.records;
+  // The same weekly windows as the concentration chart on Genres, so both pages agree.
+  const shareWeeks = trends?.concentration.weeks ?? [];
+  const biggestShare = shareWeeks.length ? shareWeeks.reduce((a, b) => (b.top1 > a.top1 ? b : a)) : null;
+  const topStudiosOneHit = data.studios.length > 0 && data.studios.every((s) => s.bigGames === 1);
 
   return (
     <>
@@ -362,9 +366,9 @@ export default async function TrendsHomePage() {
             {biggestShare ? (
               <li className="flex flex-[1_1_250px] flex-col gap-1.5 rounded-2xl border border-border bg-card px-5 py-4">
                 <span className="text-[13px] text-muted-foreground">Biggest share for one game</span>
-                <span className="font-heading text-[34px] font-extrabold tracking-tight">{biggestShare.pct.toFixed(1)}%</span>
+                <span className="font-heading text-[34px] font-extrabold tracking-tight">{(biggestShare.top1 * 100).toFixed(1)}%</span>
                 <span className="text-[13px] text-text-2">
-                  of tracked players went to {displayName(biggestShare.name)}, week of {fmtDay(Date.parse(biggestShare.weekStart))}
+                  of tracked players went to {displayName(biggestShare.topName)}, week to {fmtDay(biggestShare.endMs)}
                 </span>
               </li>
             ) : null}

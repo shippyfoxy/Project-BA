@@ -51,6 +51,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             d.visits_last::float8 as visits, d.favorites_last as favorites,
             d.up_votes_last as up_votes, d.down_votes_last as down_votes, d.samples::int as samples,
             e.rank as top_earning_rank,
+            extract(epoch from d.last_ts)::float8 * 1000 as last_ms,
             d.day >= coalesce($3::date, bounds.to_day - $4::int) as in_range
      from game_daily d
      cross join bounds

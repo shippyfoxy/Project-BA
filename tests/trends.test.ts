@@ -44,7 +44,8 @@ afterAll(async () => {
 describe("trends queries", () => {
   it("classifies active games from the last two weeks and game_peaks", async () => {
     const a = await getActiveGames(db);
-    expect(a?.day).toBe("2026-06-21");
+    // Weeks end on the last complete day; the 21st is still in progress.
+    expect(a?.day).toBe("2026-06-20");
     const byName = Object.fromEntries(a!.games.map((g) => [g.name, g]));
     expect(byName.Rocket.stage).toBe("rising");
     expect(byName.Sunset.stage).toBe("fading");
@@ -99,14 +100,14 @@ describe("trends queries", () => {
     expect((await screenGames(db, { ...any, order: "asc" }))?.matches.map((g) => g.name)).toEqual(["Plateau", "Sunset", "Rocket"]);
     const plateau = all!.matches.find((g) => g.name === "Plateau")!;
     expect(plateau.session).toBeCloseTo(384, 0);
-    expect(plateau.favsPer1k).toBeCloseTo((1_000 * 5_000) / (2_000_000 + 20 * 30_000), 3);
+    expect(plateau.favsPer1k).toBeCloseTo((1_000 * 5_000) / (2_000_000 + 19 * 30_000), 3);
   });
 });
 
 describe("genre trends and compare", () => {
   it("splits players by genre over 7-day windows ending on the latest day", async () => {
     const t = await getGenreTrends(db);
-    expect(t?.latestDay).toBe("2026-06-21");
+    expect(t?.latestDay).toBe("2026-06-20");
     const sim = t!.shares.find((g) => g.genre === "Simulation")!;
     const act = t!.shares.find((g) => g.genre === "Action")!;
     expect(sim.share + act.share).toBeCloseTo(1, 6);
@@ -130,7 +131,7 @@ describe("genre trends and compare", () => {
   it("lines up launch curves with peaks", async () => {
     expect(parseIds("3,abc,1,3,2,9,8")).toEqual([3, 1, 2, 9]);
     const [sunset] = await getCompareGames(db, [2]);
-    expect(sunset.points).toHaveLength(21);
+    expect(sunset.points).toHaveLength(20); // complete days only
     expect(sunset.peak.r7).toBeGreaterThan(sunset.latest.r7);
     expect(daysSince(Date.parse("2026-06-01T23:00:00Z"), Date.parse("2026-06-03"))).toBe(2);
   });

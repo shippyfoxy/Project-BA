@@ -43,7 +43,8 @@ export async function getRevenuePage(db: Db): Promise<RevenuePage | null> {
             e.rank, p.rank as prev_rank,
             (select avg(d.playing_avg) from game_daily d
               where d.universe_id = e.universe_id
-                and d.day > (select max(day) from game_daily) - 7)::float8 as cur7
+                and d.day > (select max(day) - 1 from game_daily) - 7
+                and d.day <= (select max(day) - 1 from game_daily))::float8 as cur7
      from earning_ranks e
      join games g using (universe_id)
      left join earning_ranks p on p.universe_id = e.universe_id and p.day = $2::date

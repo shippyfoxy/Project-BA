@@ -56,7 +56,6 @@ export interface TrendsHome {
     biggestReading: { name: string; players: number; atMs: number } | null;
     fastestToMillion: { name: string; days: number } | null;
     alwaysTop10: { names: string[]; days: number };
-    biggestShare: { name: string; pct: number; weekStart: string } | null;
   };
   rhythm: { dow: number; index: number }[]; // 1 = Monday, 100 = weekly average
   studios: { name: string; players: number; topGame: string; bigGames: number }[];
@@ -91,10 +90,11 @@ interface GameRow {
 export async function getActiveGames(db: Db): Promise<ActiveGames | null> {
   const [latest] = await db.query<{ as_of_ms: number | null; day: string | null }>(
     `select extract(epoch from max(ts))::float8 * 1000 as as_of_ms,
-            ((max(ts) at time zone 'UTC')::date)::text as day
+            ((max(ts) at time zone 'UTC')::date - 1)::text as day
      from snapshots`,
   );
   if (!latest?.as_of_ms || !latest.day) return null;
+  // Weeks end on the last complete UTC day; today is still filling in.
   const day = latest.day;
 
   // Peaks and history length come from game_peaks (kept current at refresh),
@@ -105,7 +105,7 @@ export async function getActiveGames(db: Db): Promise<ActiveGames | null> {
          avg(playing_avg) filter (where day > $1::date - 7) as cur7,
          avg(playing_avg) filter (where day <= $1::date - 7) as prev7
        from game_daily
-       where day > $1::date - 14
+       where day > $1::date - 14 and day <= $1::date
        group by universe_id
      )
      select p.universe_id::float8 as universe_id, g.name, g.creator_name,
@@ -222,18 +222,10 @@ export async function getTrendsHome(db: Db, opts: { active?: ActiveGames | null 
      having count(*) = (select count(distinct day) from game_daily)
      order by g.name`,
   );
-  const [share] = await db.query<{ name: string; pct: number; wk: string }>(
-    `with w as (select date_trunc('week', day)::date as wk, universe_id, avg(playing_avg) as p from game_daily group by 1, 2),
-          t as (select wk, sum(p) as tot from w group by wk)
-     select g.name, (100 * w.p / t.tot)::float8 as pct, w.wk::text as wk
-     from w join t using (wk) join games g using (universe_id)
-     order by w.p / t.tot desc limit 1`,
-  );
-
-  // Complete days only: today's total is still filling in.
+  // Complete days only: $1 is the last complete day.
   const rhythmRows = await db.query<{ dow: number; avg: number }>(
     `with t as (select day, sum(playing_avg) as tot from game_daily
-                where day < $1::date and day >= $1::date - 140 group by day)
+                where day <= $1::date and day > $1::date - 140 group by day)
      select extract(isodow from day)::int as dow, avg(tot)::float8 as avg from t group by 1 order by 1`,
     [day],
   );
@@ -291,7 +283,6 @@ export async function getTrendsHome(db: Db, opts: { active?: ActiveGames | null 
       biggestReading: biggest ? { name: biggest.name, players: biggest.v, atMs: biggest.at_ms } : null,
       fastestToMillion: active.fastestToMillion,
       alwaysTop10: { names: alwaysTop10.map((r) => r.name), days: totals.days },
-      biggestShare: share ? { name: share.name, pct: share.pct, weekStart: share.wk } : null,
     },
     rhythm: rhythmRows.map((r) => ({ dow: r.dow, index: (100 * r.avg) / rhythmMean })),
     studios: studioList.slice(0, 5),
