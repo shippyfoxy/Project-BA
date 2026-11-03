@@ -3,14 +3,10 @@ import { getSiteDb } from "@/lib/db/site";
 import { ageDays, parseFilters, screenGames, windowAverages } from "@/lib/trends/screener";
 import { estMonthlyDevEx } from "@/lib/trends/revenue";
 import { displayName } from "@/lib/trends/names";
+import { csvCell } from "@/lib/trends/history";
 
 const METHODOLOGY = "https://pulse.shipfox.me/methodology";
 
-const csvCell = (v: string | number | null) => {
-  if (v === null) return "";
-  const s = String(v);
-  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-};
 const round = (n: number | null, digits = 0) => (n === null ? null : Number(n.toFixed(digits)));
 
 // Every game matching the Explore filters, with the same query parameters as

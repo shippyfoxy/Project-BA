@@ -5,6 +5,8 @@ import { estMonthlyDevEx } from "@/lib/trends/revenue";
 import { toCsv } from "@/lib/trends/history";
 
 const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
+// Matches the format and is a real calendar day (2026-02-30 is not).
+const realDay = (s: string) => DAY_RE.test(s) && new Date(`${s}T00:00:00Z`).toISOString().slice(0, 10) === s;
 const METHODOLOGY = "https://pulse.shipfox.me/methodology";
 const CACHE = { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" };
 
@@ -19,7 +21,7 @@ export async function GET(req: NextRequest) {
   const day = sp.get("day");
   const format = sp.get("format") ?? "json";
   const min = Number(sp.get("min") ?? 0);
-  if (day && !DAY_RE.test(day)) return bad("day must be YYYY-MM-DD.");
+  if (day && !realDay(day)) return bad("day must be a real day as YYYY-MM-DD.");
   if (format !== "json" && format !== "csv") return bad("format must be json or csv.");
   if (!Number.isFinite(min) || min < 0) return bad("min must be a number of players.");
 

@@ -5,6 +5,8 @@ import { RESOLUTIONS, rollUp, toCsv, toDaily, type DayRow, type Resolution } fro
 
 
 const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
+// Matches the format and is a real calendar day (2026-02-30 is not).
+const realDay = (s: string) => DAY_RE.test(s) && new Date(`${s}T00:00:00Z`).toISOString().slice(0, 10) === s;
 const METHODOLOGY = "https://pulse.shipfox.me/methodology";
 // Data changes a few times a day; the API page promises at most 30 minutes stale.
 const CACHE = { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" };
@@ -23,7 +25,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const format = sp.get("format") ?? "json";
   const resolution = (sp.get("resolution") ?? "daily") as Resolution;
   if (!(RESOLUTIONS as readonly string[]).includes(resolution)) return bad("resolution must be daily, weekly or monthly.");
-  if ((from && !DAY_RE.test(from)) || (to && !DAY_RE.test(to))) return bad("Dates must be YYYY-MM-DD.");
+  if ((from && !realDay(from)) || (to && !realDay(to))) return bad("Dates must be real days as YYYY-MM-DD.");
   if (format !== "json" && format !== "csv") return bad("format must be json or csv.");
 
   const db = getSiteDb();

@@ -103,11 +103,16 @@ export function rollUp(rows: DayRow[], res: Exclude<Resolution, "daily">): Perio
   });
 }
 
+// One CSV cell. Text a spreadsheet would run as a formula (game names are
+// chosen by anyone on Roblox) gets a leading apostrophe; numbers, including
+// negative ones, stay numbers.
+export function csvCell(v: unknown): string {
+  if (v === null || v === undefined) return "";
+  let s = String(v);
+  if (typeof v === "string" && /^[=+\-@\t\r]/.test(s)) s = `'${s}`;
+  return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
 export function toCsv<T extends object>(rows: T[], cols: (keyof T)[]): string {
-  const cell = (v: unknown) => {
-    if (v === null || v === undefined) return "";
-    const s = String(v);
-    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-  };
-  return [cols.join(","), ...rows.map((r) => cols.map((c) => cell(r[c])).join(","))].join("\n") + "\n";
+  return [cols.join(","), ...rows.map((r) => cols.map((c) => csvCell(r[c])).join(","))].join("\n") + "\n";
 }

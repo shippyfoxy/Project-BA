@@ -4,8 +4,22 @@
     {
       "name": "roblox-pulse-dev",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["dev", "-p", "3003"],
+      "runtimeArgs": [
+        "dev",
+        "-p",
+        "3003"
+      ],
       "port": 3003
+    },
+    {
+      "name": "roblox-pulse-prod",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "start",
+        "-p",
+        "3004"
+      ],
+      "port": 3004
     }
   ]
 }
