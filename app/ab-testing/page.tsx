@@ -12,6 +12,9 @@ export const metadata: Metadata = {
 
 export default async function ABTestingPage() {
   const snapshot = await loadSnapshot();
+  // The comparison only reads the last two readings (for session length);
+  // sending all of them pushed this page past Vercel's 20 MB ISR limit.
+  const games = snapshot.games.map((g) => ({ ...g, samples: g.samples.slice(-2) }));
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 md:px-6 md:py-10">
       <header className="flex flex-col gap-1">
@@ -22,7 +25,7 @@ export default async function ABTestingPage() {
           from public Roblox data — not in-game telemetry.
         </p>
       </header>
-      <ABTestPanel games={snapshot.games} />
+      <ABTestPanel games={games} />
     </main>
   );
 }
