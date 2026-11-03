@@ -58,12 +58,23 @@ function takeaway(games: CompareGame[]): string | null {
   const sorted = [...dated].sort((a, b) => peakDay(b) - peakDay(a));
   const [longest, ...rest] = sorted;
   const restDays = rest.map(peakDay);
-  const pcts = dated.map((g) => Math.round((100 * g.latest.r7) / g.peak.r7));
-  const lo = Math.min(...pcts);
-  const hi = Math.max(...pcts);
   const others = rest.length === 1 ? `${displayName(rest[0].name)} peaked on day ${restDays[0]}` : `the others peaked between day ${Math.min(...restDays)} and day ${Math.max(...restDays)}`;
-  const now = lo === hi ? `${lo}% of their peak` : `between ${lo}% and ${hi}% of their peak`;
-  return `${displayName(longest.name)} kept climbing longest, to day ${peakDay(longest)}, while ${others}. By their latest readings they were at ${now}.`;
+  // Games still near their peak are named; the rest are summarised as a range.
+  const pctOf = (g: CompareGame) => (100 * g.latest.r7) / g.peak.r7;
+  const fmtP = (p: number) => (p < 1 ? "under 1%" : `${Math.round(p)}%`);
+  const names = (list: CompareGame[]) => list.map((g) => displayName(g.name)).join(" and ");
+  const atPeak = dated.filter((g) => pctOf(g) >= 95);
+  const below = dated.filter((g) => pctOf(g) < 95).map(pctOf);
+  const parts: string[] = [];
+  if (atPeak.length) parts.push(`${names(atPeak)} ${atPeak.length === 1 ? "is still at its peak" : "are still at their peaks"}`);
+  if (below.length === 1) parts.push(`${names(dated.filter((g) => pctOf(g) < 95))} is at ${fmtP(below[0])} of its peak`);
+  else if (below.length > 1) {
+    const lo = Math.min(...below);
+    const hi = Math.max(...below);
+    const range = Math.round(lo) === Math.round(hi) && lo >= 1 ? fmtP(lo) : `between ${fmtP(lo)} and ${fmtP(hi)}`;
+    parts.push(`${atPeak.length ? "the others are" : "they are"} at ${range} of their peaks`);
+  }
+  return `${displayName(longest.name)} kept climbing longest, to day ${peakDay(longest)}, while ${others}. By their latest readings, ${parts.join(", and ")}.`;
 }
 
 export default async function ComparePage({ searchParams }: { searchParams: Promise<SearchParams> }) {

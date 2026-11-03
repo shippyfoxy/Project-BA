@@ -191,7 +191,7 @@ export default async function GenresPage() {
             {fmtDay(weekFrom)} to {fmtDay(latestMs)}, games averaging 1,000+ players
           </span>
         </div>
-        <div className="overflow-x-auto rounded-2xl border border-border bg-card">
+        <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
           <table className="w-full min-w-[880px] border-collapse text-sm tabular-nums">
             <thead>
               <tr className="text-xs text-muted-foreground">
@@ -283,7 +283,7 @@ export default async function GenresPage() {
         <h2 id="week" className="font-heading text-2xl font-bold">
           This week, {fmtDay(weekFrom)} to {fmtDay(latestMs)}
         </h2>
-        <div className="overflow-x-auto rounded-2xl border border-border bg-card">
+        <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
           <table className="w-full min-w-[620px] border-collapse text-sm tabular-nums">
             <thead>
               <tr className="text-right text-xs text-muted-foreground">
