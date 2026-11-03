@@ -14,6 +14,7 @@ export interface CompareGame {
   points: { dayMs: number; r7: number }[]; // 7-day average, oldest first
   peak: { dayMs: number; r7: number };
   latest: { dayMs: number; r7: number };
+  earningRank: number | null; // latest Top Earning list
 }
 
 export function parseIds(raw: string | string[] | undefined): number[] {
@@ -38,9 +39,11 @@ export async function getCompareGames(db: Db, ids: number[]): Promise<CompareGam
   if (ids.length === 0) return [];
   const list = ids.join(",");
   const [games, rows] = await Promise.all([
-    db.query<{ universe_id: number; name: string; genre: string; created_ms: number | null }>(
+    db.query<{ universe_id: number; name: string; genre: string; created_ms: number | null; earning_rank: number | null }>(
       `select universe_id::float8 as universe_id, name, coalesce(genre_l1, 'Other') as genre,
-              extract(epoch from created_at)::float8 * 1000 as created_ms
+              extract(epoch from created_at)::float8 * 1000 as created_ms,
+              (select rank from earning_ranks e where e.universe_id = games.universe_id
+                 and e.day = (select max(day) from earning_ranks)) as earning_rank
        from games where universe_id in (select unnest(string_to_array($1, ','))::bigint)`,
       [list],
     ),
@@ -71,6 +74,7 @@ export async function getCompareGames(db: Db, ids: number[]): Promise<CompareGam
       points,
       peak,
       latest: points[points.length - 1],
+      earningRank: g.earning_rank,
     });
   }
   return out;

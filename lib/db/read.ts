@@ -81,6 +81,10 @@ export async function loadSnapshotFromDb(db: Db): Promise<Snapshot | null> {
     [tsIso],
   );
   const presenceById = new Map(presence.map((p) => [p.universe_id, p]));
+  const ranks = await db.query<{ universe_id: number; rank: number }>(
+    `select universe_id::float8 as universe_id, rank from earning_ranks where day = (select max(day) from earning_ranks)`,
+  );
+  const rankById = new Map(ranks.map((r) => [r.universe_id, r.rank]));
 
   return {
     generatedAt: tsIso,
@@ -109,6 +113,7 @@ export async function loadSnapshotFromDb(db: Db): Promise<Snapshot | null> {
         popularInCountries: p?.countries ?? [],
         popularOnDevices: p?.devices ?? [],
         samples: samplesById.get(g.universe_id) ?? [],
+        earningRank: rankById.get(g.universe_id) ?? null,
       };
     }),
   };

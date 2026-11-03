@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/table";
 import { ClientOnly } from "@/components/dashboard/ClientOnly";
 import type { SnapshotGame } from "@/lib/snapshot/schema";
+import { fmtUsdEstimate } from "@/lib/trends/revenue";
 import {
   applyFilter,
   availableGenres,
@@ -245,13 +246,31 @@ function ComparisonSummary({ comparison }: { comparison: ComparisonResult }) {
       bStr: b.gameCount ? fmtNum.compact(b.favoritesMedian) : dash,
       delta: deltas.favoritesMedian,
     },
+    {
+      label: "Games in Top Earning",
+      aStr: a.gameCount ? fmtNum.int(a.rankedCount) : dash,
+      bStr: b.gameCount ? fmtNum.int(b.rankedCount) : dash,
+      delta: deltas.rankedCount,
+    },
+    {
+      label: "Est. monthly revenue, total (modelled)",
+      aStr: a.rankedCount ? fmtUsdEstimate(a.estRevenueTotal) : dash,
+      bStr: b.rankedCount ? fmtUsdEstimate(b.estRevenueTotal) : dash,
+      delta: deltas.estRevenueTotal,
+    },
+    {
+      label: "Est. monthly revenue, median ranked game (modelled)",
+      aStr: a.estRevenueMedian !== null ? fmtUsdEstimate(a.estRevenueMedian) : dash,
+      bStr: b.estRevenueMedian !== null ? fmtUsdEstimate(b.estRevenueMedian) : dash,
+      delta: deltas.estRevenueMedian,
+    },
   ];
 
   return (
     <Card>
       <CardHeader className="pb-2">
         <CardTitle>Metrics</CardTitle>
-        <CardDescription>All figures are proxy estimates — not in-game telemetry.</CardDescription>
+        <CardDescription>All figures are proxy estimates — not in-game telemetry. Revenue is modelled from Top Earning rank.</CardDescription>
       </CardHeader>
       <CardContent className="p-0 pb-2">
         <Table>

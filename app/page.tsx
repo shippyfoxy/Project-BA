@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { getSiteDb } from "@/lib/db/site";
 import { getCachedActiveGames } from "@/lib/trends/cached";
-import { getTrendsHome, type HomeGame, type Mover } from "@/lib/trends/home";
+import { getTrendsHome, type Earner, type HomeGame, type Mover } from "@/lib/trends/home";
+import { fmtUsdEstimate } from "@/lib/trends/revenue";
 import { displayName } from "@/lib/trends/names";
 import type { Stage } from "@/lib/trends/stage";
 import { getGameIcons } from "@/lib/roblox/thumbnails";
@@ -47,6 +48,46 @@ function SectionTitle({ id, children, aside }: { id: string; children: React.Rea
         {children}
       </h2>
       {aside ? <span className="text-[13px] text-muted-foreground">{aside}</span> : null}
+    </div>
+  );
+}
+
+function EarnerList({ title, games, icons, perPlayer }: { title: string; games: Earner[]; icons: Map<number, string>; perPlayer?: boolean }) {
+  return (
+    <div className="min-w-0 flex-[1_1_440px] overflow-hidden rounded-2xl border border-border bg-card">
+      <h3 className="border-b border-border px-5 py-3.5 text-[15px] font-semibold">{title}</h3>
+      <ol>
+        {games.map((g) => {
+          const name = displayName(g.name);
+          return (
+            <li key={g.universeId} className="flex items-center gap-3 border-t border-[#1b2028] px-5 py-2.5 first:border-t-0">
+              <span className="w-8 shrink-0 text-right text-sm tabular-nums text-muted-foreground">#{g.rank}</span>
+              <GameIcon url={icons.get(g.universeId)} name={name} size={36} />
+              <span className="min-w-0 flex-1">
+                <Link href={`/games/${g.universeId}`} className="block truncate font-medium hover:text-link">
+                  {name}
+                </Link>
+                <span className="mt-0.5 block">
+                  <GenreChip genre={g.genre} />
+                </span>
+              </span>
+              <span className="text-right text-sm tabular-nums">
+                {perPlayer && g.cur7 ? (
+                  <>
+                    <span className="block">est. ${(g.estMonthly / g.cur7).toFixed(0)}</span>
+                    <span className="block text-xs text-muted-foreground">per player a month</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="block">est. {fmtUsdEstimate(g.estMonthly)}/mo</span>
+                    <span className="block text-xs text-muted-foreground">{g.cur7 === null ? "under 1,000 players" : `${fmtInt(g.cur7)} players`}</span>
+                  </>
+                )}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 }
@@ -116,7 +157,9 @@ export default async function TrendsHomePage() {
     );
   }
 
-  const icons = await getGameIcons([...data.top, ...data.risers, ...data.fallers].map((g) => g.universeId));
+  const icons = await getGameIcons(
+    [...data.top, ...data.risers, ...data.fallers, ...data.earners, ...data.earnersPerPlayer].map((g) => g.universeId),
+  );
   const podium = data.top.slice(0, 3);
   const rest = data.top.slice(3);
   const week = `${fmtDay(Date.parse(data.weekFrom))} to ${fmtDay(Date.parse(data.weekTo))}`;
@@ -258,6 +301,29 @@ export default async function TrendsHomePage() {
             <MoverList title="Falling" tone="fall" games={data.fallers} icons={icons} />
           </div>
         </section>
+
+        {data.earners.length > 0 ? (
+          <section aria-labelledby="earners" className="flex flex-col gap-3.5">
+            <SectionTitle id="earners" aside="revenue modelled from rank">
+              Top earners
+            </SectionTitle>
+            <p className="text-[13px] text-muted-foreground">
+              Roblox&apos;s Top Earning list ranks games by Robux spent in the last 7 days. It gives the order, not amounts, so the monthly
+              creator payouts here are estimates from the rank.{" "}
+              <Link href="/methodology#revenue" className="text-link underline">
+                How they are estimated
+              </Link>
+              . Per player divides that by average concurrent players, for games averaging 1,000+.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <EarnerList title="Highest estimated revenue" games={data.earners} icons={icons} />
+              <EarnerList title="Most revenue per player" games={data.earnersPerPlayer} icons={icons} perPlayer />
+            </div>
+            <Link href="/explore?launched=any&earning=1&sort=earnings" className="self-start text-sm text-link hover:underline">
+              Every game in Top Earning
+            </Link>
+          </section>
+        ) : null}
 
         <section aria-labelledby="records" className="flex flex-col gap-3.5">
           <SectionTitle id="records">Records since May</SectionTitle>

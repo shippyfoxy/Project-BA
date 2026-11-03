@@ -1,6 +1,7 @@
 import type { Db } from "@/lib/db/client";
 import { quantile } from "@/lib/stats";
 import type { AggRow } from "./game";
+import { estMonthlyDevEx } from "./revenue";
 
 const DAY_MS = 86_400_000;
 
@@ -33,10 +34,19 @@ export interface GenreBenchmark {
   session: { n: number; p25: number; p50: number; p75: number; p90: number } | null;
 }
 
+// MODELLED: each Top Earning game's estimated payout, summed by genre.
+export interface GenreRevenue {
+  genre: string;
+  ranked: number;
+  est: number;
+  share: number;
+}
+
 export interface GenreTrends {
   latestDay: string;
   shares: GenreShare[];
   concentration: Concentration;
+  revenue: { listDay: string | null; genres: GenreRevenue[] };
 }
 
 export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
@@ -45,7 +55,7 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
   const day = latest.day;
   const endMs = (wk: number) => Date.parse(day) - wk * 7 * DAY_MS;
 
-  const [weekly, may, games, conc] = await Promise.all([
+  const [weekly, may, games, conc, ranks] = await Promise.all([
     db.query<{ wk: number; genre: string; s: number; days: number }>(
       `select ($1::date - d.day) / 7 as wk, coalesce(g.genre_l1, 'Other') as genre,
               sum(d.playing_avg)::float8 as s, count(distinct d.day)::int as days
@@ -89,6 +99,11 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
        order by w.wk desc`,
       [day],
     ),
+    db.query<{ day: string; genre: string; rank: number }>(
+      `select e.day::text as day, coalesce(g.genre_l1, 'Other') as genre, e.rank
+       from earning_ranks e join games g using (universe_id)
+       where e.day = (select max(day) from earning_ranks)`,
+    ),
   ]);
 
   // Drop the oldest window if it is mostly before tracking began.
@@ -121,9 +136,25 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
   });
   shares.sort((a, b) => b.share - a.share);
 
+  const revBy = new Map<string, { ranked: number; est: number }>();
+  for (const r of ranks) {
+    const cur = revBy.get(r.genre) ?? { ranked: 0, est: 0 };
+    cur.ranked++;
+    cur.est += estMonthlyDevEx(r.rank)?.mid ?? 0;
+    revBy.set(r.genre, cur);
+  }
+  const revTotal = [...revBy.values()].reduce((a, v) => a + v.est, 0);
+  const revenue = {
+    listDay: ranks[0]?.day ?? null,
+    genres: [...revBy]
+      .map(([genre, v]) => ({ genre, ranked: v.ranked, est: v.est, share: revTotal ? v.est / revTotal : 0 }))
+      .sort((a, b) => b.est - a.est),
+  };
+
   return {
     latestDay: day,
     shares,
+    revenue,
     concentration: {
       weeks: conc.map((r) => ({ endMs: endMs(r.wk), top10: r.top10, top1: r.top1, topId: r.top_id, topName: r.top_name })),
     },

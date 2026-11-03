@@ -7,6 +7,7 @@ import { displayName } from "@/lib/trends/names";
 import { getGameIcons } from "@/lib/roblox/thumbnails";
 import { fmtDay, fmtInt } from "@/lib/format";
 import { niceMax } from "@/lib/stats";
+import { estMonthlyDevEx, fmtUsdEstimate } from "@/lib/trends/revenue";
 import { GameIcon } from "@/components/v2/GameIcon";
 import { GenreChip } from "@/components/v2/GenreChip";
 import { LineChart, type LineSeries } from "@/components/v2/LineChart";
@@ -268,7 +269,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
               Side by side
             </h2>
             <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-              <table className="w-full min-w-[760px] border-collapse text-sm tabular-nums">
+              <table className="w-full min-w-[880px] border-collapse text-sm tabular-nums">
                 <thead>
                   <tr className="text-right text-xs text-muted-foreground">
                     <th scope="col" className="px-4 py-3 text-left font-medium">Game</th>
@@ -277,7 +278,12 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                     <th scope="col" className="px-2 py-3 font-medium">First seen</th>
                     <th scope="col" className="px-2 py-3 font-medium">Peak 7-day avg</th>
                     <th scope="col" className="px-2 py-3 font-medium">Peaked on</th>
-                    <th scope="col" className="px-4 py-3 font-medium">Latest</th>
+                    <th scope="col" className="px-2 py-3 font-medium">Latest</th>
+                    <th scope="col" className="px-4 py-3 font-medium">
+                      <Link href="/methodology#revenue" className="hover:text-foreground" title="Top Earning rank, with modelled monthly payout">
+                        Earning rank
+                      </Link>
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="whitespace-nowrap text-right">
@@ -301,8 +307,18 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                         <td className="px-2 py-3">{day(g.firstDayMs)}</td>
                         <td className="px-2 py-3">{fmtInt(g.peak.r7)}</td>
                         <td className="px-2 py-3">{day(g.peak.dayMs)}</td>
-                        <td className="px-4 py-3">
+                        <td className="px-2 py-3">
                           {Math.round((100 * g.latest.r7) / g.peak.r7)}% on {day(g.latest.dayMs)}
+                        </td>
+                        <td className="px-4 py-3">
+                          {g.earningRank === null ? (
+                            <span className="text-muted-foreground">not listed</span>
+                          ) : (
+                            <>
+                              #{g.earningRank}{" "}
+                              <span className="text-muted-foreground">est. {fmtUsdEstimate(estMonthlyDevEx(g.earningRank)!.mid)}/mo</span>
+                            </>
+                          )}
                         </td>
                       </tr>
                     );

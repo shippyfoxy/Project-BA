@@ -1,5 +1,6 @@
 import { sessionBucket, SESSION_BUCKETS, type SessionBucket } from "@/lib/metrics";
 import { gameRetentionProxy, gameSessionMinutes } from "@/lib/snapshot/aggregate";
+import { estMonthlyDevEx } from "@/lib/trends/revenue";
 import type { SnapshotGame } from "./schema";
 
 export type DeviceFilter = "Phone" | "Tablet" | "Desktop" | "Console";
@@ -22,6 +23,9 @@ export interface GroupMetrics {
   concurrentMedian: number;
   concurrentTotal: number;
   favoritesMedian: number;
+  rankedCount: number; // games in Roblox's Top Earning list
+  estRevenueTotal: number; // MODELLED monthly DevEx (USD), summed over ranked games
+  estRevenueMedian: number | null; // MODELLED, median ranked game
 }
 
 export interface MetricDelta {
@@ -42,6 +46,9 @@ export interface ComparisonResult {
     concurrentMedian: MetricDelta;
     concurrentTotal: MetricDelta;
     favoritesMedian: MetricDelta;
+    rankedCount: MetricDelta;
+    estRevenueTotal: MetricDelta;
+    estRevenueMedian: MetricDelta;
   };
 }
 
@@ -111,6 +118,9 @@ export function computeGroupMetrics(games: SnapshotGame[]): GroupMetrics {
       concurrentMedian: 0,
       concurrentTotal: 0,
       favoritesMedian: 0,
+      rankedCount: 0,
+      estRevenueTotal: 0,
+      estRevenueMedian: null,
     };
   }
 
@@ -159,6 +169,11 @@ export function computeGroupMetrics(games: SnapshotGame[]): GroupMetrics {
   const favorites = games.map((g) => g.favoritedCount).sort((a, b) => a - b);
   const favoritesMedian = median(favorites);
 
+  const revenues = games
+    .map((g) => estMonthlyDevEx(g.earningRank)?.mid)
+    .filter((v): v is number => v !== undefined)
+    .sort((a, b) => a - b);
+
   return {
     gameCount: games.length,
     retentionMean,
@@ -169,6 +184,9 @@ export function computeGroupMetrics(games: SnapshotGame[]): GroupMetrics {
     concurrentMedian,
     concurrentTotal,
     favoritesMedian,
+    rankedCount: revenues.length,
+    estRevenueTotal: revenues.reduce((a, b) => a + b, 0),
+    estRevenueMedian: revenues.length ? median(revenues) : null,
   };
 }
 
@@ -200,6 +218,9 @@ export function compareGroups(
       concurrentMedian: computeDelta(a.concurrentMedian, b.concurrentMedian),
       concurrentTotal: computeDelta(a.concurrentTotal, b.concurrentTotal),
       favoritesMedian: computeDelta(a.favoritesMedian, b.favoritesMedian),
+      rankedCount: computeDelta(a.rankedCount, b.rankedCount),
+      estRevenueTotal: computeDelta(a.estRevenueTotal, b.estRevenueTotal),
+      estRevenueMedian: computeDelta(a.estRevenueMedian, b.estRevenueMedian),
     },
   };
 }

@@ -32,18 +32,22 @@ export const getCachedGenreTrends = unstable_cache(
     const db = getSiteDb();
     return db ? getGenreTrends(db) : null;
   },
-  ["genre-trends-v1"],
+  ["genre-trends-v2"],
   { revalidate: 3600 },
 );
 
-// When the data was last refreshed, for the header on every page.
-export const getCachedLatestRefresh = unstable_cache(
-  async (): Promise<number | null> => {
+
+// The latest Top Earning list as [universeId, rank] pairs, for pages that add
+// a rank column to games they already have.
+export const getCachedEarningRanks = unstable_cache(
+  async (): Promise<[number, number][]> => {
     const db = getSiteDb();
-    if (!db) return null;
-    const [r] = await db.query<{ ms: number | null }>(`select extract(epoch from max(ts))::float8 * 1000 as ms from snapshots`);
-    return r?.ms ?? null;
+    if (!db) return [];
+    const rows = await db.query<{ id: number; rank: number }>(
+      `select universe_id::float8 as id, rank from earning_ranks where day = (select max(day) from earning_ranks)`,
+    );
+    return rows.map((r) => [r.id, r.rank]);
   },
-  ["latest-refresh-v1"],
-  { revalidate: 900 },
+  ["earning-ranks-v1"],
+  { revalidate: 3600 },
 );

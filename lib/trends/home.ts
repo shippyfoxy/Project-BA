@@ -1,4 +1,5 @@
 import type { Db } from "@/lib/db/client";
+import { estMonthlyDevEx } from "./revenue";
 import { lifecycleStage, STAGES, type Stage } from "./stage";
 
 const DAY_MS = 86_400_000;
@@ -60,6 +61,17 @@ export interface TrendsHome {
   rhythm: { dow: number; index: number }[]; // 1 = Monday, 100 = weekly average
   studios: { name: string; players: number; topGame: string; bigGames: number }[];
   studiosWithSeveralHits: number;
+  earners: Earner[]; // the top of Roblox's Top Earning list
+  earnersPerPlayer: Earner[]; // ranked games with the most modelled revenue per player
+}
+
+export interface Earner {
+  universeId: number;
+  name: string;
+  genre: string;
+  rank: number;
+  estMonthly: number; // MODELLED, from rank
+  cur7: number | null;
 }
 
 interface GameRow {
@@ -237,6 +249,26 @@ export async function getTrendsHome(db: Db, opts: { active?: ActiveGames | null 
       studioMap.set(g.creatorName, { players: g.cur7, top: g, bigGames: g.cur7 >= 10_000 ? 1 : 0 });
     }
   }
+  const ranks = await db.query<{ universe_id: number; name: string; genre: string; rank: number }>(
+    `select e.universe_id::float8 as universe_id, g.name, coalesce(g.genre_l1, 'Other') as genre, e.rank
+     from earning_ranks e join games g using (universe_id)
+     where e.day = (select max(day) from earning_ranks)
+     order by e.rank`,
+  );
+  const cur7By = new Map(games.map((g) => [g.universeId, g.cur7]));
+  const earnerRows: Earner[] = ranks.map((r) => ({
+    universeId: r.universe_id,
+    name: r.name,
+    genre: r.genre,
+    rank: r.rank,
+    estMonthly: estMonthlyDevEx(r.rank)!.mid,
+    cur7: cur7By.get(r.universe_id) ?? null,
+  }));
+  // Per player only means something with a steady audience, so 1,000+ players.
+  const perPlayer = earnerRows
+    .filter((e) => e.cur7 !== null && e.cur7 >= 1_000)
+    .sort((a, b) => b.estMonthly / b.cur7! - a.estMonthly / a.cur7!);
+
   const studioList = [...studioMap.entries()]
     .map(([name, s]) => ({ name, players: s.players, topGame: s.top.name, bigGames: s.bigGames }))
     .sort((a, b) => b.players - a.players);
@@ -264,5 +296,7 @@ export async function getTrendsHome(db: Db, opts: { active?: ActiveGames | null 
     rhythm: rhythmRows.map((r) => ({ dow: r.dow, index: (100 * r.avg) / rhythmMean })),
     studios: studioList.slice(0, 5),
     studiosWithSeveralHits: studioList.filter((s) => s.bigGames >= 2).length,
+    earners: earnerRows.slice(0, 8),
+    earnersPerPlayer: perPlayer.slice(0, 8),
   };
 }

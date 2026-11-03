@@ -6,6 +6,7 @@ import { genreColor } from "@/lib/trends/genres";
 import { fmtDay, fmtInt } from "@/lib/format";
 import { niceMax } from "@/lib/stats";
 import { LineChart } from "@/components/v2/LineChart";
+import { fmtUsdEstimate } from "@/lib/trends/revenue";
 
 export const revalidate = 3600;
 export const maxDuration = 30;
@@ -86,6 +87,13 @@ export default async function GenresPage() {
   const longest = [...withSession].sort((a, b) => b.session!.p50 - a.session!.p50)[0];
   const shortest = [...withSession].sort((a, b) => a.session!.p50 - b.session!.p50)[0];
   const smallest = [...genres].sort((a, b) => a.p50 - b.p50)[0];
+  const rev = trends.revenue.genres.filter((g) => g.ranked >= 3);
+  const playerShare = new Map(trends.shares.map((g) => [g.genre, g.share]));
+  const revMax = Math.max(...rev.map((g) => Math.max(g.share, playerShare.get(g.genre) ?? 0)), 0.01);
+  const topPerPlayer = rev
+    .filter((g) => g.ranked >= 10 && (playerShare.get(g.genre) ?? 0) > 0)
+    .map((g) => ({ genre: g.genre, ratio: g.share / playerShare.get(g.genre)! }))
+    .sort((a, b) => b.ratio - a.ratio)[0];
   const outlier = (g: GenreBenchmark) => !!(g.session && all.session && g.session.p50 >= 1.5 * all.session.p50);
 
   return (
@@ -181,6 +189,91 @@ export default async function GenresPage() {
           that day&apos;s discovery lists, so the total grew by about a quarter and every share after the dashed line reads lower than before it.
         </p>
       </section>
+
+      {rev.length > 0 ? (
+        <section aria-labelledby="revenue" className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="revenue" className="font-heading text-2xl font-bold">
+              Estimated revenue by genre
+            </h2>
+            <span className="text-[13px] text-muted-foreground">
+              {fmtInt(trends.revenue.genres.reduce((a, g) => a + g.ranked, 0))} games in Roblox&apos;s Top Earning list, {fmtDay(Date.parse(trends.revenue.listDay!))}
+            </span>
+          </div>
+          <ul className="flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-text-2" aria-label="Legend">
+            <li className="flex items-center gap-2">
+              <span aria-hidden="true" className="inline-block h-2.5 w-4 rounded-sm bg-gold" />
+              Share of estimated revenue
+            </li>
+            <li className="flex items-center gap-2">
+              <span aria-hidden="true" className="inline-block h-2.5 w-4 rounded-sm bg-[#5c6573]" />
+              Share of players
+            </li>
+          </ul>
+          <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
+            <table className="w-full min-w-[820px] border-collapse text-sm tabular-nums">
+              <thead>
+                <tr className="text-right text-xs text-muted-foreground">
+                  <th scope="col" className="px-4 py-3 text-left font-medium">Genre</th>
+                  <th scope="col" className="px-2 py-3 font-medium">In Top Earning</th>
+                  <th scope="col" className="px-2 py-3 font-medium">Est. per month</th>
+                  <th scope="col" className="px-2 py-3 text-left font-medium">Revenue vs players, 0 to {Math.round(revMax * 100)}%</th>
+                  <th scope="col" className="px-4 py-3 font-medium">
+                    <span title="Share of estimated revenue divided by share of players. Above 1x earns more per player than the market.">Per player vs market</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="whitespace-nowrap text-right">
+                {rev.map((g) => {
+                  const players = playerShare.get(g.genre) ?? 0;
+                  const ratio = players > 0 ? g.share / players : null;
+                  const bar = (v: number) => `${Math.max((v / revMax) * 100, 0.5)}%`;
+                  return (
+                    <tr key={g.genre} className="border-t border-[#1b2028]">
+                      <th scope="row" className="px-4 py-2.5 text-left font-medium">
+                        <Link href={`/explore?launched=any&earning=1&genre=${encodeURIComponent(g.genre)}&sort=earnings`} className="inline-flex items-center gap-2 hover:text-link">
+                          <span aria-hidden="true" className="inline-block size-2 rounded-full" style={{ background: genreColor(g.genre) }} />
+                          {g.genre}
+                        </Link>
+                      </th>
+                      <td className="px-2 py-2.5">{fmtInt(g.ranked)}</td>
+                      <td className="px-2 py-2.5">{fmtUsdEstimate(g.est)}</td>
+                      <td className="w-[300px] px-2 py-2.5 text-left">
+                        <div className="flex flex-col gap-[3px]" role="img" aria-label={`${pct(g.share)} of estimated revenue, ${pct(players)} of players`}>
+                          <span className="flex items-center gap-2">
+                            <span className="h-2.5 rounded-sm bg-gold" style={{ width: bar(g.share) }} />
+                            <span className="text-xs text-text-2">{pct(g.share)}</span>
+                          </span>
+                          <span className="flex items-center gap-2">
+                            <span className="h-2.5 rounded-sm bg-[#5c6573]" style={{ width: bar(players) }} />
+                            <span className="text-xs text-muted-foreground">{pct(players)}</span>
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        {ratio === null ? (
+                          <span className="text-muted-foreground">—</span>
+                        ) : (
+                          <span className={ratio >= 1.25 ? "font-semibold text-foreground" : ratio <= 0.8 ? "text-muted-foreground" : ""}>{ratio.toFixed(1)}×</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-[13px] text-muted-foreground">
+            Revenue is modelled from each game&apos;s Top Earning rank, not measured: Roblox publishes the order of Robux spent, not the
+            amounts.{" "}
+            <Link href="/methodology#revenue" className="text-link underline">
+              How it is estimated
+            </Link>
+            . Share of players is this week&apos;s, across every tracked game.
+            {topPerPlayer ? ` ${topPerPlayer.genre} earns the most per player: about ${topPerPlayer.ratio.toFixed(1)} times its share of players.` : ""}
+          </p>
+        </section>
+      ) : null}
 
       <section aria-labelledby="bench" className="flex flex-col gap-3">
         <div className="flex flex-wrap items-baseline justify-between gap-2">

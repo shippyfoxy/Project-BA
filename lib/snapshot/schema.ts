@@ -35,6 +35,8 @@ export interface SnapshotGame {
   // Rolling list of (ts, playing, visits) readings — newest last.
   // Cohort proxy uses the last two.
   samples: SnapshotSample[];
+  // Position in Roblox's Top Earning list on the latest day recorded.
+  earningRank?: number | null;
 }
 
 export interface Snapshot {

@@ -3,7 +3,7 @@ import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
 import { MainNav } from "@/components/v2/MainNav";
-import { getCachedLatestRefresh } from "@/lib/trends/cached";
+import { getCachedActiveGames } from "@/lib/trends/cached";
 import { fmtDay, fmtTimeUtc } from "@/lib/format";
 import "./globals.css";
 
@@ -53,7 +53,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const refreshedMs = await getCachedLatestRefresh();
+  // The same cached data as the Trends and stage pages, so the header never
+  // disagrees with the "last refresh" they show.
+  const refreshedMs = (await getCachedActiveGames().catch(() => null))?.asOfMs ?? null;
   return (
     <html lang="en-GB" className={`dark ${geistSans.variable} ${geistMono.variable} ${bricolage.variable}`}>
       <body className="min-h-screen bg-background text-foreground antialiased">

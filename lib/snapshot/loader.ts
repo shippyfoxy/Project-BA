@@ -15,6 +15,9 @@ async function loadSnapshotFromFile(): Promise<Snapshot> {
 
   const raw = await fs.readFile(file, "utf8");
   const value = JSON.parse(raw) as Snapshot;
+  // The file keeps the ranks as one list; spread them onto the games like the database does.
+  const ranks = new Map((value.topEarning ?? []).map((r) => [r.universeId, r.rank]));
+  for (const g of value.games) g.earningRank = ranks.get(g.universeId) ?? null;
   fileCache = { value, mtimeMs: stat.mtimeMs };
   return value;
 }

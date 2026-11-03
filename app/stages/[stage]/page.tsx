@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSiteDb } from "@/lib/db/site";
-import { getCachedActiveGames } from "@/lib/trends/cached";
+import { getCachedActiveGames, getCachedEarningRanks } from "@/lib/trends/cached";
+import { estMonthlyDevEx, fmtUsdEstimate } from "@/lib/trends/revenue";
 import { countStages, getSparklines, type HomeGame } from "@/lib/trends/home";
 import { displayName } from "@/lib/trends/names";
 import { STAGES, type Stage } from "@/lib/trends/stage";
@@ -93,7 +94,8 @@ export default async function StagePage({ params }: { params: Promise<{ stage: s
   const all = active.games.filter((g) => g.stage === stage).sort(copy.sort);
   const shown = all.slice(0, LIMIT);
   const ids = shown.map((g) => g.universeId);
-  const [icons, sparks] = await Promise.all([getGameIcons(ids), getSparklines(db, ids, active.day)]);
+  const [icons, sparks, rankPairs] = await Promise.all([getGameIcons(ids), getSparklines(db, ids, active.day), getCachedEarningRanks()]);
+  const ranks = new Map(rankPairs);
   const weekFrom = Date.parse(active.day) - 6 * DAY_MS;
 
   return (
@@ -140,7 +142,7 @@ export default async function StagePage({ params }: { params: Promise<{ stage: s
       ) : (
         <section aria-label={`${stageLabel(stage)} games`} className="flex flex-col gap-3">
           <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-            <table className="w-full min-w-[820px] border-collapse text-sm tabular-nums">
+            <table className="w-full min-w-[900px] border-collapse text-sm tabular-nums">
               <thead>
                 <tr className="text-right text-xs text-muted-foreground">
                   <th scope="col" className="w-10 px-4 py-3 text-left font-medium">#</th>
@@ -149,6 +151,11 @@ export default async function StagePage({ params }: { params: Promise<{ stage: s
                   <th scope="col" className="px-2 py-3 font-medium">Week on week</th>
                   <th scope="col" className="px-2 py-3 font-medium">Of peak</th>
                   <th scope="col" className="px-2 py-3 font-medium">Age</th>
+                  <th scope="col" className="px-2 py-3 font-medium">
+                    <Link href="/methodology#revenue" className="hover:text-foreground" title="Top Earning rank, with modelled monthly payout">
+                      Earning rank
+                    </Link>
+                  </th>
                   <th scope="col" className="px-4 py-3 font-medium">Last 30 days</th>
                 </tr>
               </thead>
@@ -175,6 +182,16 @@ export default async function StagePage({ params }: { params: Promise<{ stage: s
                       <td className="px-2 py-2.5">{g.wowPct === null ? <span className="text-muted-foreground">new</span> : fmtPct(g.wowPct)}</td>
                       <td className="px-2 py-2.5">{Math.round((100 * g.cur7) / g.peak7)}%</td>
                       <td className="px-2 py-2.5 text-text-2">{age === null ? "—" : age >= 365 ? `${Math.floor(age / 365)} yr` : `${age} d`}</td>
+                      <td className="px-2 py-2.5">
+                        {ranks.has(g.universeId) ? (
+                          <span className="flex flex-col items-end leading-tight">
+                            <span>#{ranks.get(g.universeId)}</span>
+                            <span className="text-xs text-muted-foreground">est. {fmtUsdEstimate(estMonthlyDevEx(ranks.get(g.universeId))!.mid)}/mo</span>
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                      </td>
                       <td className="px-4 py-2.5">
                         <span className="inline-flex justify-end">
                           <Sparkline
