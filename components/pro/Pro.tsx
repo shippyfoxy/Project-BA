@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { estMonthlyDevEx, fmtUsdEstimate } from "@/lib/trends/revenue";
+import { paywallOn } from "@/lib/paywall";
 
 // Cached pages never carry dollar figures. After the server confirms the
 // visitor's licence (/api/pro/status), these components work them out from
@@ -11,8 +12,10 @@ import { estMonthlyDevEx, fmtUsdEstimate } from "@/lib/trends/revenue";
 const ProContext = createContext<boolean>(false);
 
 export function ProProvider({ children }: { children: ReactNode }) {
-  const [pro, setPro] = useState(false);
+  // Paywall off: figures render straight away, with no check and no badges.
+  const [pro, setPro] = useState(!paywallOn());
   useEffect(() => {
+    if (!paywallOn()) return;
     let live = true;
     fetch("/api/pro/status", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : { pro: false }))
@@ -28,6 +31,7 @@ export function ProProvider({ children }: { children: ReactNode }) {
 export const usePro = () => useContext(ProContext);
 
 export function ProStar({ className = "" }: { className?: string }) {
+  if (!paywallOn()) return null;
   return (
     <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" className={`inline-block shrink-0 ${className}`}>
       <polygon points="6,0.8 7.6,4.3 11.4,4.6 8.5,7.1 9.4,10.9 6,8.9 2.6,10.9 3.5,7.1 0.6,4.6 4.4,4.3" fill="var(--gold)" />

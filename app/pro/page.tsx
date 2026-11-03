@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { isProSession, proConfigured } from "@/lib/pro";
 import { ProStar } from "@/components/pro/Pro";
+import { paywallOn } from "@/lib/paywall";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,20 @@ const FEATURES = [
 ];
 
 export default async function ProPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
+  if (!paywallOn()) {
+    return (
+      <main className="mx-auto flex max-w-3xl flex-col gap-4 px-4 pb-16 pt-11 md:px-6">
+        <h1 className="font-heading text-5xl font-extrabold tracking-[-0.03em]">Everything is free for now</h1>
+        <p className="text-[17px] text-text-2">
+          Revenue estimates, the Revenue tab, CSV exports and the API are all open while Roblox Pulse grows. Enjoy them, and please credit Roblox
+          Pulse if you use the data.
+        </p>
+        <Link href="/revenue" className="self-start text-link underline">
+          Go to Revenue
+        </Link>
+      </main>
+    );
+  }
   const [{ status }, pro] = await Promise.all([searchParams, isProSession()]);
   const message = status ? MESSAGES[status] : undefined;
   const open = proConfigured() && CHECKOUT_URL.startsWith("https://");

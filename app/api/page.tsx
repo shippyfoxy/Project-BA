@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ProStar } from "@/components/pro/Pro";
+import { paywallOn } from "@/lib/paywall";
 
 export const metadata: Metadata = {
   title: "API: Roblox Pulse",
@@ -262,6 +263,8 @@ function Section({ id, title, children }: { id: string; title: string; children:
 }
 
 export default function ApiPage() {
+  // The key header only appears in examples once the paywall is on.
+  const AUTH = paywallOn() ? '-H "Authorization: Bearer $PULSE_KEY" ' : "";
   return (
     <main className="mx-auto flex max-w-6xl flex-wrap items-start gap-10 px-4 pb-16 pt-11 md:px-6">
       <nav aria-label="On this page" className="hidden flex-[0_1_200px] flex-col gap-0.5 text-sm lg:sticky lg:top-6 lg:flex">
@@ -277,19 +280,24 @@ export default function ApiPage() {
         <header className="flex flex-col gap-3">
           <h1 className="font-heading text-5xl font-extrabold tracking-[-0.03em]">API</h1>
           <p className="max-w-2xl text-[17px] text-text-2">
-            Read-only JSON and CSV for the same data the site shows. The data endpoints (starred) are part of{" "}
-            <Link href="/pro" className="text-link underline">
-              Roblox Pulse Pro
-            </Link>
-            , $5 a month: send your licence key as <C>Authorization: Bearer &lt;key&gt;</C>. Every figure comes from Roblox&apos;s public APIs
-            and is an estimate, not Roblox telemetry.
+            {paywallOn() ? (
+              <>
+                Read-only JSON and CSV for the same data the site shows. The data endpoints (starred) are part of{" "}
+                <Link href="/pro" className="text-link underline">
+                  Roblox Pulse Pro
+                </Link>
+                , $5 a month: send your licence key as <C>Authorization: Bearer &lt;key&gt;</C>.
+              </>
+            ) : (
+              <>Free, read-only JSON and CSV for the same data the site shows. No key needed.</>
+            )}{" "}
+            Every figure comes from Roblox&apos;s public APIs and is an estimate, not Roblox telemetry.
           </p>
         </header>
 
         <Section id="quick-start" title="Quick start">
           <p className="text-text-2">Daily history for one game, by its Roblox universe ID:</p>
-          <Code>{`curl -H "Authorization: Bearer $PULSE_KEY" \
-  "${BASE}/api/v1/games/10765288803/history?from=2026-10-30&to=2026-10-31"`}</Code>
+          <Code>{`curl ${AUTH}"${BASE}/api/v1/games/10765288803/history?from=2026-10-30&to=2026-10-31"`}</Code>
           <Code muted>{`{
   "game": { "universe_id": 10765288803, "name": "Break and Steal an Egg",
             "roblox_name": "Break and Steal an Egg", "genre": "Simulation" },
@@ -304,15 +312,19 @@ export default function ApiPage() {
   ]
 }`}</Code>
           <p className="text-text-2">Launched in the last 60 days with 10,000+ players, as a spreadsheet:</p>
-          <Code>{`curl -H "Authorization: Bearer $PULSE_KEY" -o hits.csv \
-  "${BASE}/api/v1/explore?launched=60&min=10000&format=csv"`}</Code>
+          <Code>{`curl ${AUTH}-o hits.csv "${BASE}/api/v1/explore?launched=60&min=10000&format=csv"`}</Code>
         </Section>
 
         <Section id="endpoints" title="Endpoints">
           <Table rows={ENDPOINTS} />
           <p className="text-[13px] text-muted-foreground">
-            Errors come back as JSON with an <C>error</C> message: 400 for a bad parameter, 402 without a valid Pro key (with an{" "}
-            <C>upgrade</C> link), 404 for a game we have never tracked, 429 over the rate limit, 503 if the database is unavailable.{" "}
+            Errors come back as JSON with an <C>error</C> message: 400 for a bad parameter,{" "}
+            {paywallOn() ? (
+              <>
+                402 without a valid Pro key (with an <C>upgrade</C> link),{" "}
+              </>
+            ) : null}
+            404 for a game we have never tracked, 429 over the rate limit, 503 if the database is unavailable.{" "}
             <C>/api/v1/status</C> is free.
           </p>
         </Section>

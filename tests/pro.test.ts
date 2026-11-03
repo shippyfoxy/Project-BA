@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { checkLicence, keyFromRequest, PRO_COOKIE, requirePro, sameOrigin, signKey, verifySigned } from "@/lib/pro";
+import { checkLicence, isProKey, keyFromRequest, PRO_COOKIE, requirePro, sameOrigin, signKey, verifySigned } from "@/lib/pro";
 
 const SECRET = "x".repeat(40);
 const KEY = "38b1460a-5104-4067-a91d-77b872934d51";
@@ -8,11 +8,13 @@ beforeAll(() => {
   process.env.LEMON_STORE_ID = "111";
   process.env.LEMON_PRODUCT_ID = "222";
   process.env.PRO_COOKIE_SECRET = SECRET;
+  process.env.NEXT_PUBLIC_PAYWALL = "on";
 });
 afterAll(() => {
   delete process.env.LEMON_STORE_ID;
   delete process.env.LEMON_PRODUCT_ID;
   delete process.env.PRO_COOKIE_SECRET;
+  delete process.env.NEXT_PUBLIC_PAYWALL;
 });
 
 const lemon = (body: object, status = 200) => (async () => new Response(JSON.stringify(body), { status })) as unknown as typeof fetch;
@@ -64,5 +66,17 @@ describe("Pro API gate", () => {
     expect(res?.status).toBe(402);
     expect(res?.headers.get("cache-control")).toContain("no-store");
     expect((await res!.json()).upgrade).toContain("/pro");
+  });
+});
+
+describe("with the paywall off", () => {
+  it("lets everyone through", async () => {
+    process.env.NEXT_PUBLIC_PAYWALL = "off";
+    try {
+      expect(await requirePro(new Request("https://pulse.test/api/v1/daily"))).toBeNull();
+      expect(await isProKey(null)).toBe(true);
+    } finally {
+      process.env.NEXT_PUBLIC_PAYWALL = "on";
+    }
   });
 });

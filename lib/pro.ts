@@ -2,6 +2,7 @@ import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { unstable_cache } from "next/cache";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { paywallOn } from "./paywall";
 
 // Pro access is a Lemon Squeezy licence key, issued with each subscription and
 // disabled by Lemon Squeezy when it ends. Subscribers paste it once on /pro
@@ -95,6 +96,8 @@ export function keyFromRequest(req: Request): string | null {
 }
 
 export async function isProKey(key: string | null): Promise<boolean> {
+  // With the paywall off, everyone gets everything.
+  if (!paywallOn()) return true;
   if (!key) return false;
   try {
     return (await cachedCheck(key)).valid;

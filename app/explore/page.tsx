@@ -21,6 +21,7 @@ import {
 } from "@/lib/trends/screener";
 import { COUNTRY_NAMES } from "@/lib/snapshot/aggregate";
 import { ProOnly, Usd } from "@/components/pro/Pro";
+import { paywallOn } from "@/lib/paywall";
 import { getGameIcons } from "@/lib/roblox/thumbnails";
 import { fmtDay, fmtInt, fmtPct } from "@/lib/format";
 import { ApplyButton, AutoSubmitForm } from "@/components/v2/AutoSubmitForm";
@@ -447,7 +448,7 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
       ) : null}
 
       <p className="text-[13px] text-muted-foreground">
-        Pro: the CSV has every match, not just this page, with 1, 7, 30 and 90-day average players and the Top Earning rank with its modelled revenue
+        {paywallOn() ? "Pro: the" : "The"} CSV has every match, not just this page, with 1, 7, 30 and 90-day average players and the Top Earning rank with its modelled revenue
         range. For every game day by day, download{" "}
         <a href="/api/v1/daily?format=csv" className="text-link underline">
           yesterday&apos;s full daily file
