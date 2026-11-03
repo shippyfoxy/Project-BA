@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
+import { MainNav } from "@/components/v2/MainNav";
+import { getCachedLatestRefresh } from "@/lib/trends/cached";
+import { fmtDay, fmtTimeUtc } from "@/lib/format";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -26,14 +29,8 @@ export const metadata: Metadata = {
     "Player history for every game in Roblox's discovery lists since May 2026. Spot breakouts, see what's fading, and pull the data yourself.",
 };
 
-const NAV = [
-  { href: "/", label: "Trends" },
-  { href: "/explore", label: "Explore" },
-  { href: "/dashboard", label: "Classic dashboard" },
-  { href: "/ab-testing", label: "A/B compare" },
-  { href: "/api", label: "API" },
-  { href: "/methodology", label: "Methodology" },
-];
+// Pages that are otherwise static still pick up the latest refresh time hourly.
+export const revalidate = 3600;
 
 function Logo() {
   return (
@@ -51,11 +48,12 @@ function Logo() {
   );
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const refreshedMs = await getCachedLatestRefresh();
   return (
     <html lang="en-GB" className={`dark ${geistSans.variable} ${geistMono.variable} ${bricolage.variable}`}>
       <body className="min-h-screen bg-background text-foreground antialiased">
@@ -65,17 +63,15 @@ export default function RootLayout({
               <Logo />
               Roblox Pulse
             </Link>
-            <nav aria-label="Main" className="flex flex-wrap gap-1 text-sm font-medium">
-              {NAV.map((n) => (
-                <Link
-                  key={n.href}
-                  href={n.href}
-                  className="rounded-lg px-3 py-2 text-text-2 hover:bg-secondary hover:text-foreground"
-                >
-                  {n.label}
-                </Link>
-              ))}
-            </nav>
+            <MainNav />
+            {refreshedMs ? (
+              <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
+                <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
+                  <circle cx="4" cy="4" r="4" fill="#3FA34D" />
+                </svg>
+                Data to {fmtDay(refreshedMs)}, {fmtTimeUtc(refreshedMs)}
+              </span>
+            ) : null}
           </div>
         </header>
         {children}
@@ -85,7 +81,13 @@ export default function RootLayout({
               Player counts are sampled from Roblox&apos;s public APIs. All figures are estimates, not Roblox
               telemetry. Images from Roblox. Not affiliated with Roblox.
             </span>
-            <span className="flex gap-4">
+            <span className="flex flex-wrap gap-x-4 gap-y-1">
+              <Link href="/dashboard" className="hover:text-foreground">
+                Classic dashboard
+              </Link>
+              <Link href="/ab-testing" className="hover:text-foreground">
+                Group comparison
+              </Link>
               <Link href="/results" className="hover:text-foreground">
                 Summary
               </Link>

@@ -7,6 +7,8 @@ import type { IngestGame } from "@/lib/db/ingest";
 import { getActiveGames, getTrendsHome } from "@/lib/trends/home";
 import { getGameHistory, loadWeekAggregates } from "@/lib/trends/game";
 import { DEFAULT_FILTERS, filtersToQuery, parseFilters, screenGames } from "@/lib/trends/screener";
+import { genreBenchmarks, getGenreTrends } from "@/lib/trends/genreTrends";
+import { daysSince, getCompareGames, parseIds } from "@/lib/trends/compare";
 
 const DAY = 86_400_000;
 const START = Date.parse("2026-06-01T12:00:00Z");
@@ -96,6 +98,39 @@ describe("trends queries", () => {
     const plateau = all!.matches.find((g) => g.name === "Plateau")!;
     expect(plateau.session).toBeCloseTo(384, 0);
     expect(plateau.favsPer1k).toBeCloseTo((1_000 * 5_000) / (2_000_000 + 20 * 30_000), 3);
+  });
+});
+
+describe("genre trends and compare", () => {
+  it("splits players by genre over 7-day windows ending on the latest day", async () => {
+    const t = await getGenreTrends(db);
+    expect(t?.latestDay).toBe("2026-06-21");
+    const sim = t!.shares.find((g) => g.genre === "Simulation")!;
+    const act = t!.shares.find((g) => g.genre === "Action")!;
+    expect(sim.share + act.share).toBeCloseTo(1, 6);
+    expect(sim.games).toBe(2);
+    // The latest window's share is the last weekly point, so the headline and the chart agree.
+    expect(sim.weeks[sim.weeks.length - 1].share).toBeCloseTo(sim.share, 9);
+    expect(t!.concentration.weeks.at(-1)!.top10).toBeCloseTo(1, 6);
+    expect(t!.concentration.weeks.at(-1)!.topName).toBe("Rocket");
+  });
+
+  it("benchmarks genres from the week aggregates", async () => {
+    const { all, genres } = genreBenchmarks(await loadWeekAggregates(db, "2026-06-21"), 1);
+    expect(all.n).toBe(3);
+    expect(genres.map((g) => [g.genre, g.n])).toEqual([
+      ["Simulation", 2],
+      ["Action", 1],
+    ]);
+    expect(all.p99).toBeNull();
+  });
+
+  it("lines up launch curves with peaks", async () => {
+    expect(parseIds("3,abc,1,3,2,9,8")).toEqual([3, 1, 2, 9]);
+    const [sunset] = await getCompareGames(db, [2]);
+    expect(sunset.points).toHaveLength(21);
+    expect(sunset.peak.r7).toBeGreaterThan(sunset.latest.r7);
+    expect(daysSince(Date.parse("2026-06-01T23:00:00Z"), Date.parse("2026-06-03"))).toBe(2);
   });
 });
 
