@@ -165,7 +165,7 @@ export default async function StagePage({ params }: { params: Promise<{ stage: s
                   const age = g.createdMs ? Math.max(0, Math.round((active.asOfMs - g.createdMs) / DAY_MS)) : null;
                   const falling = (g.wowPct ?? 0) < 0;
                   return (
-                    <tr key={g.universeId} className="border-t border-[#1b2028] hover:bg-surface-2">
+                    <tr key={g.universeId} className="border-t border-rule hover:bg-surface-2">
                       <td className="px-4 py-2.5 text-left text-muted-foreground">{i + 1}</td>
                       <th scope="row" className="px-2 py-2.5 text-left font-medium">
                         <Link href={`/games/${g.universeId}`} className="flex items-center gap-3 hover:text-link">

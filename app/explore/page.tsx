@@ -116,7 +116,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
       <nav aria-label="Quick screens" className="flex flex-wrap items-center gap-2 text-sm">
         <span className="text-muted-foreground">Quick screens:</span>
         {PRESETS.map((p) => (
-          <Link key={p.href} href={p.href} className="rounded-full border border-input px-3 py-1.5 text-text-2 hover:text-foreground">
+          <Link key={p.href} href={p.href} className="rounded-full border border-input bg-card px-3.5 py-1.5 font-medium text-foreground hover:border-ring hover:bg-secondary">
             {p.label}
           </Link>
         ))}
@@ -197,9 +197,14 @@ function Filters({ f, result }: { f: ScreenerFilters; result: ScreenerResult }) 
     >
       <div className="flex items-center justify-between">
         <h2 className="font-heading text-lg font-bold">Filters</h2>
-        <Link href="/explore" className="text-sm text-link hover:underline">
-          Clear
-        </Link>
+        {activeCount(f) ? (
+          <Link href="/explore" className="btn h-9 px-3">
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+            Clear filters
+          </Link>
+        ) : null}
       </div>
       {f.q ? <input type="hidden" name="q" value={f.q} /> : null}
 
@@ -241,7 +246,7 @@ function Filters({ f, result }: { f: ScreenerFilters; result: ScreenerResult }) 
           Country
         </label>
         <select id="f-country" name="country" defaultValue={f.country ?? ""} className={`${selectClass} w-full`}>
-          <option value="">Any of 12 countries</option>
+          <option value="">Any of {COUNTRIES.length} countries</option>
           {COUNTRIES.map((c) => (
             <option key={c} value={c}>
               {COUNTRY_NAMES[c] ?? c.toUpperCase()}
@@ -332,7 +337,7 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
             <ProOnly label="Download CSV">
               <a
                 href={`/api/v1/explore${query ? `${query}&` : "?"}format=csv`}
-                className="inline-flex h-10 items-center rounded-[10px] border border-input px-3 text-sm text-text-2 hover:text-foreground"
+                className="btn"
               >
                 Download CSV
               </a>
@@ -376,7 +381,7 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
                 const name = displayName(g.name);
                 const age = ageDays(g.createdMs, asOfMs);
                 return (
-                  <tr key={g.universeId} className="border-t border-[#1b2028] hover:bg-surface-2">
+                  <tr key={g.universeId} className="border-t border-rule hover:bg-surface-2">
                     <td className="px-4 py-2.5 text-left text-muted-foreground">{i + 1}</td>
                     <th scope="row" className="px-2 py-2.5 text-left font-medium">
                       <Link href={`/games/${g.universeId}`} className="flex items-center gap-3 hover:text-link">
@@ -439,7 +444,7 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
             <Link
               href={`/explore${filtersToQuery(f, { limit: f.limit + PAGE_SIZE })}`}
               scroll={false}
-              className="rounded-[10px] border border-input px-4 py-2 text-sm text-text-2 hover:text-foreground"
+              className="btn"
             >
               Show {fmtInt(Math.min(PAGE_SIZE, matches.length - shown.length))} more
             </Link>

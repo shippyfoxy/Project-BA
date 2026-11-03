@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
 import { MainNav } from "@/components/v2/MainNav";
 import { ProProvider } from "@/components/pro/Pro";
+import { ThemeToggle } from "@/components/v2/ThemeToggle";
+import { THEME_SCRIPT } from "@/lib/theme";
 import { getCachedActiveGames } from "@/lib/trends/cached";
 import { fmtDay, fmtTimeUtc } from "@/lib/format";
 import "./globals.css";
@@ -60,7 +62,11 @@ export default async function RootLayout({
   const active = await Promise.race([getCachedActiveGames().catch(() => null), new Promise<null>((r) => setTimeout(() => r(null), 4_000))]);
   const refreshedMs = active?.asOfMs ?? null;
   return (
-    <html lang="en-GB" className={`dark ${geistSans.variable} ${geistMono.variable} ${bricolage.variable}`}>
+    // The theme class is set by THEME_SCRIPT before React hydrates, so it may differ from the server's.
+    <html lang="en-GB" className={`dark ${geistSans.variable} ${geistMono.variable} ${bricolage.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
         <ProProvider>
         <header className="border-b border-border">
@@ -70,14 +76,17 @@ export default async function RootLayout({
               Roblox Pulse
             </Link>
             <MainNav />
-            {refreshedMs ? (
-              <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
-                <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
-                  <circle cx="4" cy="4" r="4" fill="#3FA34D" />
-                </svg>
-                Data to {fmtDay(refreshedMs)}, {fmtTimeUtc(refreshedMs)}
-              </span>
-            ) : null}
+            <span className="flex items-center gap-3">
+              {refreshedMs ? (
+                <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
+                  <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
+                    <circle cx="4" cy="4" r="4" fill="#3FA34D" />
+                  </svg>
+                  Data to {fmtDay(refreshedMs)}, {fmtTimeUtc(refreshedMs)}
+                </span>
+              ) : null}
+              <ThemeToggle />
+            </span>
           </div>
         </header>
         {children}

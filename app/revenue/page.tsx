@@ -26,7 +26,7 @@ const PREVIEW = 5;
 
 function Upgrade() {
   return (
-    <section className="flex flex-col gap-3 rounded-2xl border border-[rgba(229,177,58,0.4)] bg-[rgba(229,177,58,0.07)] p-6">
+    <section className="flex flex-col gap-3 rounded-2xl border border-gold/40 bg-gold/7 p-6">
       <h2 className="flex items-center gap-2 font-heading text-2xl font-bold">
         <ProStar className="size-5" />
         Revenue is part of Roblox Pulse Pro
@@ -85,7 +85,7 @@ function MoverCard({ title, games, icons }: { title: string; games: RankedGame[]
           {games.map((g) => {
             const name = displayName(g.name);
             return (
-              <li key={g.universeId} className="flex items-center gap-3 border-t border-[#1b2028] px-5 py-2.5 first:border-t-0">
+              <li key={g.universeId} className="flex items-center gap-3 border-t border-rule px-5 py-2.5 first:border-t-0">
                 <GameIcon url={icons.get(g.universeId)} name={name} size={36} />
                 <span className="min-w-0 flex-1">
                   <Link href={`/games/${g.universeId}`} className="block truncate font-medium hover:text-link">
@@ -257,7 +257,7 @@ export default async function RevenuePage() {
                 const name = displayName(g.name);
                 const est = estMonthlyDevEx(g.rank)!;
                 return (
-                  <tr key={g.universeId} className="border-t border-[#1b2028] hover:bg-surface-2">
+                  <tr key={g.universeId} className="border-t border-rule hover:bg-surface-2">
                     <td className="px-4 py-2.5 text-left text-text-2">#{g.rank}</td>
                     {prevDay ? (
                       <td className="px-2 py-2.5">
@@ -315,7 +315,7 @@ export default async function RevenuePage() {
               {perPlayer.map((g) => {
                 const name = displayName(g.name);
                 return (
-                  <li key={g.universeId} className="flex items-center gap-3 border-t border-[#1b2028] px-5 py-2.5 first:border-t-0">
+                  <li key={g.universeId} className="flex items-center gap-3 border-t border-rule px-5 py-2.5 first:border-t-0">
                     <span className="w-9 shrink-0 text-right text-sm tabular-nums text-muted-foreground">#{g.rank}</span>
                     <GameIcon url={icons.get(g.universeId)} name={name} size={32} />
                     <Link href={`/games/${g.universeId}`} className="min-w-0 flex-1 truncate font-medium hover:text-link">

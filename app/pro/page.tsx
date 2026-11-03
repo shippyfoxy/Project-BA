@@ -54,7 +54,7 @@ export default async function ProPage({ searchParams }: { searchParams: Promise<
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-8 px-4 pb-16 pt-11 md:px-6">
       <header className="flex flex-col gap-3">
-        <span className="inline-flex items-center gap-2 self-start rounded-full border border-[rgba(229,177,58,0.4)] bg-[rgba(229,177,58,0.10)] px-3 py-1 text-sm font-semibold text-gold">
+        <span className="inline-flex items-center gap-2 self-start rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-sm font-semibold text-gold">
           <ProStar />
           Roblox Pulse Pro
         </span>
@@ -69,7 +69,7 @@ export default async function ProPage({ searchParams }: { searchParams: Promise<
         <p
           role="status"
           className={`rounded-xl border px-4 py-3 text-sm ${
-            message.tone === "good" ? "border-[rgba(74,139,232,0.4)] bg-[rgba(74,139,232,0.08)]" : "border-[rgba(217,115,44,0.4)] bg-[rgba(217,115,44,0.08)]"
+            message.tone === "good" ? "border-rise/40 bg-rise/8" : "border-fall/40 bg-fall/8"
           }`}
         >
           {message.text}
@@ -107,14 +107,14 @@ export default async function ProPage({ searchParams }: { searchParams: Promise<
             Manage or cancel the subscription from the link in your Lemon Squeezy receipt.
           </p>
           <form action="/api/pro/logout" method="post">
-            <button type="submit" className="h-10 rounded-[10px] border border-input px-4 text-sm text-text-2 hover:text-foreground">
+            <button type="submit" className="btn">
               Sign out of Pro here
             </button>
           </form>
         </section>
       ) : (
         <>
-          <section className="flex flex-col gap-3 rounded-2xl border border-[rgba(229,177,58,0.4)] bg-[rgba(229,177,58,0.07)] p-6">
+          <section className="flex flex-col gap-3 rounded-2xl border border-gold/40 bg-gold/7 p-6">
             <h2 className="font-heading text-xl font-bold">Get Pro</h2>
             {open ? (
               <a href={CHECKOUT_URL} className="inline-flex h-11 items-center self-start rounded-xl bg-gold px-5 text-sm font-bold text-background hover:brightness-110">

@@ -45,7 +45,7 @@ export function ProLock({ label = "Pro" }: { label?: string }) {
     <Link
       href="/pro"
       title="Estimated revenue is part of Roblox Pulse Pro"
-      className="inline-flex items-center gap-1 rounded-full border border-[rgba(229,177,58,0.4)] bg-[rgba(229,177,58,0.10)] px-2 py-0.5 text-xs font-semibold text-gold hover:bg-[rgba(229,177,58,0.18)]"
+      className="inline-flex items-center gap-1 rounded-full border border-gold/40 bg-gold/10 px-2 py-0.5 text-xs font-semibold text-gold hover:bg-gold/18"
     >
       <ProStar />
       {label}

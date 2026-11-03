@@ -171,7 +171,7 @@ export function WeeklyCompare({ rhythm, name }: { rhythm: { dow: number; game: n
     <svg viewBox="0 0 560 210" width="100%" role="img" aria-label={`Players by weekday as % of the weekly average, ${name} vs all tracked games: ${summary}`} className="block">
       <g transform="translate(40,12)">
         <line x1="0" x2="510" y1={H} y2={H} stroke="var(--input)" />
-        <line x1="0" x2="510" y1={y(100)} y2={y(100)} stroke="#3a4250" strokeDasharray="4 4" />
+        <line x1="0" x2="510" y1={y(100)} y2={y(100)} stroke="var(--guide)" strokeDasharray="4 4" />
         <g fill="var(--muted-foreground)" fontSize="12" textAnchor="end">
           <text x="-8" y={H + 4}>0</text>
           <text x="-8" y={y(100) + 4}>100</text>
@@ -183,7 +183,7 @@ export function WeeklyCompare({ rhythm, name }: { rhythm: { dow: number; game: n
               <rect x={x0} y={y(r.game)} width="28" height={H - y(r.game)} rx="4" fill="var(--rise)">
                 <title>{`${DAYS[r.dow - 1]}: ${name} ${Math.round(r.game)}% of its weekly average`}</title>
               </rect>
-              <rect x={x0 + 30} y={y(r.all)} width="28" height={H - y(r.all)} rx="4" fill="#5c6573">
+              <rect x={x0 + 30} y={y(r.all)} width="28" height={H - y(r.all)} rx="4" fill="var(--mark)">
                 <title>{`${DAYS[r.dow - 1]}: all tracked games ${Math.round(r.all)}%`}</title>
               </rect>
               <text x={x0 + 14} y={y(r.game) - 6} fill="var(--foreground)" fontSize="12" fontWeight="600" textAnchor="middle">

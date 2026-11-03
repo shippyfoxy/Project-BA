@@ -60,7 +60,7 @@ function EarnerList({ title, games, icons, perPlayer }: { title: string; games: 
         {games.map((g) => {
           const name = displayName(g.name);
           return (
-            <li key={g.universeId} className="flex items-center gap-3 border-t border-[#1b2028] px-5 py-2.5 first:border-t-0">
+            <li key={g.universeId} className="flex items-center gap-3 border-t border-rule px-5 py-2.5 first:border-t-0">
               <span className="w-8 shrink-0 text-right text-sm tabular-nums text-muted-foreground">#{g.rank}</span>
               <GameIcon url={icons.get(g.universeId)} name={name} size={36} />
               <span className="min-w-0 flex-1">
@@ -112,7 +112,7 @@ function MoverList({ title, tone, games, icons }: { title: string; tone: "rise" 
           {games.map((g) => {
             const name = displayName(g.name);
             return (
-              <li key={g.universeId} className="border-b border-[#1b2028] last:border-0">
+              <li key={g.universeId} className="border-b border-rule last:border-0">
                 <GameLink game={g} className="grid grid-cols-[40px_minmax(0,1fr)_64px] items-center gap-3 px-4 py-2.5 hover:bg-surface-2 sm:grid-cols-[40px_minmax(0,1fr)_auto_64px] sm:px-5">
                   <GameIcon url={icons.get(g.universeId)} name={name} size={40} />
                   <span className="min-w-0">
@@ -173,11 +173,11 @@ export default async function TrendsHomePage() {
   return (
     <>
       <section
-        className="border-b border-[#1b2028]"
+        className="border-b border-rule"
         style={{ backgroundImage: "radial-gradient(#1d232d 1.2px, transparent 1.2px)", backgroundSize: "22px 22px" }}
       >
         <div className="mx-auto flex max-w-6xl flex-col gap-5 px-4 pb-11 pt-14 md:px-6">
-          <span className="self-start rounded-full bg-[rgba(74,139,232,0.14)] px-3 py-1 text-[13px] font-medium">
+          <span className="self-start rounded-full bg-rise/14 px-3 py-1 text-[13px] font-medium">
             {fmtInt(data.gamesTracked)} games · {fmtInt(data.daysOfHistory)} days · {fmtCompact(data.readings)} readings
           </span>
           <h1 className="max-w-3xl font-heading text-5xl font-extrabold leading-none tracking-[-0.035em] md:text-6xl">
@@ -278,7 +278,7 @@ export default async function TrendsHomePage() {
             {rest.map((g, i) => {
               const name = displayName(g.name);
               return (
-                <li key={g.universeId} className="border-b border-[#1b2028] last:border-0">
+                <li key={g.universeId} className="border-b border-rule last:border-0">
                   <GameLink game={g} className="grid grid-cols-[20px_40px_minmax(0,1fr)_auto] items-center gap-3 px-4 py-2.5 hover:bg-surface-2 sm:grid-cols-[24px_40px_minmax(0,1fr)_auto_96px] sm:px-5">
                     <span className="tabular-nums text-muted-foreground">{i + 4}</span>
                     <GameIcon url={icons.get(g.universeId)} name={name} size={40} />
@@ -396,7 +396,7 @@ export default async function TrendsHomePage() {
               </thead>
               <tbody>
                 {data.studios.map((s) => (
-                  <tr key={s.name} className="border-t border-[#1b2028]">
+                  <tr key={s.name} className="border-t border-rule">
                     <td className="py-2 pr-3">{s.name}</td>
                     <td className="py-2 pr-3 text-text-2">{displayName(s.topGame)}</td>
                     <td className="py-2 text-right">{fmtInt(s.players)}</td>
@@ -405,7 +405,7 @@ export default async function TrendsHomePage() {
               </tbody>
             </table>
             {topStudiosOneHit ? (
-              <p className="flex gap-2.5 rounded-xl bg-[rgba(229,177,58,0.10)] px-3.5 py-3 text-sm">
+              <p className="flex gap-2.5 rounded-xl bg-gold/10 px-3.5 py-3 text-sm">
                 <svg width="16" height="16" viewBox="0 0 12 12" aria-hidden="true" className="mt-0.5 shrink-0">
                   <polygon points="6,0.8 7.6,4.3 11.4,4.6 8.5,7.1 9.4,10.9 6,8.9 2.6,10.9 3.5,7.1 0.6,4.6 4.4,4.3" fill="var(--gold)" />
                 </svg>

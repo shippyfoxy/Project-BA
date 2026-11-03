@@ -102,7 +102,7 @@ export function PlayersChart({ points, peak, summary }: { points: PlayersPoint[]
           </g>
           {h ? (
             <g pointerEvents="none">
-              <line x1={x(h.dayMs)} x2={x(h.dayMs)} y1="0" y2={H} stroke="#5c6573" strokeDasharray="3 3" />
+              <line x1={x(h.dayMs)} x2={x(h.dayMs)} y1="0" y2={H} stroke="var(--mark)" strokeDasharray="3 3" />
               <circle cx={x(h.dayMs)} cy={y(h.avg)} r="4" fill="#6b7484" stroke="var(--card)" strokeWidth="2" />
               <circle cx={x(h.dayMs)} cy={y(h.r7)} r="5" fill="var(--rise)" stroke="var(--card)" strokeWidth="2" />
             </g>
@@ -126,7 +126,7 @@ export function PlayersChart({ points, peak, summary }: { points: PlayersPoint[]
           </div>
           <div className="flex items-center justify-between gap-4 text-text-2">
             <span className="flex items-center gap-1.5">
-              <span className="inline-block h-0.5 w-3 rounded bg-[#6b7484]" aria-hidden="true" />Daily average
+              <span className="inline-block h-0.5 w-3 rounded bg-mark" aria-hidden="true" />Daily average
             </span>
             <span className="tabular-nums text-foreground">{fmtInt(h.avg)}</span>
           </div>

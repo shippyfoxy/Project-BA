@@ -17,6 +17,10 @@
   --color-fall: var(--fall);
   --color-gold: var(--gold);
   --color-link: var(--link);
+  --color-rule: var(--rule);
+  --color-mark: var(--mark);
+  --color-guide: var(--guide);
+  --color-text-soft: var(--text-soft);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -56,38 +60,51 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  /* Light theme. Same hues as dark, stepped darker so text and marks keep
+     at least 4.5:1 (text) or 3:1 (marks) on white. */
+  --background: #f6f7f9;
+  --foreground: #12151a;
+  --card: #ffffff;
+  --card-foreground: #12151a;
+  --popover: #ffffff;
+  --popover-foreground: #12151a;
+  --primary: #2f6bd1;
+  --primary-foreground: #ffffff;
+  --secondary: #eef1f5;
+  --secondary-foreground: #12151a;
+  --muted: #eef1f5;
+  --muted-foreground: #5b6472;
+  --accent: #eef1f5;
+  --accent-foreground: #12151a;
+  --destructive: #c23b3b;
+  --border: #dfe3e9;
+  --input: #c9cfd8;
+  --ring: #2f6bd1;
+  --chart-1: #2f6bd1;
+  --chart-2: #a76c00;
+  --chart-3: #13805b;
+  --chart-4: #6a5fd0;
+  --chart-5: #b64071;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #ffffff;
+  --sidebar-foreground: #12151a;
+  --sidebar-primary: #2f6bd1;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eef1f5;
+  --sidebar-accent-foreground: #12151a;
+  --sidebar-border: #dfe3e9;
+  --sidebar-ring: #2f6bd1;
+  --text-2: #3d4552;
+  --text-soft: #2a313b;
+  --surface-2: #f1f3f6;
+  --grid: #e6e9ee;
+  --rule: #eceff3;
+  --mark: #8f98a6;
+  --guide: #b4bcc8;
+  --rise: #2f6bd1;
+  --fall: #b35514;
+  --gold: #9a6b00;
+  --link: #1f5fc4;
 }
 
 .dark {
@@ -131,6 +148,18 @@
   --fall: #d9732c;
   --gold: #e5b13a;
   --link: #9cc2ff;
+  --text-soft: #d4d9e1;
+  --rule: #1b2028;
+  --mark: #5c6573;
+  --guide: #3a4250;
+}
+
+@layer components {
+  /* Secondary actions (Clear, Download, Show more): solid border and full
+     contrast text, so they read as buttons rather than faint links. */
+  .btn {
+    @apply inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-[10px] border border-input bg-card px-4 text-sm font-medium text-foreground transition-colors hover:border-ring hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
+  }
 }
 
 @layer base {

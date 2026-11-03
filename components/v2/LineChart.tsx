@@ -188,7 +188,7 @@ export function LineChart({ series, xKind, yKind, xMin, xMax, yMax, yStep, summa
             : null}
           {hoverX !== null ? (
             <g pointerEvents="none">
-              <line x1={x(hoverX)} x2={x(hoverX)} y1="0" y2={H} stroke="#5c6573" strokeDasharray="3 3" />
+              <line x1={x(hoverX)} x2={x(hoverX)} y1="0" y2={H} stroke="var(--mark)" strokeDasharray="3 3" />
               {hovered.map(({ s, v }) =>
                 v === undefined ? null : <circle key={s.id} cx={x(hoverX)} cy={y(v)} r="4.5" fill={s.color} stroke="var(--card)" strokeWidth="2" />,
               )}

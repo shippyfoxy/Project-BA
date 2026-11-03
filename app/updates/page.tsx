@@ -55,7 +55,7 @@ function RangeTable({ rows, caption }: { rows: { key: string; label: ReactNode; 
         </thead>
         <tbody className="whitespace-nowrap text-right">
           {rows.map(({ key, label, s }) => (
-            <tr key={key} className="border-t border-[#1b2028]">
+            <tr key={key} className="border-t border-rule">
               <th scope="row" className="px-4 py-2.5 text-left font-medium">
                 {label}
               </th>
@@ -208,7 +208,7 @@ export default async function UpdatesPage() {
             </thead>
             <tbody className="text-right">
               {u.recent.slice(0, 25).map((r) => (
-                <tr key={`${r.universeId}-${r.dayMs}`} className="border-t border-[#1b2028]">
+                <tr key={`${r.universeId}-${r.dayMs}`} className="border-t border-rule">
                   <th scope="row" className="px-4 py-2.5 text-left font-medium">
                     <Link href={`/games/${r.universeId}`} className="hover:text-link">
                       {displayName(r.name)}

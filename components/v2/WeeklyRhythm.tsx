@@ -12,7 +12,7 @@ export function WeeklyRhythm({ rhythm }: { rhythm: { dow: number; index: number 
     <svg viewBox="0 0 520 200" width="100%" role="img" aria-label={`Players by weekday as % of the weekly average: ${summary}`} className="block">
       <g transform="translate(36,12)">
         <line x1="0" y1={h} x2="480" y2={h} stroke="var(--input)" />
-        <line x1="0" y1={y(100)} x2="480" y2={y(100)} stroke="#3a4250" strokeDasharray="4 4" />
+        <line x1="0" y1={y(100)} x2="480" y2={y(100)} stroke="var(--guide)" strokeDasharray="4 4" />
         <g fill="var(--muted-foreground)" fontSize="12" textAnchor="end">
           <text x="-8" y={h + 4}>0</text>
           <text x="-8" y={y(100) + 4}>100</text>

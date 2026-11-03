@@ -291,7 +291,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                     const d = (ms: number) => daysSince(g.createdMs, ms);
                     const day = (ms: number) => (d(ms) === null ? fmtDay(ms) : `day ${d(ms)}`);
                     return (
-                      <tr key={g.universeId} className="border-t border-[#1b2028]">
+                      <tr key={g.universeId} className="border-t border-rule">
                         <th scope="row" className="px-4 py-3 text-left font-medium">
                           <span className="inline-flex items-center gap-2.5">
                             <span aria-hidden="true" className="inline-block size-2.5 rounded-full" style={{ background: COMPARE_COLORS[i] }} />
@@ -336,11 +336,11 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
           </section>
 
           {note ? (
-            <section className="flex gap-3 rounded-2xl border border-[rgba(74,139,232,0.35)] bg-[rgba(74,139,232,0.08)] px-5 py-4">
+            <section className="flex gap-3 rounded-2xl border border-rise/35 bg-rise/8 px-5 py-4">
               <svg width="18" height="18" viewBox="0 0 12 12" aria-hidden="true" className="mt-0.5 flex-none">
                 <polygon points="6,0.8 7.6,4.3 11.4,4.6 8.5,7.1 9.4,10.9 6,8.9 2.6,10.9 3.5,7.1 0.6,4.6 4.4,4.3" fill="var(--gold)" />
               </svg>
-              <p className="text-[#D4D9E1]">
+              <p className="text-text-soft">
                 <strong className="text-foreground">Takeaway:</strong> {note}
               </p>
             </section>

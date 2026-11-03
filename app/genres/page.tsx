@@ -154,7 +154,7 @@ export default async function GenresPage() {
           </h2>
           <ul className="flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-text-2" aria-label="Legend">
             <li className="flex items-center gap-2">
-              <span aria-hidden="true" className="inline-block h-[3px] w-4 rounded bg-[#B4BCC8]" />
+              <span aria-hidden="true" className="inline-block h-[3px] w-4 rounded bg-text-2" />
               Top 10 games
             </li>
             <li className="flex items-center gap-2">
@@ -167,7 +167,7 @@ export default async function GenresPage() {
           <div className="min-w-[640px]">
             <LineChart
               series={[
-                { id: "top10", label: "Top 10 games", color: "#B4BCC8", points: conc.map((w) => [w.endMs, w.top10]) },
+                { id: "top10", label: "Top 10 games", color: "var(--text-2)", points: conc.map((w) => [w.endMs, w.top10]) },
                 { id: "top1", label: "Biggest single game", color: "var(--rise)", points: conc.map((w) => [w.endMs, w.top1]), emphasis: true },
               ]}
               xKind="date"
@@ -206,7 +206,7 @@ export default async function GenresPage() {
               Share of estimated revenue
             </li>
             <li className="flex items-center gap-2">
-              <span aria-hidden="true" className="inline-block h-2.5 w-4 rounded-sm bg-[#5c6573]" />
+              <span aria-hidden="true" className="inline-block h-2.5 w-4 rounded-sm bg-mark" />
               Share of players
             </li>
           </ul>
@@ -229,7 +229,7 @@ export default async function GenresPage() {
                   const ratio = players > 0 ? g.share / players : null;
                   const bar = (v: number) => `${Math.max((v / revMax) * 100, 0.5)}%`;
                   return (
-                    <tr key={g.genre} className="border-t border-[#1b2028]">
+                    <tr key={g.genre} className="border-t border-rule">
                       <th scope="row" className="px-4 py-2.5 text-left font-medium">
                         <Link href={`/explore?launched=any&earning=1&genre=${encodeURIComponent(g.genre)}&sort=earnings`} className="inline-flex items-center gap-2 hover:text-link">
                           <span aria-hidden="true" className="inline-block size-2 rounded-full" style={{ background: genreColor(g.genre) }} />
@@ -247,7 +247,7 @@ export default async function GenresPage() {
                             <span className="text-xs text-text-2">{pct(g.share)}</span>
                           </span>
                           <span className="flex items-center gap-2">
-                            <span className="h-2.5 rounded-sm bg-[#5c6573]" style={{ width: bar(players) }} />
+                            <span className="h-2.5 rounded-sm bg-mark" style={{ width: bar(players) }} />
                             <span className="text-xs text-muted-foreground">{pct(players)}</span>
                           </span>
                         </div>
@@ -305,7 +305,7 @@ export default async function GenresPage() {
             </thead>
             <tbody className="whitespace-nowrap text-right">
               {[all, ...genres].map((g, i) => (
-                <tr key={g.genre} className={`border-t border-[#1b2028] ${i === 0 ? "bg-surface-2/50 font-medium" : ""}`}>
+                <tr key={g.genre} className={`border-t border-rule ${i === 0 ? "bg-surface-2/50 font-medium" : ""}`}>
                   <th scope="row" className="px-4 py-2.5 text-left font-medium">
                     {i === 0 ? (
                       g.genre
@@ -323,7 +323,7 @@ export default async function GenresPage() {
                   <td className="px-2 py-2.5">
                     {g.session ? (
                       <span className="inline-flex items-center gap-2">
-                        {i > 0 && outlier(g) ? <span className="rounded-full bg-[rgba(229,177,58,0.15)] px-2 py-0.5 text-[11px] text-gold">Long</span> : null}
+                        {i > 0 && outlier(g) ? <span className="rounded-full bg-gold/15 px-2 py-0.5 text-[11px] text-gold">Long</span> : null}
                         {g.session.p50.toFixed(1)} min
                       </span>
                     ) : (
@@ -393,7 +393,7 @@ export default async function GenresPage() {
               {trends.shares
                 .filter((g) => g.share > 0)
                 .map((g) => (
-                  <tr key={g.genre} className="border-t border-[#1b2028]">
+                  <tr key={g.genre} className="border-t border-rule">
                     <th scope="row" className="px-4 py-2.5 text-left font-medium">
                       <Link href={`/explore?launched=any&genre=${encodeURIComponent(g.genre)}`} className="inline-flex items-center gap-2 hover:text-link">
                         <span aria-hidden="true" className="inline-block size-2 rounded-full" style={{ background: genreColor(g.genre) }} />

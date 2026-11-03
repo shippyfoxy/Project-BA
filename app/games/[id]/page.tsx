@@ -157,7 +157,10 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
         <span>{name}</span>
       </nav>
 
-      <section className={`relative flex items-end overflow-hidden rounded-3xl border border-border ${shots.length ? "min-h-[380px]" : "bg-card"}`}>
+      {/* Over a screenshot the hero keeps the dark theme, so its text stays readable in light mode. */}
+      <section
+        className={`relative flex items-end overflow-hidden rounded-3xl border border-border ${shots.length ? "dark min-h-[380px] text-foreground" : "bg-card"}`}
+      >
         {shots[0] ? (
           <>
             <Image src={shots[0]} alt={`${name} screenshot`} fill unoptimized priority className="object-cover" sizes="100vw" />
@@ -182,7 +185,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
                 ) : null}
               </div>
               <h1 className="font-heading text-4xl font-extrabold leading-none tracking-[-0.03em] md:text-[56px]">{name}</h1>
-              <p className="text-sm text-[#d4d9e1]">
+              <p className="text-sm text-text-soft">
                 by {g.creatorName}
                 {g.createdMs ? ` · Created ${fmtDay(g.createdMs)} ${new Date(g.createdMs).getUTCFullYear()}` : ""}
                 {g.ageRecommendation ? ` · ${g.ageRecommendation}` : ""}
@@ -293,7 +296,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
               <span aria-hidden="true" className="inline-block h-[3px] w-5 rounded bg-rise" />7-day average
             </span>
             <span className="inline-flex items-center gap-2">
-              <span aria-hidden="true" className="inline-block h-[2px] w-5 rounded bg-[#6b7484]" />Daily average
+              <span aria-hidden="true" className="inline-block h-[2px] w-5 rounded bg-mark" />Daily average
             </span>
           </div>
         </div>
@@ -326,7 +329,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
               </thead>
               <tbody className="text-right">
                 {[...g.daily].reverse().map((d) => (
-                  <tr key={d.dayMs} className="border-t border-[#1b2028]">
+                  <tr key={d.dayMs} className="border-t border-rule">
                     <th scope="row" className="px-3 py-1.5 text-left font-normal">{fmtDay(d.dayMs)}</th>
                     <td className="px-3 py-1.5">{fmtInt(d.avg)}</td>
                     <td className="px-3 py-1.5">{fmtInt(d.r7)}</td>
@@ -353,13 +356,13 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
         ) : (
           <>
             {b.players ? (
-              <div className="flex flex-wrap items-center gap-x-7 gap-y-3 border-b border-[#1b2028] pb-4">
+              <div className="flex flex-wrap items-center gap-x-7 gap-y-3 border-b border-rule pb-4">
                 <div className="flex min-w-0 flex-[1_1_260px] flex-col gap-1">
                   <span className="text-[13px] text-muted-foreground">Players, 7-day average</span>
                   <span className="flex flex-wrap items-baseline gap-2.5">
                     <span className="font-heading text-[28px] font-extrabold">{fmtInt(b.players.value)}</span>
                     {b.players.p99 !== undefined && b.players.value > b.players.p99 ? (
-                      <span className="rounded-full bg-[rgba(229,177,58,0.16)] px-2.5 py-0.5 text-xs font-bold">Outlier</span>
+                      <span className="rounded-full bg-gold/16 px-2.5 py-0.5 text-xs font-bold">Outlier</span>
                     ) : null}
                   </span>
                   <span className="text-[13px] text-text-2">
@@ -383,12 +386,12 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
                 />
               </div>
             ) : (
-              <p className="border-b border-[#1b2028] pb-4 text-sm text-text-2">
+              <p className="border-b border-rule pb-4 text-sm text-text-2">
                 Too few {g.genre} games this week (under 15) for a player benchmark.
               </p>
             )}
             {b.session ? (
-              <div className="flex flex-wrap items-center gap-x-7 gap-y-3 border-b border-[#1b2028] pb-4">
+              <div className="flex flex-wrap items-center gap-x-7 gap-y-3 border-b border-rule pb-4">
                 <div className="flex min-w-0 flex-[1_1_260px] flex-col gap-1">
                   <span className="text-[13px] text-muted-foreground">Estimated session length</span>
                   <span className="font-heading text-[28px] font-extrabold">{b.session.value.toFixed(1)} min</span>
@@ -467,7 +470,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
                     {name}
                   </span>
                   <span className="inline-flex items-center gap-2">
-                    <span aria-hidden="true" className="inline-block size-3 rounded-[3px] bg-[#5c6573]" />
+                    <span aria-hidden="true" className="inline-block size-3 rounded-[3px] bg-mark" />
                     All tracked games
                   </span>
                 </div>
@@ -490,7 +493,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
               </p>
               <ul className="flex flex-wrap gap-1.5 font-mono text-xs" aria-label="Countries">
                 {g.reach.countries.map((c) => (
-                  <li key={c} className="rounded-lg bg-[rgba(74,139,232,0.16)] px-2 py-1 uppercase">
+                  <li key={c} className="rounded-lg bg-rise/16 px-2 py-1 uppercase">
                     {c}
                   </li>
                 ))}
@@ -541,11 +544,11 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
       ) : null}
 
       {notes.length > 0 ? (
-        <section aria-labelledby="takeaways" className="flex flex-col gap-3 rounded-2xl border border-[rgba(74,139,232,0.35)] bg-[rgba(74,139,232,0.08)] px-6 py-5">
+        <section aria-labelledby="takeaways" className="flex flex-col gap-3 rounded-2xl border border-rise/35 bg-rise/8 px-6 py-5">
           <h2 id="takeaways" className="font-heading text-[22px] font-bold">
             Takeaways
           </h2>
-          <ul className="flex list-disc flex-col gap-2 pl-5 text-[#d4d9e1]">
+          <ul className="flex list-disc flex-col gap-2 pl-5 text-text-soft">
             {notes.map((n) => (
               <li key={n}>{n}</li>
             ))}
@@ -570,7 +573,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
           {updates.announced.length ? (
             <ul className="flex flex-col">
               {updates.announced.map((a) => (
-                <li key={a.dayMs} className="flex flex-wrap items-baseline justify-between gap-3 border-t border-[#1b2028] py-2.5 text-sm first:border-t-0">
+                <li key={a.dayMs} className="flex flex-wrap items-baseline justify-between gap-3 border-t border-rule py-2.5 text-sm first:border-t-0">
                   <span className="min-w-0">
                     <span className="mr-2 text-muted-foreground">{fmtDay(a.dayMs)}</span>
                     {a.name}
