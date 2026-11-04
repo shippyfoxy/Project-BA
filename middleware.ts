@@ -35,7 +35,10 @@ export function middleware(req: NextRequest) {
   if (isAiCrawler(ua)) {
     return new NextResponse("AI crawlers are not permitted on this site.\n", { status: 403, headers: { "Content-Type": "text/plain" } });
   }
-  if (!isApi && isScraperLibrary(ua) && req.nextUrl.pathname !== "/robots.txt") {
+  // Feeds, badges and embeds are made for feed readers, image proxies and
+  // other sites, which often fetch with generic HTTP libraries.
+  const forMachines = /^\/(feeds|badge|embed)\//.test(req.nextUrl.pathname) || req.nextUrl.pathname === "/robots.txt";
+  if (!isApi && !forMachines && isScraperLibrary(ua)) {
     return new NextResponse("Automated access to pages is not permitted. See /api for the data.\n", {
       status: 403,
       headers: { "Content-Type": "text/plain" },

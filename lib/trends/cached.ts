@@ -7,6 +7,7 @@ import { getRevenuePage, type RevenuePage } from "./revenuePage";
 import { getUpdateImpact, type UpdateImpact } from "./updates";
 import { getLaunchCurves, type LaunchCurves } from "./launches";
 import { getIdeas, type Ideas } from "./ideas";
+import { getWidgetGame, type WidgetGame } from "./widget";
 import { EARNING_WEEK } from "./revenue";
 
 // Shared across every game page and refreshed at most hourly, so opening a
@@ -98,4 +99,15 @@ export const getCachedIdeas = unstable_cache(
   },
   ["ideas-v3"],
   { revalidate: 3600 },
+);
+
+// One game for embeds and badges, which can be viewed far more often than
+// the site itself: the data changes hourly, so half an hour is fresh enough.
+export const getCachedWidgetGame = unstable_cache(
+  async (universeId: number): Promise<WidgetGame | null> => {
+    const db = getSiteDb();
+    return db ? getWidgetGame(db, universeId) : null;
+  },
+  ["widget-game-v1"],
+  { revalidate: 1800 },
 );

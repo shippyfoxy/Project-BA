@@ -31,6 +31,14 @@ export const metadata: Metadata = {
   title: "Roblox Pulse: what's moving on Roblox",
   description:
     "Player history for every game in Roblox's discovery lists since May 2026. Spot breakouts, see what's fading, and pull the data yourself.",
+  alternates: {
+    types: {
+      "application/rss+xml": [
+        { url: "/feeds/breakouts.xml", title: "Roblox Pulse: breakouts" },
+        { url: "/feeds/updates.xml", title: "Roblox Pulse: announced updates" },
+      ],
+    },
+  },
 };
 
 // Pages that are otherwise static still pick up the latest refresh time hourly.
@@ -109,6 +117,9 @@ export default async function RootLayout({
               </Link>
               <Link href="/methodology" className="hover:text-foreground">
                 How we measure
+              </Link>
+              <Link href="/widgets" className="hover:text-foreground">
+                Widgets and RSS
               </Link>
             </span>
           </div>
