@@ -28,9 +28,9 @@ const ly = (v: number) => Math.log10(1 + Math.max(v, 0));
 
 function Tile({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
-    <div className="flex-[1_1_220px] rounded-2xl border border-border bg-card px-5 py-4">
+    <div className="flex-[1_1_150px] sm:flex-[1_1_220px] rounded-2xl border border-border bg-card px-5 py-4">
       <div className="text-[13px] text-muted-foreground">{label}</div>
-      <div className="mt-1 font-heading text-[34px] font-extrabold tracking-tight">{value}</div>
+      <div className="mt-1 font-heading text-[26px] sm:text-[34px] font-extrabold tracking-tight">{value}</div>
       <div className="text-[13px] text-muted-foreground">{hint}</div>
     </div>
   );
@@ -187,11 +187,11 @@ export default async function LaunchesPage({ searchParams }: { searchParams: Pro
           What on track looks like
         </h2>
         <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-          <table className="w-full min-w-[760px] border-collapse text-sm tabular-nums">
+          <table className="pin w-full min-w-[760px] border-collapse text-sm tabular-nums">
             <caption className="sr-only">Average players a day at key points after launch</caption>
             <thead>
               <tr className="text-right text-xs text-muted-foreground">
-                <th scope="col" className="px-4 py-3 text-left font-medium">
+                <th data-pin="" scope="col" className="px-4 py-3 text-left font-medium">
                   Day
                 </th>
                 <th scope="col" className="px-2 py-3 font-medium">Median</th>

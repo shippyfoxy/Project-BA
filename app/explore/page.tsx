@@ -113,10 +113,18 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
         </button>
       </form>
 
-      <nav aria-label="Quick screens" className="flex flex-wrap items-center gap-2 text-sm">
-        <span className="text-muted-foreground">Quick screens:</span>
+      {/* One swipeable row on phones, wrapping lines on wider screens. */}
+      <nav
+        aria-label="Quick screens"
+        className="no-scrollbar -mx-4 flex items-center gap-2 overflow-x-auto px-4 text-sm sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+      >
+        <span className="shrink-0 text-muted-foreground">Quick screens:</span>
         {PRESETS.map((p) => (
-          <Link key={p.href} href={p.href} className="rounded-full border border-input bg-card px-3.5 py-1.5 font-medium text-foreground hover:border-ring hover:bg-secondary">
+          <Link
+            key={p.href}
+            href={p.href}
+            className="shrink-0 whitespace-nowrap rounded-full border border-input bg-card px-3.5 py-1.5 font-medium text-foreground hover:border-ring hover:bg-secondary"
+          >
             {p.label}
           </Link>
         ))}
@@ -362,11 +370,11 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
         </div>
       ) : (
         <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-          <table className="w-full min-w-[1060px] border-collapse text-sm tabular-nums">
+          <table className="pin w-full min-w-[1060px] border-collapse text-sm tabular-nums">
             <thead>
               <tr className="text-right text-xs text-muted-foreground">
                 <th scope="col" className="w-10 px-4 py-3 text-left font-medium">#</th>
-                <th scope="col" className="px-2 py-3 text-left font-medium">Game</th>
+                <th data-pin="" scope="col" className="px-2 py-3 text-left font-medium">Game</th>
                 <th scope="col" className="px-2 py-3 text-left font-medium">Stage</th>
                 <th scope="col" className="px-2 py-3 font-medium">Age</th>
                 <th scope="col" className="px-2 py-3 font-medium">7-day avg</th>

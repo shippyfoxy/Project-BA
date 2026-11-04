@@ -43,9 +43,9 @@ const pct = (x: number) => `${x > 0 ? "+" : x < 0 ? "−" : ""}${Math.abs(Math.r
 
 function Tile({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
-    <div className="flex-[1_1_220px] rounded-2xl border border-border bg-card px-5 py-4">
+    <div className="flex-[1_1_150px] sm:flex-[1_1_220px] rounded-2xl border border-border bg-card px-5 py-4">
       <div className="text-[13px] text-muted-foreground">{label}</div>
-      <div className="mt-1 font-heading text-[30px] font-extrabold leading-tight tracking-tight">{value}</div>
+      <div className="mt-1 font-heading text-[24px] sm:text-[30px] font-extrabold leading-tight tracking-tight">{value}</div>
       <div className="text-[13px] text-muted-foreground">{hint}</div>
     </div>
   );
@@ -187,11 +187,11 @@ export default async function IdeasPage({ searchParams }: { searchParams: Promis
           </p>
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-            <table className="table-sticky w-full min-w-[1040px] border-collapse text-sm tabular-nums">
+            <table className="pin w-full min-w-[1040px] border-collapse text-sm tabular-nums">
               <caption className="sr-only">Words in game names, with players, momentum, new games and modelled revenue</caption>
               <thead>
                 <tr className="text-right text-xs text-muted-foreground">
-                  <th scope="col" className="px-4 py-3 text-left font-medium">
+                  <th data-pin="" scope="col" className="px-4 py-3 text-left font-medium">
                     Pattern
                   </th>
                   <th scope="col" className="px-2 py-3 text-left font-medium">
@@ -278,11 +278,11 @@ export default async function IdeasPage({ searchParams }: { searchParams: Promis
           Genres at a glance
         </h2>
         <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-          <table className="w-full min-w-[860px] border-collapse text-sm tabular-nums">
+          <table className="pin w-full min-w-[860px] border-collapse text-sm tabular-nums">
             <caption className="sr-only">Genres by players, momentum, new games and modelled revenue</caption>
             <thead>
               <tr className="text-right text-xs text-muted-foreground">
-                <th scope="col" className="px-4 py-3 text-left font-medium">
+                <th data-pin="" scope="col" className="px-4 py-3 text-left font-medium">
                   Genre
                 </th>
                 <th scope="col" className="px-2 py-3 font-medium">Games</th>

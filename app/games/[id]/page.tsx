@@ -78,9 +78,9 @@ const ordinal = (n: number) => {
 
 function Tile({ label, value, hint }: { label: string; value: string; hint: ReactNode }) {
   return (
-    <div className="flex-[1_1_220px] rounded-2xl border border-border bg-card px-5 py-4">
+    <div className="flex-[1_1_150px] sm:flex-[1_1_220px] rounded-2xl border border-border bg-card px-5 py-4">
       <div className="text-[13px] text-muted-foreground">{label}</div>
-      <div className="mt-1 font-heading text-[34px] font-extrabold tracking-tight">{value}</div>
+      <div className="mt-1 font-heading text-[26px] sm:text-[34px] font-extrabold tracking-tight">{value}</div>
       <div className="text-[13px] text-muted-foreground">{hint}</div>
     </div>
   );
@@ -615,7 +615,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
             <span className="text-[13px] text-muted-foreground">Estimated from its &ldquo;{welcome.badgeName}&rdquo; badge</span>
           </div>
           <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
-            <span className="font-heading text-[34px] font-extrabold">{(welcomeLast.share * 100).toFixed(welcomeLast.share < 0.1 ? 1 : 0)}%</span>
+            <span className="font-heading text-[26px] sm:text-[34px] font-extrabold">{(welcomeLast.share * 100).toFixed(welcomeLast.share < 0.1 ? 1 : 0)}%</span>
             <span className="text-sm text-text-2">
               of joins were by new players in the 24 hours to {fmtDay(welcomeLast.dayMs)}: {fmtInt(welcomeLast.newPlayers)} new players against{" "}
               {fmtInt(welcomeLast.visits)} visits. The other {(100 - welcomeLast.share * 100).toFixed(welcomeLast.share < 0.1 ? 1 : 0)}% came back.

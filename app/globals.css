@@ -237,16 +237,29 @@
     display: none;
   }
 
-  /* A wide table keeps its first column in view while the rest scrolls. */
-  .table-sticky tr > :first-child {
+  /* A wide table keeps the game or row name in view while the rest scrolls;
+     any columns before it slide underneath. The name's header carries
+     data-pin. */
+  .pin thead th[data-pin],
+  .pin tbody th[scope="row"] {
     position: sticky;
     left: 0;
     z-index: 1;
     background: var(--card);
     box-shadow: inset -1px 0 0 var(--rule);
   }
-  .table-sticky tbody tr:hover > :first-child {
+  .pin tbody tr:hover th[scope="row"] {
     background: var(--surface-2);
+  }
+  /* On a phone the pinned name takes at most about half the width, so
+     figures always show beside it; long names end in an ellipsis. */
+  @media (max-width: 639px) {
+    .pin tbody th[scope="row"],
+    .pin thead th[data-pin] {
+      max-width: 52vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }
 
@@ -286,4 +299,13 @@
   html {
     @apply font-sans;
   }
+}
+/* Unlayered, so it outranks the text-sm and text-xs utilities: data tables
+   read at 15px, with their headers and small notes at 12.5px. */
+main table.text-sm {
+  font-size: 0.9375rem;
+}
+main table .text-xs,
+main table thead tr {
+  font-size: 0.78125rem;
 }

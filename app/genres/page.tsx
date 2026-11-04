@@ -211,10 +211,10 @@ export default async function GenresPage() {
             </li>
           </ul>
           <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
-            <table className="w-full min-w-[820px] border-collapse text-sm tabular-nums">
+            <table className="pin w-full min-w-[820px] border-collapse text-sm tabular-nums">
               <thead>
                 <tr className="text-right text-xs text-muted-foreground">
-                  <th scope="col" className="px-4 py-3 text-left font-medium">Genre</th>
+                  <th data-pin="" scope="col" className="px-4 py-3 text-left font-medium">Genre</th>
                   <th scope="col" className="px-2 py-3 font-medium">In Top Earning</th>
                   <th scope="col" className="px-2 py-3 font-medium">Est. per month</th>
                   <th scope="col" className="px-2 py-3 text-left font-medium">Revenue vs players, 0 to {Math.round(revMax * 100)}%</th>
@@ -287,10 +287,10 @@ export default async function GenresPage() {
           </span>
         </div>
         <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
-          <table className="w-full min-w-[880px] border-collapse text-sm tabular-nums">
+          <table className="pin w-full min-w-[880px] border-collapse text-sm tabular-nums">
             <thead>
               <tr className="text-xs text-muted-foreground">
-                <th scope="col" rowSpan={2} className="px-4 py-2 text-left align-bottom font-medium">Genre</th>
+                <th data-pin="" scope="col" rowSpan={2} className="px-4 py-2 text-left align-bottom font-medium">Genre</th>
                 <th scope="col" rowSpan={2} className="px-2 py-2 text-right align-bottom font-medium">Games</th>
                 <th scope="colgroup" colSpan={3} className="px-2 pt-3 text-center font-medium">Players per game</th>
                 <th scope="colgroup" colSpan={2} className="px-4 pt-3 text-center font-medium">Estimated session length</th>

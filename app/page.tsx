@@ -340,7 +340,7 @@ export default async function TrendsHomePage() {
             {biggestReading ? (
               <li className="flex flex-[1_1_250px] flex-col gap-1.5 rounded-2xl border border-border bg-card px-5 py-4">
                 <span className="text-[13px] text-muted-foreground">Biggest single reading</span>
-                <span className="font-heading text-[34px] font-extrabold tracking-tight">{fmtCompact(biggestReading.players)}</span>
+                <span className="font-heading text-[26px] sm:text-[34px] font-extrabold tracking-tight">{fmtCompact(biggestReading.players)}</span>
                 <span className="text-[13px] text-text-2">
                   {displayName(biggestReading.name)}, {fmtWeekdayDay(biggestReading.atMs)} at <UtcTime ms={biggestReading.atMs} />
                 </span>
@@ -349,14 +349,14 @@ export default async function TrendsHomePage() {
             {fastestToMillion ? (
               <li className="flex flex-[1_1_250px] flex-col gap-1.5 rounded-2xl border border-border bg-card px-5 py-4">
                 <span className="text-[13px] text-muted-foreground">Fastest to a 1M 7-day average</span>
-                <span className="font-heading text-[34px] font-extrabold tracking-tight">{fastestToMillion.days} days</span>
+                <span className="font-heading text-[26px] sm:text-[34px] font-extrabold tracking-tight">{fastestToMillion.days} days</span>
                 <span className="text-[13px] text-text-2">{displayName(fastestToMillion.name)}, from creation</span>
               </li>
             ) : null}
             {alwaysTop10.names.length > 0 ? (
               <li className="flex flex-[1_1_250px] flex-col gap-1.5 rounded-2xl border border-border bg-card px-5 py-4">
                 <span className="text-[13px] text-muted-foreground">Never left the top 10</span>
-                <span className="font-heading text-[34px] font-extrabold tracking-tight">
+                <span className="font-heading text-[26px] sm:text-[34px] font-extrabold tracking-tight">
                   {alwaysTop10.names.length} {alwaysTop10.names.length === 1 ? "game" : "games"}
                 </span>
                 <span className="text-[13px] text-text-2">
@@ -367,7 +367,7 @@ export default async function TrendsHomePage() {
             {biggestShare ? (
               <li className="flex flex-[1_1_250px] flex-col gap-1.5 rounded-2xl border border-border bg-card px-5 py-4">
                 <span className="text-[13px] text-muted-foreground">Biggest share for one game</span>
-                <span className="font-heading text-[34px] font-extrabold tracking-tight">{(biggestShare.top1 * 100).toFixed(1)}%</span>
+                <span className="font-heading text-[26px] sm:text-[34px] font-extrabold tracking-tight">{(biggestShare.top1 * 100).toFixed(1)}%</span>
                 <span className="text-[13px] text-text-2">
                   of tracked players went to {displayName(biggestShare.topName)}, week to {fmtDay(biggestShare.endMs)}
                 </span>

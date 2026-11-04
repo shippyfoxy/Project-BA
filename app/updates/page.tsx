@@ -24,9 +24,9 @@ const pct = (x: number) => fmtPct(x * 100);
 
 function Tile({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
-    <div className="flex-[1_1_220px] rounded-2xl border border-border bg-card px-5 py-4">
+    <div className="flex-[1_1_150px] sm:flex-[1_1_220px] rounded-2xl border border-border bg-card px-5 py-4">
       <div className="text-[13px] text-muted-foreground">{label}</div>
-      <div className="mt-1 font-heading text-[34px] font-extrabold tracking-tight">{value}</div>
+      <div className="mt-1 font-heading text-[26px] sm:text-[34px] font-extrabold tracking-tight">{value}</div>
       <div className="text-[13px] text-muted-foreground">{hint}</div>
     </div>
   );
@@ -40,11 +40,11 @@ function Change({ x }: { x: number }) {
 function RangeTable({ rows, caption }: { rows: { key: string; label: ReactNode; s: LiftSummary }[]; caption: string }) {
   return (
     <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
-      <table className="w-full min-w-[720px] border-collapse text-sm tabular-nums">
+      <table className="pin w-full min-w-[720px] border-collapse text-sm tabular-nums">
         <caption className="sr-only">{caption}</caption>
         <thead>
           <tr className="text-right text-xs text-muted-foreground">
-            <th scope="col" className="px-4 py-3 text-left font-medium" />
+            <th data-pin="" scope="col" className="px-4 py-3 text-left font-medium" />
             <th scope="col" className="px-2 py-3 font-medium">Events</th>
             <th scope="col" className="px-2 py-3 font-medium">Median change</th>
             <th scope="col" className="px-2 py-3 font-medium">Rose</th>
@@ -196,10 +196,10 @@ export default async function UpdatesPage() {
           Latest announced updates
         </h2>
         <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
-          <table className="w-full min-w-[860px] border-collapse text-sm tabular-nums">
+          <table className="pin w-full min-w-[860px] border-collapse text-sm tabular-nums">
             <thead>
               <tr className="text-right text-xs text-muted-foreground">
-                <th scope="col" className="px-4 py-3 text-left font-medium">Game</th>
+                <th data-pin="" scope="col" className="px-4 py-3 text-left font-medium">Game</th>
                 <th scope="col" className="px-2 py-3 text-left font-medium">Title change</th>
                 <th scope="col" className="px-2 py-3 font-medium">Seen</th>
                 <th scope="col" className="px-2 py-3 font-medium">Players a week before</th>

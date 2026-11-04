@@ -31,8 +31,11 @@ export function LaunchChart({ bands, game, summary }: LaunchChartProps) {
   const maxDay = bands[bands.length - 1].day;
   const top = Math.max(...bands.map((b) => b.p90), ...(game?.points.map((p) => p[1]) ?? [0]), 100);
   const yMax = TICKS.find((t) => t >= top) ?? 1_000_000;
-  const x = (d: number) => LEFT + (d / Math.max(maxDay, 1)) * (W - LEFT - RIGHT);
-  const y = (v: number) => TOP + (1 - ly(v) / ly(yMax)) * (H - TOP - BOTTOM);
+  // Rounded, so the server and the browser draw identical numbers (their
+  // log10 can differ in the last digit, which breaks hydration).
+  const round = (n: number) => Math.round(n * 10) / 10;
+  const x = (d: number) => round(LEFT + (d / Math.max(maxDay, 1)) * (W - LEFT - RIGHT));
+  const y = (v: number) => round(TOP + (1 - ly(v) / ly(yMax)) * (H - TOP - BOTTOM));
   const area = (lo: (b: (typeof bands)[number]) => number, hi: (b: (typeof bands)[number]) => number) =>
     `M${bands.map((b) => `${x(b.day).toFixed(1)},${y(hi(b)).toFixed(1)}`).join("L")}L${[...bands]
       .reverse()

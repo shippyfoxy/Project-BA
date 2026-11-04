@@ -143,11 +143,11 @@ export default async function StagePage({ params }: { params: Promise<{ stage: s
       ) : (
         <section aria-label={`${stageLabel(stage)} games`} className="flex flex-col gap-3">
           <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-            <table className="w-full min-w-[900px] border-collapse text-sm tabular-nums">
+            <table className="pin w-full min-w-[900px] border-collapse text-sm tabular-nums">
               <thead>
                 <tr className="text-right text-xs text-muted-foreground">
                   <th scope="col" className="w-10 px-4 py-3 text-left font-medium">#</th>
-                  <th scope="col" className="px-2 py-3 text-left font-medium">Game</th>
+                  <th data-pin="" scope="col" className="px-2 py-3 text-left font-medium">Game</th>
                   <th scope="col" className="px-2 py-3 font-medium">7-day avg</th>
                   <th scope="col" className="px-2 py-3 font-medium">Week on week</th>
                   <th scope="col" className="px-2 py-3 font-medium">Of peak</th>

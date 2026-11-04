@@ -269,10 +269,10 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
               Side by side
             </h2>
             <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-              <table className="w-full min-w-[880px] border-collapse text-sm tabular-nums">
+              <table className="pin w-full min-w-[880px] border-collapse text-sm tabular-nums">
                 <thead>
                   <tr className="text-right text-xs text-muted-foreground">
-                    <th scope="col" className="px-4 py-3 text-left font-medium">Game</th>
+                    <th data-pin="" scope="col" className="px-4 py-3 text-left font-medium">Game</th>
                     <th scope="col" className="px-2 py-3 text-left font-medium">Genre</th>
                     <th scope="col" className="px-2 py-3 font-medium">Created</th>
                     <th scope="col" className="px-2 py-3 font-medium">First seen</th>
