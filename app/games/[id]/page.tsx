@@ -12,9 +12,11 @@ import { DEVICE_LABELS } from "@/lib/trends/labels";
 import { genreColor } from "@/lib/trends/genres";
 import { getEarningRanks, type EarningRanks } from "@/lib/trends/earnings";
 import { getGameUpdates, type GameUpdates } from "@/lib/trends/updates";
+import { getGameWelcome, type GameWelcome } from "@/lib/trends/welcome";
 import { ProOnly, Usd } from "@/components/pro/Pro";
 import { getGameIcons, getGameScreenshots } from "@/lib/roblox/thumbnails";
-import { fmtCompact, fmtDay, fmtInt, fmtPct, fmtTimeUtc, fmtWeekdayDay } from "@/lib/format";
+import { fmtCompact, fmtDay, fmtInt, fmtPct, fmtWeekdayDay } from "@/lib/format";
+import { UtcTime } from "@/components/v2/UtcTime";
 import { niceMax } from "@/lib/stats";
 import { GameIcon } from "@/components/v2/GameIcon";
 import { StageBadge } from "@/components/v2/StageBadge";
@@ -44,6 +46,11 @@ const loadEarning = cache(async (id: number): Promise<EarningRanks | null> => {
 const loadUpdates = cache(async (id: number): Promise<GameUpdates | null> => {
   const db = getSiteDb();
   return db ? getGameUpdates(db, id).catch(() => null) : null;
+});
+
+const loadWelcome = cache(async (id: number, genre: string): Promise<GameWelcome | null> => {
+  const db = getSiteDb();
+  return db ? getGameWelcome(db, id, genre).catch(() => null) : null;
 });
 
 function parseId(raw: string): number | null {
@@ -119,12 +126,14 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
   const g = await loadGame(id);
   if (!g) notFound();
 
-  const [icons, shots, earning, updates] = await Promise.all([
+  const [icons, shots, earning, updates, welcome] = await Promise.all([
     getGameIcons([g.universeId]),
     getGameScreenshots(g.universeId),
     loadEarning(g.universeId),
     loadUpdates(g.universeId),
+    loadWelcome(g.universeId, g.genre),
   ]);
+  const welcomeLast = welcome?.days[welcome.days.length - 1];
   const name = displayName(g.name);
   const robloxHref = g.canonicalUrlPath ? `https://www.roblox.com${g.canonicalUrlPath}` : null;
   const first = g.daily[0];
@@ -238,7 +247,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
         ) : (
           <Tile label="Tracked for" value={`${g.daily.length} days`} hint={`since ${fmtDay(first.dayMs)}`} />
         )}
-        <Tile label="Highest single reading" value={fmtCompact(g.highest.players)} hint={`${fmtWeekdayDay(g.highest.atMs)}, ${fmtTimeUtc(g.highest.atMs)}`} />
+        <Tile label="Highest single reading" value={fmtCompact(g.highest.players)} hint={<>{fmtWeekdayDay(g.highest.atMs)}, <UtcTime ms={g.highest.atMs} /></>} />
         {earning?.latest ? (
           <Tile
             label="Top Earning rank"
@@ -597,6 +606,50 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
         </section>
       ) : null}
 
+      {welcome && welcomeLast ? (
+        <section aria-labelledby="newplayers" className="flex flex-col gap-3 rounded-2xl border border-border bg-card px-6 py-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="newplayers" className="font-heading text-[22px] font-bold">
+              New and returning players
+            </h2>
+            <span className="text-[13px] text-muted-foreground">Estimated from its &ldquo;{welcome.badgeName}&rdquo; badge</span>
+          </div>
+          <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+            <span className="font-heading text-[34px] font-extrabold">{(welcomeLast.share * 100).toFixed(welcomeLast.share < 0.1 ? 1 : 0)}%</span>
+            <span className="text-sm text-text-2">
+              of joins were by new players in the 24 hours to {fmtDay(welcomeLast.dayMs)}: {fmtInt(welcomeLast.newPlayers)} new players against{" "}
+              {fmtInt(welcomeLast.visits)} visits. The other {(100 - welcomeLast.share * 100).toFixed(welcomeLast.share < 0.1 ? 1 : 0)}% came back.
+            </span>
+          </div>
+          {welcome.genreMedian !== null ? (
+            <p className="text-sm text-text-2">
+              {welcomeLast.share > welcome.genreMedian ? "More" : "Less"} reliant on new players than the median {g.genre} game (
+              {(welcome.genreMedian * 100).toFixed(1)}% across {welcome.genreGames} games with a Welcome badge this week).
+            </p>
+          ) : null}
+          {welcome.days.length > 1 ? (
+            <ul className="flex flex-col text-sm tabular-nums">
+              {welcome.days
+                .slice(-14)
+                .reverse()
+                .map((d) => (
+                  <li key={d.dayMs} className="flex justify-between gap-3 border-t border-rule py-2 first:border-t-0">
+                    <span className="text-muted-foreground">{fmtDay(d.dayMs)}</span>
+                    <span>
+                      {fmtInt(d.newPlayers)} new · {(d.share * 100).toFixed(1)}% of joins
+                    </span>
+                  </li>
+                ))}
+            </ul>
+          ) : null}
+          <p className="text-[13px] text-muted-foreground">
+            Most games give a Welcome badge on a player&apos;s first visit, so its awards in a day count new players. Visits count every join, so
+            this is a share of joins, not of people: a returning player who joins three times counts three times. Read once a day for games
+            averaging 1,000+ players that have such a badge.
+          </p>
+        </section>
+      ) : null}
+
       <section aria-labelledby="facts" className="rounded-2xl border border-border bg-card px-6 py-5">
         <h2 id="facts" className="mb-3 text-base font-semibold">
           Details
@@ -608,7 +661,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
           <dd className="tabular-nums">{g.latest.favorites === null ? "—" : fmtInt(g.latest.favorites)}</dd>
           <dt className="text-muted-foreground">First seen in discovery</dt>
           <dd>
-            {fmtDay(g.firstSeenMs)} {new Date(g.firstSeenMs).getUTCFullYear()}, {fmtTimeUtc(g.firstSeenMs)}
+            {fmtDay(g.firstSeenMs)} {new Date(g.firstSeenMs).getUTCFullYear()}, <UtcTime ms={g.firstSeenMs} />
           </dd>
           <dt className="text-muted-foreground">Days tracked</dt>
           <dd className="tabular-nums">{g.daily.length}</dd>

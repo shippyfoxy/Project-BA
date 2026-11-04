@@ -56,7 +56,7 @@ describe("applyMigrations", () => {
   it("is a no-op the second time", async () => {
     expect(await applyMigrations(db)).toEqual([]);
     const r = await one<{ n: number }>("select count(*)::int as n from schema_migrations");
-    expect(r.n).toBe(5);
+    expect(r.n).toBe(6);
   });
 });
 

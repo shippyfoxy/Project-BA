@@ -279,6 +279,21 @@ export async function getTopEarning(
   return out;
 }
 
+export interface BadgeRecord {
+  id: number;
+  name: string;
+  enabled: boolean;
+  created: string;
+  statistics: { pastDayAwardedCount: number; awardedCount: number };
+}
+
+// A game's first 100 badges, oldest first: a Welcome badge is nearly always
+// among the first a game creates.
+export async function getBadges(universeId: number, opts?: FetchOpts): Promise<BadgeRecord[]> {
+  const url = `https://badges.roblox.com/v1/universes/${universeId}/badges?limit=100&sortOrder=Asc`;
+  return (await jget<{ data?: BadgeRecord[] }>(url, opts)).data ?? [];
+}
+
 // Servers endpoint takes placeId, not universeId. Used for live server count.
 export async function getPublicServers(
   placeId: number,

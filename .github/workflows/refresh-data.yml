@@ -55,3 +55,12 @@ jobs:
         run: pnpm db:ingest
         env:
           DATABASE_URL_UNPOOLED: ${{ secrets.DATABASE_URL_UNPOOLED }}
+
+      # New players from each game's Welcome badge. An extra: a failure here
+      # leaves the snapshot already recorded above untouched.
+      - name: Read Welcome badges
+        run: pnpm refresh-badges
+        continue-on-error: true
+        timeout-minutes: 6
+        env:
+          DATABASE_URL_UNPOOLED: ${{ secrets.DATABASE_URL_UNPOOLED }}
