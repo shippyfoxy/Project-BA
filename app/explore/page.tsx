@@ -172,15 +172,18 @@ function Option({
   count?: number;
 }) {
   return (
-    <label className="flex min-h-8 cursor-pointer items-center gap-2.5 text-sm">
-      <input type={type} name={name} value={value} defaultChecked={checked} className="size-4 accent-[var(--rise)]" />
-      <span className="flex-1">{label}</span>
+    // Choices read like an iPhone settings list: a round button before a
+    // single choice, a switch after anything that can be on or off.
+    <label className="flex min-h-9 cursor-pointer items-center gap-3 text-sm">
+      {type === "radio" ? <input type="radio" name={name} value={value} defaultChecked={checked} className="radio" /> : null}
+      <span className="min-w-0 flex-1">{label}</span>
       {count !== undefined ? <span className="tabular-nums text-muted-foreground">{fmtInt(count)}</span> : null}
+      {type === "checkbox" ? <input type="checkbox" name={name} value={value} defaultChecked={checked} className="switch" /> : null}
     </label>
   );
 }
 
-const selectClass = "h-10 rounded-[10px] border border-input bg-background px-3 text-sm";
+const selectClass = "select";
 
 function Filters({ f, result }: { f: ScreenerFilters; result: ScreenerResult }) {
   // Keep picked genres visible even when the other filters leave none of them.

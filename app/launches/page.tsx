@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 const KEY_DAYS = [1, 3, 7, 14, 30, 60, 90];
-const selectClass = "h-10 rounded-[10px] border border-input bg-background px-3 text-sm";
+const selectClass = "select";
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 // The bars share one log scale, so rows compare directly.
 const ly = (v: number) => Math.log10(1 + Math.max(v, 0));

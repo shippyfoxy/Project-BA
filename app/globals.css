@@ -162,9 +162,123 @@
   }
 }
 
+@layer components {
+  /* An on/off switch in the style of iOS, for checkboxes. */
+  .switch {
+    appearance: none;
+    position: relative;
+    flex: none;
+    width: 36px;
+    height: 22px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--muted-foreground) 38%, transparent);
+    cursor: pointer;
+    transition: background-color 0.18s ease;
+  }
+  .switch::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
+    transition: transform 0.18s ease;
+  }
+  .switch:checked {
+    background: var(--rise);
+  }
+  .switch:checked::after {
+    transform: translateX(14px);
+  }
+  .radio {
+    appearance: none;
+    flex: none;
+    display: grid;
+    place-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid var(--input);
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+  }
+  .radio:checked {
+    border-color: var(--rise);
+  }
+  .radio:checked::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--rise);
+  }
+  .switch:focus-visible,
+  .radio:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* Dropdowns drawn the same on every system, with a slim chevron. */
+  .select {
+    @apply h-10 rounded-[10px] border border-input bg-background pl-3 pr-9 text-sm text-foreground transition-colors hover:border-ring;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5l3 3 3-3' fill='none' stroke='%238c95a3' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* A wide table keeps its first column in view while the rest scrolls. */
+  .table-sticky tr > :first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--card);
+    box-shadow: inset -1px 0 0 var(--rule);
+  }
+  .table-sticky tbody tr:hover > :first-child {
+    background: var(--surface-2);
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--muted-foreground) 45%, transparent) transparent;
+  }
+  /* Scrolling panels show their bar only while the pointer is over them, as
+     on a phone; touch screens draw their own overlay bars anyway. */
+  @media (hover: hover) {
+    .overflow-x-auto,
+    .overflow-auto {
+      scrollbar-color: transparent transparent;
+      transition: scrollbar-color 0.2s ease;
+    }
+    .overflow-x-auto:hover,
+    .overflow-auto:hover {
+      scrollbar-color: color-mix(in oklab, var(--muted-foreground) 50%, transparent) transparent;
+    }
+  }
+  /* Data tables: headers and short values stay on one line, and rows breathe. */
+  main table thead th {
+    white-space: nowrap;
+  }
+  main table tbody td,
+  main table tbody th {
+    line-height: 1.45;
+  }
+  main table td .text-xs {
+    white-space: nowrap;
   }
   body {
     @apply bg-background text-foreground;

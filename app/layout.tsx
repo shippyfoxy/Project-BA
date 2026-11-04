@@ -79,23 +79,25 @@ export default async function RootLayout({
       <body className="min-h-screen bg-background text-foreground antialiased">
         <ProProvider>
         <header className="border-b border-border">
-          <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 md:px-6">
-            <Link href="/" className="flex items-center gap-2.5 font-heading text-[19px] font-extrabold tracking-tight">
+          {/* Phones: logo and toggle, then the tabs as one swipeable row.
+              Wide screens: everything on one line. */}
+          <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-4 gap-y-1 px-4 pt-3 lg:flex-nowrap lg:py-3 md:px-6">
+            <Link href="/" className="flex shrink-0 items-center gap-2.5 font-heading text-[19px] font-extrabold tracking-tight">
               <Logo />
               Roblox Pulse
             </Link>
-            <MainNav />
-            <span className="flex items-center gap-3">
+            <span className="ml-auto flex shrink-0 items-center gap-3 lg:order-3">
               {refreshedMs ? (
-                <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
+                <span className="flex items-center gap-2 whitespace-nowrap font-mono text-xs text-muted-foreground">
                   <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
                     <circle cx="4" cy="4" r="4" fill="#3FA34D" />
                   </svg>
-                  Data to {fmtDay(refreshedMs)}, <UtcTime ms={refreshedMs} />
+                  <span className="hidden sm:inline lg:hidden 2xl:inline">Data to {fmtDay(refreshedMs)},</span> <UtcTime ms={refreshedMs} compact />
                 </span>
               ) : null}
               <ThemeToggle />
             </span>
+            <MainNav />
           </div>
         </header>
         {children}

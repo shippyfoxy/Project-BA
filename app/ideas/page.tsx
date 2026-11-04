@@ -36,7 +36,7 @@ const MOMENTUM_CLASS: Record<Momentum, string> = {
 };
 const SHOWN = 60;
 const RISING_MIN_PLAYERS = 10_000;
-const selectClass = "h-10 rounded-[10px] border border-input bg-background px-3 text-sm";
+const selectClass = "select";
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 const pts = (x: number) => `${x > 0 ? "+" : x < 0 ? "−" : ""}${Math.abs(Math.round(x * 100))} pts`;
 const pct = (x: number) => `${x > 0 ? "+" : x < 0 ? "−" : ""}${Math.abs(Math.round(x * 100))}%`;
@@ -52,7 +52,7 @@ function Tile({ label, value, hint }: { label: string; value: string; hint: stri
 }
 
 function MomentumChip({ m }: { m: Momentum }) {
-  return <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${MOMENTUM_CLASS[m]}`}>{MOMENTUM_LABEL[m]}</span>;
+  return <span className={`whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold ${MOMENTUM_CLASS[m]}`}>{MOMENTUM_LABEL[m]}</span>;
 }
 
 // Hit rate as a small bar: how many of the last month's new games using a
@@ -187,7 +187,7 @@ export default async function IdeasPage({ searchParams }: { searchParams: Promis
           </p>
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-            <table className="w-full min-w-[980px] border-collapse text-sm tabular-nums">
+            <table className="table-sticky w-full min-w-[1040px] border-collapse text-sm tabular-nums">
               <caption className="sr-only">Words in game names, with players, momentum, new games and modelled revenue</caption>
               <thead>
                 <tr className="text-right text-xs text-muted-foreground">
@@ -215,11 +215,12 @@ export default async function IdeasPage({ searchParams }: { searchParams: Promis
                       <Link href={`/explore?launched=any&q=${encodeURIComponent(p.term)}`} className="hover:text-link">
                         {p.term}
                       </Link>
-                      <span className="mt-0.5 flex flex-wrap gap-1 font-normal">
-                        {p.genres.map(([g]) => (
-                          <GenreChip key={g} genre={g} />
-                        ))}
-                      </span>
+                      {/* The main genre only, so rows stay one height. */}
+                      {p.genres[0] ? (
+                        <span className="mt-1 block font-normal">
+                          <GenreChip genre={p.genres[0][0]} />
+                        </span>
+                      ) : null}
                     </th>
                     <td className="px-2 py-2.5 text-left">
                       <MomentumChip m={p.momentum} />
@@ -228,7 +229,7 @@ export default async function IdeasPage({ searchParams }: { searchParams: Promis
                     <td className="px-2 py-2.5">
                       {fmtCompact(p.players, 1)}
                       {p.topShare >= 0.6 ? (
-                        <span className="block text-xs text-muted-foreground">{Math.round(p.topShare * 100)}% one game</span>
+                        <span className="block text-xs text-muted-foreground">{Math.round(p.topShare * 100)}% in one</span>
                       ) : null}
                     </td>
                     <td className={`px-2 py-2.5 font-semibold ${p.vsMarket === null ? "" : p.vsMarket >= 0 ? "text-rise" : "text-fall"}`}>
@@ -254,13 +255,11 @@ export default async function IdeasPage({ searchParams }: { searchParams: Promis
                       )}
                     </td>
                     <td className="px-4 py-2.5 text-left text-[13px] text-text-2">
-                      {p.top.map((g, i) => (
-                        <span key={g.universeId}>
-                          {i ? ", " : ""}
-                          <Link href={`/games/${g.universeId}`} className="hover:text-link">
-                            {displayName(g.name)}
-                          </Link>
-                        </span>
+                      {/* Two names, one line each, so rows stay short. */}
+                      {p.top.slice(0, 2).map((g) => (
+                        <Link key={g.universeId} href={`/games/${g.universeId}`} className="block max-w-[240px] truncate hover:text-link">
+                          {displayName(g.name)}
+                        </Link>
                       ))}
                     </td>
                   </tr>
