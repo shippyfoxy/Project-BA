@@ -5,6 +5,7 @@ import { getActiveGames, type ActiveGames } from "./home";
 import { getGenreTrends, type GenreTrends } from "./genreTrends";
 import { getRevenuePage, type RevenuePage } from "./revenuePage";
 import { getUpdateImpact, type UpdateImpact } from "./updates";
+import { getLaunchCurves, type LaunchCurves } from "./launches";
 
 // Shared across every game page and refreshed at most hourly, so opening a
 // game for the first time doesn't recompute every game's week.
@@ -72,4 +73,15 @@ export const getCachedUpdateImpact = unstable_cache(
   },
   ["update-impact-v1"],
   { revalidate: 3600 },
+);
+
+// Launch percentile curves, per genre: a heavy query over every launch since
+// May, and the curves move slowly, so a few hours is fresh enough.
+export const getCachedLaunchCurves = unstable_cache(
+  async (genre: string | null): Promise<LaunchCurves | null> => {
+    const db = getSiteDb();
+    return db ? getLaunchCurves(db, genre) : null;
+  },
+  ["launch-curves-v2"],
+  { revalidate: 3 * 3600 },
 );
