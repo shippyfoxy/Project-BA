@@ -173,13 +173,23 @@ describe("top earning ranks and revenue estimates", () => {
     const r100 = estMonthlyDevEx(100)!;
     expect(r100.mid).toBeGreaterThan(105_000);
     expect(r100.mid).toBeLessThan(115_000);
-    expect(r100.low).toBeCloseTo(r100.mid * 0.7);
+    expect(r100.low).toBeCloseTo(estMonthlyDevEx(101)!.mid * 0.7);
+    expect(r100.high).toBeCloseTo(estMonthlyDevEx(99)!.mid * 1.5);
     expect(fmtUsdEstimate(r100.mid)).toBe("$110k");
     expect(fmtUsdEstimate(1_234_567)).toBe("$1.2M");
     expect(fmtUsdEstimate(996_000)).toBe("$1M");
     expect(fmtUsdEstimate(13_260_000)).toBe("$13M");
     expect(fmtUsdEstimate(9_282_000)).toBe("$9.3M");
     expect(fmtUsdEstimate(46_480)).toBe("$46k");
+  });
+
+  it("gives neighbours at the top overlapping ranges", () => {
+    const [r1, r2] = [estMonthlyDevEx(1)!, estMonthlyDevEx(2)!];
+    expect(r1.low).toBeLessThan(r2.high);
+    expect(r2.high).toBeCloseTo(r1.mid * 1.5);
+    // An effective rank between two places lands between their estimates.
+    expect(estMonthlyDevEx(1.5)!.mid).toBeLessThan(r1.mid);
+    expect(estMonthlyDevEx(1.5)!.mid).toBeGreaterThan(r2.mid);
   });
 });
 

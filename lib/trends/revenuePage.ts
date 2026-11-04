@@ -1,5 +1,5 @@
 import type { Db } from "@/lib/db/client";
-import { estMonthlyDevEx } from "./revenue";
+import { EARNING_WEEK, estMonthlyDevEx } from "./revenue";
 
 export interface RankedGame {
   universeId: number;
@@ -7,8 +7,9 @@ export interface RankedGame {
   creatorName: string;
   genre: string;
   rank: number;
+  effRank: number; // over the last 7 lists; the estimate comes from this
   prevRank: number | null; // on the previous recorded day; null if not listed then
-  estMonthly: number; // MODELLED, from rank
+  estMonthly: number; // MODELLED, from effRank
   cur7: number | null; // 7-day average players
 }
 
@@ -36,17 +37,20 @@ export async function getRevenuePage(db: Db): Promise<RevenuePage | null> {
     creator_name: string | null;
     genre: string;
     rank: number;
+    eff_rank: number;
     prev_rank: number | null;
     cur7: number | null;
   }>(
-    `select e.universe_id::float8 as universe_id, g.name, g.creator_name, coalesce(g.genre_l1, 'Other') as genre,
-            e.rank, p.rank as prev_rank,
+    `with ${EARNING_WEEK}
+     select e.universe_id::float8 as universe_id, g.name, g.creator_name, coalesce(g.genre_l1, 'Other') as genre,
+            e.rank, w.eff_rank, p.rank as prev_rank,
             (select avg(d.playing_avg) from game_daily d
               where d.universe_id = e.universe_id
                 and d.day > (select max(day) - 1 from game_daily) - 7
                 and d.day <= (select max(day) - 1 from game_daily))::float8 as cur7
      from earning_ranks e
      join games g using (universe_id)
+     join earning_week w using (universe_id)
      left join earning_ranks p on p.universe_id = e.universe_id and p.day = $2::date
      where e.day = $1::date
      order by e.rank`,
@@ -59,8 +63,9 @@ export async function getRevenuePage(db: Db): Promise<RevenuePage | null> {
     creatorName: r.creator_name ?? "Unknown",
     genre: r.genre,
     rank: r.rank,
+    effRank: r.eff_rank,
     prevRank: r.prev_rank,
-    estMonthly: estMonthlyDevEx(r.rank)!.mid,
+    estMonthly: estMonthlyDevEx(r.eff_rank)!.mid,
     cur7: r.cur7,
   }));
   const sorted = games.map((g) => g.estMonthly).sort((a, b) => a - b);

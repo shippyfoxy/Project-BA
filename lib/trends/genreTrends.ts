@@ -1,7 +1,7 @@
 import type { Db } from "@/lib/db/client";
 import { quantile } from "@/lib/stats";
 import type { AggRow } from "./game";
-import { estMonthlyDevEx } from "./revenue";
+import { EARNING_WEEK, estMonthlyDevEx } from "./revenue";
 
 const DAY_MS = 86_400_000;
 
@@ -38,7 +38,7 @@ export interface GenreBenchmark {
 export interface GenreRevenue {
   genre: string;
   ranked: number;
-  ranks: number[]; // so the browser can total the estimate for Pro visitors
+  ranks: number[]; // effective ranks, so the browser can total the estimate for Pro visitors
   est: number;
   share: number;
 }
@@ -103,9 +103,10 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
        order by w.wk desc`,
       [day],
     ),
-    db.query<{ day: string; genre: string; rank: number }>(
-      `select e.day::text as day, coalesce(g.genre_l1, 'Other') as genre, e.rank
-       from earning_ranks e join games g using (universe_id)
+    db.query<{ day: string; genre: string; rank: number; eff_rank: number }>(
+      `with ${EARNING_WEEK}
+       select e.day::text as day, coalesce(g.genre_l1, 'Other') as genre, e.rank, w.eff_rank
+       from earning_ranks e join games g using (universe_id) join earning_week w using (universe_id)
        where e.day = (select max(day) from earning_ranks)`,
     ),
   ]);
@@ -144,8 +145,8 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
   for (const r of ranks) {
     const cur = revBy.get(r.genre) ?? { ranked: 0, ranks: [], est: 0 };
     cur.ranked++;
-    cur.ranks.push(r.rank);
-    cur.est += estMonthlyDevEx(r.rank)?.mid ?? 0;
+    cur.ranks.push(r.eff_rank);
+    cur.est += estMonthlyDevEx(r.eff_rank)?.mid ?? 0;
     revBy.set(r.genre, cur);
   }
   const revTotal = [...revBy.values()].reduce((a, v) => a + v.est, 0);

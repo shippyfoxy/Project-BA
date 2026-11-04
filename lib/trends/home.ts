@@ -1,5 +1,5 @@
 import type { Db } from "@/lib/db/client";
-import { estMonthlyDevEx } from "./revenue";
+import { EARNING_WEEK, estMonthlyDevEx } from "./revenue";
 import { lifecycleStage, STAGES, type Stage } from "./stage";
 
 const DAY_MS = 86_400_000;
@@ -69,7 +69,8 @@ export interface Earner {
   name: string;
   genre: string;
   rank: number;
-  estMonthly: number; // MODELLED, from rank
+  effRank: number; // over the last 7 lists; the estimate comes from this
+  estMonthly: number; // MODELLED, from effRank
   cur7: number | null;
 }
 
@@ -241,9 +242,10 @@ export async function getTrendsHome(db: Db, opts: { active?: ActiveGames | null 
       studioMap.set(g.creatorName, { players: g.cur7, top: g, bigGames: g.cur7 >= 10_000 ? 1 : 0 });
     }
   }
-  const ranks = await db.query<{ universe_id: number; name: string; genre: string; rank: number }>(
-    `select e.universe_id::float8 as universe_id, g.name, coalesce(g.genre_l1, 'Other') as genre, e.rank
-     from earning_ranks e join games g using (universe_id)
+  const ranks = await db.query<{ universe_id: number; name: string; genre: string; rank: number; eff_rank: number }>(
+    `with ${EARNING_WEEK}
+     select e.universe_id::float8 as universe_id, g.name, coalesce(g.genre_l1, 'Other') as genre, e.rank, w.eff_rank
+     from earning_ranks e join games g using (universe_id) join earning_week w using (universe_id)
      where e.day = (select max(day) from earning_ranks)
      order by e.rank`,
   );
@@ -253,7 +255,8 @@ export async function getTrendsHome(db: Db, opts: { active?: ActiveGames | null 
     name: r.name,
     genre: r.genre,
     rank: r.rank,
-    estMonthly: estMonthlyDevEx(r.rank)!.mid,
+    effRank: r.eff_rank,
+    estMonthly: estMonthlyDevEx(r.eff_rank)!.mid,
     cur7: cur7By.get(r.universe_id) ?? null,
   }));
   // Per player only means something with a steady audience, so 1,000+ players.

@@ -112,7 +112,8 @@ export default function MethodologyPage() {
           </p>
           <pre className="overflow-x-auto rounded-md border border-border bg-muted/40 p-3 font-mono text-xs">
 {`monthly DevEx (USD) = 13.26M × rank^-1.041
-range shown         = 0.7× to 1.5× that figure`}
+rank used           = the effective rank over the last 7 lists
+range shown         = 0.7× the rank below to 1.5× the rank above`}
           </pre>
           <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
             <li>
@@ -126,6 +127,13 @@ range shown         = 0.7× to 1.5× that figure`}
             <li>
               The tiers are per creator and the curve is per game, so it reads low at the very top: the ten highest-ranked games add up to
               about $455M a year against $657M for the top ten creators, who often own several hits.
+            </li>
+            <li>
+              The curve is steep at the top: rank 1 is estimated at twice rank 2. Neighbours often earn about the same, so a game that
+              swaps places with its neighbour would see its estimate halve or double overnight. Estimates therefore use the game&rsquo;s
+              effective rank over the last 7 recorded lists (the rank whose estimate is the mean of its daily estimates; a day off the list
+              counts as the rank just below it), and the range runs from the rank below to the rank above, so neighbours&rsquo; ranges
+              overlap. The rank column itself is always the latest list. Day-by-day exports use each day&rsquo;s own rank.
             </li>
           </ul>
           <p className="text-muted-foreground">

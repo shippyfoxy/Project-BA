@@ -169,7 +169,7 @@ export function computeGroupMetrics(games: SnapshotGame[]): GroupMetrics {
   const favoritesMedian = median(favorites);
 
   const revenues = games
-    .map((g) => estMonthlyDevEx(g.earningRank)?.mid)
+    .map((g) => estMonthlyDevEx(g.earningEffRank ?? g.earningRank)?.mid)
     .filter((v): v is number => v !== undefined)
     .sort((a, b) => a - b);
 

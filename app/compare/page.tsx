@@ -317,7 +317,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                             <>
                               #{g.earningRank}{" "}
                               <span className="text-muted-foreground">
-                                <Usd rank={g.earningRank} prefix="est. " suffix="/mo" />
+                                <Usd rank={g.earningEffRank} prefix="est. " suffix="/mo" />
                               </span>
                             </>
                           )}

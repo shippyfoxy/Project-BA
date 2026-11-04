@@ -76,14 +76,14 @@ function EarnerList({ title, games, icons, perPlayer }: { title: string; games: 
                 {perPlayer && g.cur7 ? (
                   <>
                     <span className="block">
-                      <UsdPerPlayer rank={g.rank} players={g.cur7} prefix="est. " />
+                      <UsdPerPlayer rank={g.effRank} players={g.cur7} prefix="est. " />
                     </span>
                     <span className="block text-xs text-muted-foreground">per concurrent player a month</span>
                   </>
                 ) : (
                   <>
                     <span className="block">
-                      <Usd rank={g.rank} prefix="est. " suffix="/mo" />
+                      <Usd rank={g.effRank} prefix="est. " suffix="/mo" />
                     </span>
                     <span className="block text-xs text-muted-foreground">{g.cur7 === null ? "under 1,000 players" : `${fmtInt(g.cur7)} players`}</span>
                   </>

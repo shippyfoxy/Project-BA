@@ -150,7 +150,7 @@ export default async function RevenuePage() {
         <h1 className="font-heading text-5xl font-extrabold tracking-[-0.03em]">Revenue</h1>
         <p className="max-w-3xl text-text-2">
           Roblox&apos;s own Top Earning list ranks games by Robux spent in the last 7 days. Roblox publishes the order but never the
-          amounts, so every dollar figure here is an estimate modelled from the rank.{" "}
+          amounts, so every dollar figure here is an estimate modelled from the rank, averaged over the last 7 lists so a one-day swap with a neighbour barely moves it.{" "}
           <Link href="/methodology#revenue" className="text-link underline">
             How it is estimated
           </Link>
@@ -255,7 +255,7 @@ export default async function RevenuePage() {
             <tbody className="whitespace-nowrap text-right">
               {shown.map((g) => {
                 const name = displayName(g.name);
-                const est = estMonthlyDevEx(g.rank)!;
+                const est = estMonthlyDevEx(g.effRank)!;
                 return (
                   <tr key={g.universeId} className="border-t border-rule hover:bg-surface-2">
                     <td className="px-4 py-2.5 text-left text-text-2">#{g.rank}</td>

@@ -37,6 +37,7 @@ export interface SnapshotGame {
   samples: SnapshotSample[];
   // Position in Roblox's Top Earning list on the latest day recorded.
   earningRank?: number | null;
+  earningEffRank?: number | null; // over the last 7 lists; estimates come from this
 }
 
 export interface Snapshot {

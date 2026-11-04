@@ -95,7 +95,8 @@ export default async function StagePage({ params }: { params: Promise<{ stage: s
   const shown = all.slice(0, LIMIT);
   const ids = shown.map((g) => g.universeId);
   const [icons, sparks, rankPairs] = await Promise.all([getGameIcons(ids), getSparklines(db, ids, active.day), getCachedEarningRanks()]);
-  const ranks = new Map(rankPairs);
+  const ranks = new Map(rankPairs.map(([id, rank]) => [id, rank]));
+  const effRanks = new Map(rankPairs.map(([id, , eff]) => [id, eff]));
   const weekFrom = Date.parse(active.day) - 6 * DAY_MS;
 
   return (
@@ -187,7 +188,7 @@ export default async function StagePage({ params }: { params: Promise<{ stage: s
                           <span className="flex flex-col items-end leading-tight">
                             <span>#{ranks.get(g.universeId)}</span>
                             <span className="text-xs text-muted-foreground">
-                              <Usd rank={ranks.get(g.universeId) ?? null} prefix="est. " suffix="/mo" />
+                              <Usd rank={effRanks.get(g.universeId) ?? null} prefix="est. " suffix="/mo" />
                             </span>
                           </span>
                         ) : (

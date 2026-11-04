@@ -1,5 +1,6 @@
 import type { Db } from "@/lib/db/client";
 import { MIN_PEAK_DAYS } from "@/lib/db/ingest";
+import { EARNING_WEEK } from "./revenue";
 
 const DAY_MS = 86_400_000;
 export const MAX_COMPARE = 4;
@@ -16,6 +17,7 @@ export interface CompareGame {
   peak: { dayMs: number; r7: number };
   latest: { dayMs: number; r7: number };
   earningRank: number | null; // latest Top Earning list
+  earningEffRank: number | null; // over the last 7 lists; estimates come from this
 }
 
 export function parseIds(raw: string | string[] | undefined): number[] {
@@ -40,11 +42,13 @@ export async function getCompareGames(db: Db, ids: number[]): Promise<CompareGam
   if (ids.length === 0) return [];
   const list = ids.join(",");
   const [games, rows] = await Promise.all([
-    db.query<{ universe_id: number; name: string; genre: string; created_ms: number | null; earning_rank: number | null }>(
-      `select universe_id::float8 as universe_id, name, coalesce(genre_l1, 'Other') as genre,
+    db.query<{ universe_id: number; name: string; genre: string; created_ms: number | null; earning_rank: number | null; earning_eff_rank: number | null }>(
+      `with ${EARNING_WEEK}
+       select universe_id::float8 as universe_id, name, coalesce(genre_l1, 'Other') as genre,
               extract(epoch from created_at)::float8 * 1000 as created_ms,
               (select rank from earning_ranks e where e.universe_id = games.universe_id
-                 and e.day = (select max(day) from earning_ranks)) as earning_rank
+                 and e.day = (select max(day) from earning_ranks)) as earning_rank,
+              (select eff_rank from earning_week w where w.universe_id = games.universe_id) as earning_eff_rank
        from games where universe_id in (select unnest(string_to_array($1, ','))::bigint)`,
       [list],
     ),
@@ -82,6 +86,7 @@ export async function getCompareGames(db: Db, ids: number[]): Promise<CompareGam
       peak,
       latest: points[points.length - 1],
       earningRank: g.earning_rank,
+      earningEffRank: g.earning_eff_rank,
     });
   }
   return out;

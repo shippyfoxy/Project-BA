@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
 
   const games = result.matches.map((g) => {
     const w = windows.get(g.universeId);
-    const est = estMonthlyDevEx(g.earningRank);
+    const est = estMonthlyDevEx(g.earningEffRank);
     return {
     universe_id: g.universeId,
     // The same cleaned name the site shows; roblox_name keeps the raw title.

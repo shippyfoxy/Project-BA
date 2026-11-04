@@ -412,7 +412,7 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
                         <span className="flex flex-col items-end leading-tight">
                           <span>#{g.earningRank}</span>
                           <span className="text-xs text-muted-foreground" title="Modelled from the rank, not measured">
-                            <Usd rank={g.earningRank} prefix="est. " suffix="/mo" />
+                            <Usd rank={g.earningEffRank} prefix="est. " suffix="/mo" />
                           </span>
                         </span>
                       )}

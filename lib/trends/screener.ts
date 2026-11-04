@@ -1,7 +1,7 @@
 import type { Db } from "@/lib/db/client";
 import { lifecycleStage, STAGES, type Stage } from "./stage";
 import { parseSearch, searchWhere } from "./search";
-import { estMonthlyDevEx } from "./revenue";
+import { EARNING_WEEK, estMonthlyDevEx } from "./revenue";
 import { ACTIVE_MIN_PLAYERS } from "./home";
 
 const DAY_MS = 86_400_000;
@@ -59,7 +59,8 @@ export interface ScreenerRow {
   session: number | null; // estimated minutes
   favsPer1k: number | null; // favourites per 1,000 visits
   earningRank: number | null; // position in Roblox's Top Earning list
-  estMonthly: number | null; // MODELLED monthly DevEx in USD, from earningRank
+  earningEffRank: number | null; // over the last 7 lists; the estimate comes from this
+  estMonthly: number | null; // MODELLED monthly DevEx in USD, from earningEffRank
   stage: Stage | null; // only for games averaging ACTIVE_MIN_PLAYERS+, as on every other page
 }
 
@@ -176,6 +177,7 @@ interface Row {
   fav: number | null;
   vis: number | null;
   earning_rank: number | null;
+  earning_eff_rank: number | null;
 }
 
 // Every game with readings in the last 7 days that passes the SQL-side
@@ -232,15 +234,16 @@ export async function screenGames(db: Db, f: ScreenerFilters): Promise<ScreenerR
          (array_agg(favorites_last order by day desc) filter (where favorites_last is not null))[1] as fav,
          (array_agg(visits_last order by day desc))[1] as vis
        from base group by universe_id
-     ), er as (
-       select universe_id, rank from earning_ranks where day = (select max(day) from earning_ranks)
+     ), ${EARNING_WEEK}, er as (
+       select universe_id, rank, w.eff_rank from earning_ranks join earning_week w using (universe_id)
+       where day = (select max(day) from earning_ranks)
      )
      select g.universe_id::float8 as universe_id, g.name, g.creator_name, coalesce(g.genre_l1, 'Other') as genre,
             extract(epoch from g.created_at)::float8 * 1000 as created_ms,
             a.cur7::float8 as cur7, a.prev7::float8 as prev7,
             coalesce(p.peak7, a.cur7)::float8 as peak7, coalesce(p.days_tracked, 1) as days_tracked,
             (a.cm / nullif(a.vpm, 0))::float8 as session, a.fav::float8 as fav, a.vis::float8 as vis,
-            er.rank as earning_rank
+            er.rank as earning_rank, er.eff_rank as earning_eff_rank
      from agg a
      join games g using (universe_id)
      left join game_peaks p using (universe_id)
@@ -266,7 +269,8 @@ export async function screenGames(db: Db, f: ScreenerFilters): Promise<ScreenerR
       session: r.session !== null && r.session >= 0.5 && r.session <= 600 ? r.session : null,
       favsPer1k: r.fav !== null && r.vis ? (1_000 * r.fav) / r.vis : null,
       earningRank: r.earning_rank,
-      estMonthly: estMonthlyDevEx(r.earning_rank)?.mid ?? null,
+      earningEffRank: r.earning_eff_rank,
+      estMonthly: estMonthlyDevEx(r.earning_eff_rank)?.mid ?? null,
       stage:
         r.cur7 >= ACTIVE_MIN_PLAYERS
           ? lifecycleStage({ cur7: r.cur7, prev7: r.prev7, peak7, createdMs: r.created_ms, daysTracked: r.days_tracked, nowMs: asOfMs })

@@ -254,7 +254,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
             value={`#${earning.latest.rank}`}
             hint={
               <>
-                <Usd rank={earning.latest.rank} kind="range" prefix="est. " suffix=" a month in payouts (modelled)" />
+                <Usd rank={earning.latest.effRank} kind="range" prefix="est. " suffix=" a month in payouts (modelled)" />
               </>
             }
           />

@@ -1,5 +1,6 @@
 import type { Db } from "./client";
 import type { Snapshot, SnapshotGame } from "../snapshot/schema";
+import { EARNING_WEEK } from "@/lib/trends/revenue";
 
 // Matches what refresh-data keeps per game in the JSON snapshot: a day of
 // hourly readings, enough for the classic dashboard's peak hour and session length.
@@ -82,10 +83,13 @@ export async function loadSnapshotFromDb(db: Db): Promise<Snapshot | null> {
     [tsIso],
   );
   const presenceById = new Map(presence.map((p) => [p.universe_id, p]));
-  const ranks = await db.query<{ universe_id: number; rank: number }>(
-    `select universe_id::float8 as universe_id, rank from earning_ranks where day = (select max(day) from earning_ranks)`,
+  const ranks = await db.query<{ universe_id: number; rank: number; eff_rank: number }>(
+    `with ${EARNING_WEEK}
+     select universe_id::float8 as universe_id, rank, w.eff_rank from earning_ranks join earning_week w using (universe_id)
+     where day = (select max(day) from earning_ranks)`,
   );
   const rankById = new Map(ranks.map((r) => [r.universe_id, r.rank]));
+  const effById = new Map(ranks.map((r) => [r.universe_id, r.eff_rank]));
 
   return {
     generatedAt: tsIso,
@@ -115,6 +119,7 @@ export async function loadSnapshotFromDb(db: Db): Promise<Snapshot | null> {
         popularOnDevices: p?.devices ?? [],
         samples: samplesById.get(g.universe_id) ?? [],
         earningRank: rankById.get(g.universe_id) ?? null,
+        earningEffRank: effById.get(g.universe_id) ?? null,
       };
     }),
   };

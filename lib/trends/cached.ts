@@ -6,6 +6,7 @@ import { getGenreTrends, type GenreTrends } from "./genreTrends";
 import { getRevenuePage, type RevenuePage } from "./revenuePage";
 import { getUpdateImpact, type UpdateImpact } from "./updates";
 import { getLaunchCurves, type LaunchCurves } from "./launches";
+import { EARNING_WEEK } from "./revenue";
 
 // Shared across every game page and refreshed at most hourly, so opening a
 // game for the first time doesn't recompute every game's week.
@@ -40,18 +41,20 @@ export const getCachedGenreTrends = unstable_cache(
 );
 
 
-// The latest Top Earning list as [universeId, rank] pairs, for pages that add
-// a rank column to games they already have.
+// The latest Top Earning list as [universeId, rank, effective rank] rows, for
+// pages that add a rank column to games they already have.
 export const getCachedEarningRanks = unstable_cache(
-  async (): Promise<[number, number][]> => {
+  async (): Promise<[number, number, number][]> => {
     const db = getSiteDb();
     if (!db) return [];
-    const rows = await db.query<{ id: number; rank: number }>(
-      `select universe_id::float8 as id, rank from earning_ranks where day = (select max(day) from earning_ranks)`,
+    const rows = await db.query<{ id: number; rank: number; eff_rank: number }>(
+      `with ${EARNING_WEEK}
+       select universe_id::float8 as id, rank, w.eff_rank from earning_ranks join earning_week w using (universe_id)
+       where day = (select max(day) from earning_ranks)`,
     );
-    return rows.map((r) => [r.id, r.rank]);
+    return rows.map((r) => [r.id, r.rank, r.eff_rank]);
   },
-  ["earning-ranks-v1"],
+  ["earning-ranks-v2"],
   { revalidate: 3600 },
 );
 

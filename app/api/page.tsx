@@ -162,12 +162,12 @@ const EXPLORE_FIELDS: Row[] = [
   ["top_earning_day", "The day of that list."],
   [
     "est_monthly_devex_low_usd, est_monthly_devex_high_usd",
-    "The modelled range around est_monthly_devex_usd, 0.7 to 1.5 times it: the same range game pages show.",
+    "The modelled range around est_monthly_devex_usd: 0.7 times the estimate for the rank below to 1.5 times the estimate for the rank above, so neighbours overlap. The same range game pages show.",
   ],
   [
     "est_monthly_devex_usd",
     <>
-      Modelled monthly creator payout in US dollars, rounded to the nearest thousand, from <C>top_earning_rank</C>. An estimate, not a
+      Modelled monthly creator payout in US dollars, rounded to the nearest thousand, from the effective rank over the last 7 lists (see <C>top_earning_rank</C>). An estimate, not a
       measurement; see{" "}
       <Link href="/methodology#revenue" className="text-link underline">
         how it is estimated
