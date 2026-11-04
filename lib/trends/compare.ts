@@ -44,7 +44,7 @@ export async function getCompareGames(db: Db, ids: number[]): Promise<CompareGam
   const [games, rows] = await Promise.all([
     db.query<{ universe_id: number; name: string; genre: string; created_ms: number | null; earning_rank: number | null; earning_eff_rank: number | null }>(
       `with ${EARNING_WEEK}
-       select universe_id::float8 as universe_id, name, coalesce(genre_l1, 'Other') as genre,
+       select universe_id::float8 as universe_id, name, coalesce(nullif(genre_l1, 'All'), 'Other') as genre,
               extract(epoch from created_at)::float8 * 1000 as created_ms,
               (select rank from earning_ranks e where e.universe_id = games.universe_id
                  and e.day = (select max(day) from earning_ranks)) as earning_rank,

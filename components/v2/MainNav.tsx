@@ -37,7 +37,7 @@ export function MainNav() {
           key={n.href}
           href={n.href}
           aria-current={active(n.href) ? "page" : undefined}
-          className={`shrink-0 whitespace-nowrap rounded-[10px] px-3 py-2 ${active(n.href) ? "bg-secondary text-foreground" : "text-text-2 hover:bg-secondary hover:text-foreground"}`}
+          className={`shrink-0 whitespace-nowrap rounded-[10px] px-3 py-2 lg:px-2.5 xl:px-3 ${active(n.href) ? "bg-secondary text-foreground" : "text-text-2 hover:bg-secondary hover:text-foreground"}`}
         >
           <span className="inline-flex items-center gap-1.5">
             {n.label}

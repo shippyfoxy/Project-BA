@@ -238,7 +238,7 @@ export async function screenGames(db: Db, f: ScreenerFilters): Promise<ScreenerR
        select universe_id, rank, w.eff_rank from earning_ranks join earning_week w using (universe_id)
        where day = (select max(day) from earning_ranks)
      )
-     select g.universe_id::float8 as universe_id, g.name, g.creator_name, coalesce(g.genre_l1, 'Other') as genre,
+     select g.universe_id::float8 as universe_id, g.name, g.creator_name, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre,
             extract(epoch from g.created_at)::float8 * 1000 as created_ms,
             a.cur7::float8 as cur7, a.prev7::float8 as prev7,
             coalesce(p.peak7, a.cur7)::float8 as peak7, coalesce(p.days_tracked, 1) as days_tracked,

@@ -9,6 +9,7 @@ import { quantile } from "@/lib/stats";
 // Lift compares average players on the two days after the event with the
 // same two weekdays a week earlier, which cancels Roblox's weekly rhythm.
 
+const DAY_MS = 86_400_000;
 const MAX_DETECTION_GAP_MS = 36 * 3_600_000;
 export const MIN_PLAYERS = 1_000;
 
@@ -47,6 +48,8 @@ export interface UpdateImpact {
   byWeekday: ({ dow: number } & LiftSummary)[];
   byGenre: ({ genre: string } & LiftSummary)[];
   recent: { universeId: number; name: string; prevName: string; genre: string; dayMs: number; lift: number; before: number }[];
+  // Announced in the last few days: the result needs two complete days after.
+  pending: { universeId: number; name: string; prevName: string; genre: string; dayMs: number; before: number; resultMs: number }[];
 }
 
 interface EventLift {
@@ -87,6 +90,18 @@ const LIFT_SQL = `
      and count(*) filter (where d.day in (ev.day - 6, ev.day - 5)) = 2
      and count(*) filter (where d.day in (ev.day + 1, ev.day + 2)) = 2`;
 
+// Players the week before, for events too recent to have a result yet.
+const BEFORE_SQL = `
+  with ev as (
+    select distinct r.universe_id, r.day
+    from jsonb_to_recordset($1::text::jsonb) as r(universe_id bigint, day date)
+  )
+  select ev.universe_id::float8 as universe_id, ev.day::text as day, avg(d.playing_avg)::float8 as before
+  from ev
+  join game_daily d on d.universe_id = ev.universe_id and d.day in (ev.day - 6, ev.day - 5)
+  group by ev.universe_id, ev.day
+  having count(*) = 2 and avg(d.playing_avg) >= ${MIN_PLAYERS}`;
+
 export async function getUpdateImpact(db: Db): Promise<UpdateImpact | null> {
   const [range] = await db.query<{ first: string | null; last: string | null }>(
     `select min(day)::text as first, max(day)::text as last from game_daily`,
@@ -116,7 +131,7 @@ export async function getUpdateImpact(db: Db): Promise<UpdateImpact | null> {
   // Title changes spotted within 36 hours of the previous sighting.
   const titles = await db.query<{ universe_id: number; name: string; prev_name: string; genre: string; first_ms: number; prev_ms: number }>(
     `select * from (
-       select n.universe_id::float8 as universe_id, n.name, coalesce(g.genre_l1, 'Other') as genre,
+       select n.universe_id::float8 as universe_id, n.name, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre,
               lag(n.name) over w as prev_name,
               extract(epoch from n.first_seen)::float8 * 1000 as first_ms,
               extract(epoch from n.prev_seen)::float8 * 1000 as prev_ms
@@ -154,6 +169,27 @@ export async function getUpdateImpact(db: Db): Promise<UpdateImpact | null> {
   }
   const stats = (xs: number[]) => summarise(xs.map((lift) => ({ universe_id: 0, lift })));
 
+  // Too recent for a result: day + 2 is today or later.
+  const cutoff = Date.parse(range.last) - 3 * DAY_MS;
+  const fresh = announced.filter((t) => Date.parse(evDay(t.first_ms)) > cutoff);
+  const befores = fresh.length
+    ? await db.query<{ universe_id: number; day: string; before: number }>(BEFORE_SQL, [
+        JSON.stringify(fresh.map((t) => ({ universe_id: t.universe_id, day: evDay(t.first_ms) }))),
+      ])
+    : [];
+  const beforeBy = new Map(befores.map((b) => [`${b.universe_id}|${b.day}`, b.before]));
+  const pendingSeen = new Set<string>();
+  const pending: UpdateImpact["pending"] = [];
+  for (const t of fresh) {
+    const day = evDay(t.first_ms);
+    const key = `${t.universe_id}|${day}`;
+    const before = beforeBy.get(key);
+    if (before === undefined || pendingSeen.has(key)) continue;
+    pendingSeen.add(key);
+    const dayMs = Date.parse(day);
+    pending.push({ universeId: t.universe_id, name: t.name, prevName: t.prev_name, genre: t.genre, dayMs, before, resultMs: dayMs + 3 * DAY_MS });
+  }
+
   return {
     since: range.first!,
     publishes: summarise(pubLifts),
@@ -164,6 +200,7 @@ export async function getUpdateImpact(db: Db): Promise<UpdateImpact | null> {
       .map(([g, xs]) => ({ genre: g, ...stats(xs) }))
       .sort((a, b) => b.median - a.median),
     recent: recent.sort((a, b) => b.dayMs - a.dayMs).slice(0, 40),
+    pending: pending.sort((a, b) => b.dayMs - a.dayMs || b.before - a.before).slice(0, 20),
   };
 }
 

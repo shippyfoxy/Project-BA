@@ -234,7 +234,7 @@ export async function getIdeas(db: Db, genre: string | null = null): Promise<Ide
        from game_daily
        where day > $1::date - 14 and day <= $1::date
        group by universe_id)
-     select g.universe_id::float8 as universe_id, g.name, coalesce(g.genre_l1, 'Other') as genre,
+     select g.universe_id::float8 as universe_id, g.name, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre,
             r.cur7::float8 as cur7, r.prev7::float8 as prev7,
             (g.first_seen::date > $1::date - ${LAUNCH_DAYS}
               and g.first_seen::date - g.created_at::date <= ${MAX_START_AGE_DAYS}) as launched,

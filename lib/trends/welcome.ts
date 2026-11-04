@@ -65,7 +65,7 @@ export async function getGameWelcome(db: Db, universeId: number, genre: string):
   const peers = await db.query<{ new_players: number; visits_24h: number | null }>(
     `select distinct on (w.universe_id) w.new_players, w.visits_24h::float8 as visits_24h
      from welcome_badges w join games g using (universe_id)
-     where w.badge_id is not null and w.day > current_date - 7 and coalesce(g.genre_l1, 'Other') = $1
+     where w.badge_id is not null and w.day > current_date - 7 and coalesce(nullif(g.genre_l1, 'All'), 'Other') = $1
      order by w.universe_id, w.day desc`,
     [genre],
   );

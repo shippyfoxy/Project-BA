@@ -8,7 +8,7 @@ import { COUNTRIES } from "@/lib/trends/screener";
 export const metadata: Metadata = {
   title: "API: Roblox Pulse",
   description:
-    "Read-only JSON and CSV for Roblox Pulse: every game's daily player history, Top Earning ranks and the Explore screener, with a Pro licence key.",
+    "Free, read-only JSON and CSV for Roblox Pulse: every game's daily player history, Top Earning ranks and the Explore screener.",
 };
 
 const BASE = "https://pulse.shipfox.me";
@@ -392,7 +392,7 @@ export default function ApiPage() {
             hourly, so polling more often than that returns the same answer. AI crawlers are not permitted anywhere on the site.
           </p>
           <p className="text-text-2">
-            Use the data in your own projects and reports; please don&apos;t resell it or share your licence key. Credit Roblox Pulse and link
+            Use the data in your own projects and reports; please don&apos;t resell it{paywallOn() ? " or share your licence key" : ""}. Credit Roblox Pulse and link
             to{" "}
             <Link href="/methodology" className="text-link underline">
               the methodology

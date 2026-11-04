@@ -35,7 +35,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   if (!db) return bad("The database is not available.", 503);
 
   const [game] = await db.query<{ universe_id: number; name: string; genre: string }>(
-    `select universe_id::float8 as universe_id, name, coalesce(genre_l1, 'Other') as genre from games where universe_id = $1::bigint`,
+    `select universe_id::float8 as universe_id, name, coalesce(nullif(genre_l1, 'All'), 'Other') as genre from games where universe_id = $1::bigint`,
     [id],
   );
   if (!game) return bad("No tracked game with that universe ID.", 404);

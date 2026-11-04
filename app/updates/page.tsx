@@ -191,10 +191,58 @@ export default async function UpdatesPage() {
         ) : null}
       </section>
 
+      {u.pending.length ? (
+        <section aria-labelledby="pending" className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="pending" className="font-heading text-[28px] font-bold tracking-tight">
+              Just announced
+            </h2>
+            <span className="text-[13px] text-muted-foreground">results arrive once two full days have passed</span>
+          </div>
+          <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
+            <table className="pin w-full min-w-[760px] border-collapse text-sm tabular-nums">
+              <thead>
+                <tr className="text-right text-xs text-muted-foreground">
+                  <th data-pin="" scope="col" className="px-4 py-3 text-left font-medium">Game</th>
+                  <th scope="col" className="px-2 py-3 text-left font-medium">Title change</th>
+                  <th scope="col" className="px-2 py-3 font-medium">Seen</th>
+                  <th scope="col" className="px-2 py-3 font-medium">Players a week before</th>
+                  <th scope="col" className="px-4 py-3 font-medium">Result</th>
+                </tr>
+              </thead>
+              <tbody className="text-right">
+                {u.pending.map((r) => (
+                  <tr key={`${r.universeId}-${r.dayMs}`} className="border-t border-rule">
+                    <th scope="row" className="px-4 py-2.5 text-left font-medium">
+                      <Link href={`/games/${r.universeId}`} className="hover:text-link">
+                        {displayName(r.name)}
+                      </Link>
+                    </th>
+                    <td className="max-w-[360px] px-2 py-2.5 text-left text-xs text-text-2">
+                      <span className="line-through decoration-muted-foreground/60">{r.prevName}</span>
+                      <span aria-hidden="true"> → </span>
+                      <span className="sr-only"> became </span>
+                      <span className="text-foreground">{r.name}</span>
+                    </td>
+                    <td className="whitespace-nowrap px-2 py-2.5 text-text-2">{fmtDay(r.dayMs)}</td>
+                    <td className="px-2 py-2.5">{fmtInt(r.before)}</td>
+                    <td className="whitespace-nowrap px-4 py-2.5 text-muted-foreground">due {fmtDay(r.resultMs)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : null}
+
       <section aria-labelledby="recent" className="flex flex-col gap-3">
         <h2 id="recent" className="font-heading text-[28px] font-bold tracking-tight">
           Latest announced updates
         </h2>
+        <p className="text-[13px] text-muted-foreground">
+          Titles were not recorded between 24 October and 3 November, so updates announced in that stretch are missing; everything since
+          is recorded hourly.
+        </p>
         <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
           <table className="pin w-full min-w-[860px] border-collapse text-sm tabular-nums">
             <thead>

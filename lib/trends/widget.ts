@@ -32,7 +32,7 @@ export async function getWidgetGame(db: Db, universeId: number): Promise<WidgetG
     day: string;
   }>(
     `with latest as (select (max(ts) at time zone 'UTC')::date - 1 as day, max(ts) as ts from snapshots)
-     select g.name, coalesce(g.genre_l1, 'Other') as genre,
+     select g.name, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre,
             extract(epoch from g.created_at)::float8 * 1000 as created_ms,
             p.peak7::float8 as peak7, p.days_tracked,
             (select avg(playing_avg) from game_daily d

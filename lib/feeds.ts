@@ -67,7 +67,7 @@ export async function breakoutItems(db: Db): Promise<FeedItem[]> {
        where d.day >= c.d0 and d.day <= last.day and d.playing_avg >= t.level
        group by d.universe_id, t.level)
      select distinct on (x.universe_id, x.day)
-            x.universe_id::float8 as universe_id, g.name, coalesce(g.genre_l1, 'Other') as genre, x.level,
+            x.universe_id::float8 as universe_id, g.name, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre, x.level,
             x.day::text as day, d.playing_avg::float8 as players, (x.day - c.d0)::int as since
      from crossed x
      join games g using (universe_id)

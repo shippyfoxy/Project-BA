@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
   }>(
     `with target as (select coalesce($1::date, (select max(day) - 1 from game_daily)) as day)
      select d.day::text as day, d.universe_id::float8 as universe_id, g.name, g.creator_name,
-            coalesce(g.genre_l1, 'Other') as genre, round(d.playing_avg)::float8 as playing_avg,
+            coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre, round(d.playing_avg)::float8 as playing_avg,
             d.playing_min, d.playing_max, d.visits_last::float8 as visits, p.visits_last::float8 as prev_visits,
             extract(epoch from d.last_ts - p.last_ts)::float8 / 60 as gap_mins,
             d.favorites_last as favorites, d.up_votes_last as up_votes, d.down_votes_last as down_votes,

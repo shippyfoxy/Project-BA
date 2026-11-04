@@ -40,6 +40,14 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [{ protocol: "https", hostname: "tr.rbxcdn.com" }],
   },
+  // The first version's pages, replaced by the current ones.
+  async redirects() {
+    return [
+      { source: "/dashboard", destination: "/", permanent: true },
+      { source: "/results", destination: "/", permanent: true },
+      { source: "/ab-testing", destination: "/compare", permanent: true },
+    ];
+  },
   async headers() {
     return [
       { source: "/((?!embed/).*)", headers: pageHeaders },

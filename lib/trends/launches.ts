@@ -51,7 +51,7 @@ export interface LaunchGame {
 const COHORT = `
   last as (select (max(ts) at time zone 'UTC')::date - 1 as day from snapshots),
   cohort as (
-    select g.universe_id, coalesce(g.genre_l1, 'Other') as genre, min(d.day) as d0
+    select g.universe_id, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre, min(d.day) as d0
     from games g join game_daily d using (universe_id)
     where g.created_at >= '${LAUNCHES_FROM}'::date
     group by g.universe_id, g.genre_l1, g.created_at

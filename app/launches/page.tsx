@@ -100,7 +100,8 @@ export default async function LaunchesPage({ searchParams }: { searchParams: Pro
         <h1 className="font-heading text-[clamp(36px,6vw,48px)] font-extrabold leading-[1.05] tracking-[-0.03em]">Is my launch on track?</h1>
         <p className="max-w-[760px] text-base text-text-2">
           How {fmtInt(curves.cohort)} {genre ? `${genre} ` : ""}games launched since May did in their first 90 days, counted from the day each first
-          reached Roblox&apos;s discovery lists. Find a game to see where it stands.
+          reached Roblox&apos;s discovery lists. These are launches that broke through: most new games never reach the lists, so the bar is
+          higher than for a typical release. Find a game to see where it stands.
         </p>
       </section>
 
@@ -151,7 +152,7 @@ export default async function LaunchesPage({ searchParams }: { searchParams: Pro
             {best ? <Tile label="Its best day so far" value={fmtInt(best[1])} hint={`day ${best[0]}, ${fmtDay(game.startMs + best[0] * 86_400_000)}`} /> : null}
           </>
         ) : null}
-        {d7 ? <Tile label="Median launch, day 7" value={fmtInt(d7.q[Q.p50])} hint={`top 10% from ${fmtInt(d7.q[Q.p90])} players`} /> : null}
+        {d7 ? <Tile label="Median launch, day 7" value={fmtInt(d7.q[Q.p50])} hint={`of launches that reached the lists; top 10% from ${fmtInt(d7.q[Q.p90])}`} /> : null}
         {d30 ? (
           <Tile
             label="Still played on day 30"

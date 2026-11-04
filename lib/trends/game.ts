@@ -111,7 +111,7 @@ export function loadWeekAggregates(db: Db, day: string, universeId?: number): Pr
          (array_agg(visits_last order by day desc))[1] as vis
        from base group by universe_id
      )
-     select p.universe_id::float8 as universe_id, coalesce(g.genre_l1, 'Other') as genre,
+     select p.universe_id::float8 as universe_id, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre,
             a.cur7::float8 as cur7, a.prev7::float8 as prev7, p.peak7::float8 as peak7, p.days_tracked as days_tracked,
             (a.cm / nullif(a.vpm, 0))::float8 as session, a.fav::float8 as fav, a.vis::float8 as vis
      from game_peaks p
@@ -140,7 +140,7 @@ export async function getGameHistory(
     age_recommendation: string | null;
   }>(
     `select universe_id::float8 as universe_id, root_place_id::float8 as root_place_id, name, creator_name,
-            coalesce(genre_l1, 'Other') as genre, genre_l2,
+            coalesce(nullif(genre_l1, 'All'), 'Other') as genre, genre_l2,
             extract(epoch from created_at)::float8 * 1000 as created_ms,
             extract(epoch from first_seen)::float8 * 1000 as first_seen_ms,
             canonical_url_path, age_recommendation

@@ -48,7 +48,7 @@ export async function searchGames(db: Db, query: SearchQuery, limit = 50): Promi
     last_seen_ms: number;
   }>(
     `with latest as (select (max(ts) at time zone 'UTC')::date - 1 as day from snapshots)
-     select g.universe_id::float8 as universe_id, g.name, g.creator_name, coalesce(g.genre_l1, 'Other') as genre,
+     select g.universe_id::float8 as universe_id, g.name, g.creator_name, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre,
             g.canonical_url_path,
             (select avg(d.playing_avg) from game_daily d, latest
               where d.universe_id = g.universe_id and d.day > latest.day - 7 and d.day <= latest.day)::float8 as cur7,

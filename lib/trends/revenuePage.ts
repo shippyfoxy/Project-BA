@@ -16,6 +16,8 @@ export interface RankedGame {
 export interface RevenuePage {
   listDay: string;
   prevDay: string | null;
+  firstDay: string; // when recording began
+  lists: number; // lists behind each estimate: up to 7
   games: RankedGame[];
   totalEst: number;
   medianEst: number;
@@ -24,8 +26,8 @@ export interface RevenuePage {
 // Roblox's Top Earning list on the latest recorded day, with each game's rank
 // the day before and its 7-day average players.
 export async function getRevenuePage(db: Db): Promise<RevenuePage | null> {
-  const [days] = await db.query<{ latest: string | null; prev: string | null }>(
-    `select max(day)::text as latest,
+  const [days] = await db.query<{ latest: string | null; prev: string | null; first: string; n: number }>(
+    `select max(day)::text as latest, min(day)::text as first, least(count(distinct day), 7)::int as n,
             (select max(day) from earning_ranks where day < (select max(day) from earning_ranks))::text as prev
      from earning_ranks`,
   );
@@ -42,7 +44,7 @@ export async function getRevenuePage(db: Db): Promise<RevenuePage | null> {
     cur7: number | null;
   }>(
     `with ${EARNING_WEEK}
-     select e.universe_id::float8 as universe_id, g.name, g.creator_name, coalesce(g.genre_l1, 'Other') as genre,
+     select e.universe_id::float8 as universe_id, g.name, g.creator_name, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre,
             e.rank, w.eff_rank, p.rank as prev_rank,
             (select avg(d.playing_avg) from game_daily d
               where d.universe_id = e.universe_id
@@ -73,6 +75,8 @@ export async function getRevenuePage(db: Db): Promise<RevenuePage | null> {
   return {
     listDay: days.latest,
     prevDay: days.prev,
+    firstDay: days.first,
+    lists: days.n,
     games,
     totalEst: sorted.reduce((a, b) => a + b, 0),
     medianEst: sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2,

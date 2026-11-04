@@ -59,7 +59,7 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
 
   const [weekly, may, games, conc, ranks] = await Promise.all([
     db.query<{ wk: number; genre: string; s: number; days: number }>(
-      `select ($1::date - d.day) / 7 as wk, coalesce(g.genre_l1, 'Other') as genre,
+      `select ($1::date - d.day) / 7 as wk, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre,
               sum(d.playing_avg)::float8 as s, count(distinct d.day)::int as days
        from game_daily d join games g using (universe_id)
        where d.day <= $1::date
@@ -67,13 +67,13 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
       [day],
     ),
     db.query<{ genre: string; s: number }>(
-      `select coalesce(g.genre_l1, 'Other') as genre, sum(d.playing_avg)::float8 as s
+      `select coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre, sum(d.playing_avg)::float8 as s
        from game_daily d join games g using (universe_id)
        where d.day >= '2026-05-01' and d.day < '2026-06-01'
        group by 1`,
     ),
     db.query<{ genre: string; n: number }>(
-      `select coalesce(g.genre_l1, 'Other') as genre, count(distinct d.universe_id)::int as n
+      `select coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre, count(distinct d.universe_id)::int as n
        from game_daily d join games g using (universe_id)
        where d.day > $1::date - 7 and d.day <= $1::date
        group by 1`,
@@ -105,7 +105,7 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
     ),
     db.query<{ day: string; genre: string; rank: number; eff_rank: number }>(
       `with ${EARNING_WEEK}
-       select e.day::text as day, coalesce(g.genre_l1, 'Other') as genre, e.rank, w.eff_rank
+       select e.day::text as day, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre, e.rank, w.eff_rank
        from earning_ranks e join games g using (universe_id) join earning_week w using (universe_id)
        where e.day = (select max(day) from earning_ranks)`,
     ),

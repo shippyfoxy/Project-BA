@@ -110,7 +110,7 @@ export async function getActiveGames(db: Db): Promise<ActiveGames | null> {
        group by universe_id
      )
      select p.universe_id::float8 as universe_id, g.name, g.creator_name,
-            coalesce(g.genre_l1, 'Other') as genre, g.canonical_url_path,
+            coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre, g.canonical_url_path,
             coalesce(r.cur7, 0)::float8 as cur7, r.prev7::float8 as prev7, p.peak7::float8 as peak7,
             p.days_tracked as days_tracked,
             extract(epoch from g.created_at)::float8 * 1000 as created_ms,
@@ -244,7 +244,7 @@ export async function getTrendsHome(db: Db, opts: { active?: ActiveGames | null 
   }
   const ranks = await db.query<{ universe_id: number; name: string; genre: string; rank: number; eff_rank: number }>(
     `with ${EARNING_WEEK}
-     select e.universe_id::float8 as universe_id, g.name, coalesce(g.genre_l1, 'Other') as genre, e.rank, w.eff_rank
+     select e.universe_id::float8 as universe_id, g.name, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre, e.rank, w.eff_rank
      from earning_ranks e join games g using (universe_id) join earning_week w using (universe_id)
      where e.day = (select max(day) from earning_ranks)
      order by e.rank`,

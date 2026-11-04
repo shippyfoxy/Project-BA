@@ -14,6 +14,9 @@ import { Sparkline } from "@/components/v2/Sparkline";
 import { StageBadge, stageLabel } from "@/components/v2/StageBadge";
 import { WeeklyRhythm } from "@/components/v2/WeeklyRhythm";
 
+
+// The first whole week with every known game tracked: 25 to 31 October.
+const FULL_TRACKING_FIRST_WEEK_END = Date.UTC(2026, 9, 31);
 export const revalidate = 3600;
 // Room for a cold Neon compute to wake during the hourly rebuild.
 export const maxDuration = 30;
@@ -153,11 +156,7 @@ export default async function TrendsHomePage() {
       <main className="mx-auto max-w-6xl px-4 py-16 md:px-6">
         <h1 className="font-heading text-4xl font-extrabold tracking-tight">What&apos;s moving on Roblox</h1>
         <p className="mt-4 max-w-xl text-text-2">
-          Live trends are temporarily unavailable. The{" "}
-          <Link href="/dashboard" className="text-link underline">
-            classic dashboard
-          </Link>{" "}
-          still shows the latest snapshot.
+          Live trends are temporarily unavailable. Please try again in a few minutes.
         </p>
       </main>
     );
@@ -172,7 +171,11 @@ export default async function TrendsHomePage() {
   const { biggestReading, fastestToMillion, alwaysTop10 } = data.records;
   // The same weekly windows as the concentration chart on Genres, so both pages agree.
   const shareWeeks = trends?.concentration.weeks ?? [];
-  const biggestShare = shareWeeks.length ? shareWeeks.reduce((a, b) => (b.top1 > a.top1 ? b : a)) : null;
+  // Before 25 October only games in the discovery lists were read, so totals
+  // were smaller and one game's share looked bigger: the record counts only
+  // whole weeks since every known game has been tracked.
+  const fullWeeks = shareWeeks.filter((w) => w.endMs >= FULL_TRACKING_FIRST_WEEK_END);
+  const biggestShare = fullWeeks.length ? fullWeeks.reduce((a, b) => (b.top1 > a.top1 ? b : a)) : null;
   const topStudiosOneHit = data.studios.length > 0 && data.studios.every((s) => s.bigGames === 1);
 
   return (
@@ -366,7 +369,7 @@ export default async function TrendsHomePage() {
             ) : null}
             {biggestShare ? (
               <li className="flex flex-[1_1_250px] flex-col gap-1.5 rounded-2xl border border-border bg-card px-5 py-4">
-                <span className="text-[13px] text-muted-foreground">Biggest share for one game</span>
+                <span className="text-[13px] text-muted-foreground">Biggest share for one game since 25 Oct</span>
                 <span className="font-heading text-[26px] sm:text-[34px] font-extrabold tracking-tight">{(biggestShare.top1 * 100).toFixed(1)}%</span>
                 <span className="text-[13px] text-text-2">
                   of tracked players went to {displayName(biggestShare.topName)}, week to {fmtDay(biggestShare.endMs)}
@@ -428,9 +431,9 @@ export default async function TrendsHomePage() {
             <span className="font-heading text-xl font-bold">Explore</span>
             <span className="text-sm text-text-2">Find any game, studio or universe ID in the history.</span>
           </Link>
-          <Link href="/dashboard" className="flex flex-[1_1_260px] flex-col gap-1.5 rounded-2xl border border-border bg-card px-6 py-5 hover:bg-surface-2">
-            <span className="font-heading text-xl font-bold">Classic dashboard</span>
-            <span className="text-sm text-text-2">Appeal score and session-length proxies by genre, age rating and region.</span>
+          <Link href="/launches" className="flex flex-[1_1_260px] flex-col gap-1.5 rounded-2xl border border-border bg-card px-6 py-5 hover:bg-surface-2">
+            <span className="font-heading text-xl font-bold">Is my launch on track?</span>
+            <span className="text-sm text-text-2">The first 90 days of thousands of new games, as percentile curves.</span>
           </Link>
           <Link href="/methodology" className="flex flex-[1_1_260px] flex-col gap-1.5 rounded-2xl border border-border bg-card px-6 py-5 hover:bg-surface-2">
             <span className="font-heading text-xl font-bold">How we measure</span>

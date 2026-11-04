@@ -76,7 +76,7 @@ export const getCachedUpdateImpact = unstable_cache(
     const db = getSiteDb();
     return db ? getUpdateImpact(db) : null;
   },
-  ["update-impact-v1"],
+  ["update-impact-v2"],
   { revalidate: 3600 },
 );
 

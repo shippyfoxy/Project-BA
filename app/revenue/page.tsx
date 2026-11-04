@@ -79,7 +79,7 @@ function MoverCard({ title, games, icons }: { title: string; games: RankedGame[]
     <div className="min-w-0 flex-[1_1_440px] overflow-hidden rounded-2xl border border-border bg-card">
       <h3 className="border-b border-border px-5 py-3.5 text-[15px] font-semibold">{title}</h3>
       {games.length === 0 ? (
-        <p className="px-5 py-4 text-sm text-muted-foreground">None today.</p>
+        <p className="px-5 py-4 text-sm text-muted-foreground">No game moved 5 or more places.</p>
       ) : (
         <ol>
           {games.map((g) => {
@@ -150,11 +150,20 @@ export default async function RevenuePage() {
         <h1 className="font-heading text-5xl font-extrabold tracking-[-0.03em]">Revenue</h1>
         <p className="max-w-3xl text-text-2">
           Roblox&apos;s own Top Earning list ranks games by Robux spent in the last 7 days. Roblox publishes the order but never the
-          amounts, so every dollar figure here is an estimate modelled from the rank, averaged over the last 7 lists so a one-day swap with a neighbour barely moves it.{" "}
+          amounts, so every dollar figure here is an estimate modelled from the rank, averaged over the last{" "}
+          {data.lists === 7 ? "7 daily lists" : `${data.lists} daily list${data.lists === 1 ? "" : "s"} (up to 7 once there are enough)`} so a one-day
+          swap with a neighbour barely moves it.{" "}
           <Link href="/methodology#revenue" className="text-link underline">
             How it is estimated
           </Link>
         </p>
+        {data.lists < 7 ? (
+          <p className="max-w-3xl rounded-xl border border-gold/40 bg-gold/10 px-4 py-3 text-sm text-text-2">
+            <strong className="text-foreground">Young data.</strong> Ranks have been recorded since {fmtDay(Date.parse(data.firstDay))}, so
+            each estimate rests on {data.lists} {data.lists === 1 ? "list" : "lists"} so far. Expect them to settle over the next{" "}
+            {7 - data.lists} {7 - data.lists === 1 ? "day" : "days"}.
+          </p>
+        ) : null}
       </header>
 
       <section aria-label="Key figures" className="flex flex-wrap gap-3">

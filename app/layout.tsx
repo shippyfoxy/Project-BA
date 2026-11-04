@@ -88,7 +88,7 @@ export default async function RootLayout({
             </Link>
             <span className="ml-auto flex shrink-0 items-center gap-3 lg:order-3">
               {refreshedMs ? (
-                <span className="flex items-center gap-2 whitespace-nowrap font-mono text-xs text-muted-foreground">
+                <span className="flex items-center gap-2 whitespace-nowrap font-mono text-xs text-muted-foreground lg:hidden xl:flex">
                   <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
                     <circle cx="4" cy="4" r="4" fill="#3FA34D" />
                   </svg>
@@ -108,15 +108,6 @@ export default async function RootLayout({
               telemetry. Images from Roblox. Not affiliated with Roblox.
             </span>
             <span className="flex flex-wrap gap-x-4 gap-y-1">
-              <Link href="/dashboard" className="hover:text-foreground">
-                Classic dashboard
-              </Link>
-              <Link href="/ab-testing" className="hover:text-foreground">
-                Group comparison
-              </Link>
-              <Link href="/results" className="hover:text-foreground">
-                Summary
-              </Link>
               <Link href="/methodology" className="hover:text-foreground">
                 How we measure
               </Link>
