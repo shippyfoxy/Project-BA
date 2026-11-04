@@ -6,6 +6,7 @@ import { getGenreTrends, type GenreTrends } from "./genreTrends";
 import { getRevenuePage, type RevenuePage } from "./revenuePage";
 import { getUpdateImpact, type UpdateImpact } from "./updates";
 import { getLaunchCurves, type LaunchCurves } from "./launches";
+import { getIdeas, type Ideas } from "./ideas";
 import { EARNING_WEEK } from "./revenue";
 
 // Shared across every game page and refreshed at most hourly, so opening a
@@ -87,4 +88,14 @@ export const getCachedLaunchCurves = unstable_cache(
   },
   ["launch-curves-v2"],
   { revalidate: 3 * 3600 },
+);
+
+// Name patterns and genre signals for the Ideas page, per genre, hourly.
+export const getCachedIdeas = unstable_cache(
+  async (genre: string | null): Promise<Ideas | null> => {
+    const db = getSiteDb();
+    return db ? getIdeas(db, genre) : null;
+  },
+  ["ideas-v3"],
+  { revalidate: 3600 },
 );
