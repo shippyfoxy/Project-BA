@@ -6,7 +6,8 @@ import { Usd, UsdPerPlayer } from "@/components/pro/Pro";
 import { displayName } from "@/lib/trends/names";
 import type { Stage } from "@/lib/trends/stage";
 import { getGameIcons } from "@/lib/roblox/thumbnails";
-import { fmtCompact, fmtDay, fmtInt, fmtPct, fmtTimeUtc, fmtWeekdayDay } from "@/lib/format";
+import { fmtCompact, fmtDay, fmtInt, fmtPct, fmtWeekdayDay } from "@/lib/format";
+import { UtcTime } from "@/components/v2/UtcTime";
 import { GameIcon } from "@/components/v2/GameIcon";
 import { GenreChip } from "@/components/v2/GenreChip";
 import { Sparkline } from "@/components/v2/Sparkline";
@@ -214,7 +215,7 @@ export default async function TrendsHomePage() {
           </form>
           <p className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
             <span aria-hidden="true" className="inline-block size-2 rounded-full bg-[#3fa34d]" />
-            Last refresh {fmtTimeUtc(data.asOfMs)}, {fmtDay(data.asOfMs)} · {fmtCompact(data.playingNow)} playing across{" "}
+            Last refresh <UtcTime ms={data.asOfMs} />, {fmtDay(data.asOfMs)} · {fmtCompact(data.playingNow)} playing across{" "}
             {fmtInt(data.gamesNow)} games
           </p>
         </div>
@@ -341,7 +342,7 @@ export default async function TrendsHomePage() {
                 <span className="text-[13px] text-muted-foreground">Biggest single reading</span>
                 <span className="font-heading text-[34px] font-extrabold tracking-tight">{fmtCompact(biggestReading.players)}</span>
                 <span className="text-[13px] text-text-2">
-                  {displayName(biggestReading.name)}, {fmtWeekdayDay(biggestReading.atMs)} at {fmtTimeUtc(biggestReading.atMs)}
+                  {displayName(biggestReading.name)}, {fmtWeekdayDay(biggestReading.atMs)} at <UtcTime ms={biggestReading.atMs} />
                 </span>
               </li>
             ) : null}

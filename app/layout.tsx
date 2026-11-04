@@ -7,7 +7,8 @@ import { ProProvider } from "@/components/pro/Pro";
 import { ThemeToggle } from "@/components/v2/ThemeToggle";
 import { THEME_SCRIPT } from "@/lib/theme";
 import { getCachedActiveGames } from "@/lib/trends/cached";
-import { fmtDay, fmtTimeUtc } from "@/lib/format";
+import { fmtDay } from "@/lib/format";
+import { UtcTime } from "@/components/v2/UtcTime";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -82,7 +83,7 @@ export default async function RootLayout({
                   <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
                     <circle cx="4" cy="4" r="4" fill="#3FA34D" />
                   </svg>
-                  Data to {fmtDay(refreshedMs)}, {fmtTimeUtc(refreshedMs)}
+                  Data to {fmtDay(refreshedMs)}, <UtcTime ms={refreshedMs} />
                 </span>
               ) : null}
               <ThemeToggle />
