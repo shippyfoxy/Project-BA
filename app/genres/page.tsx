@@ -8,6 +8,7 @@ import { fmtDay, fmtInt } from "@/lib/format";
 import { niceMax } from "@/lib/stats";
 import { LineChart } from "@/components/v2/LineChart";
 import { UsdSum } from "@/components/pro/Pro";
+import { Sparkline } from "@/components/v2/Sparkline";
 
 export const revalidate = 3600;
 export const maxDuration = 30;
@@ -22,18 +23,18 @@ const DAY_MS = 86_400_000;
 const ALL_GAMES_FROM = Date.UTC(2026, 9, 25);
 const WEEK_GAP = 8 * DAY_MS;
 
-const pts = (v: number) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(1)} pts`;
+const pts = (v: number) => `${v >= 0.05 ? "+" : v <= -0.05 ? "−" : ""}${Math.abs(v).toFixed(1)} pts`;
 const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
 
-function Change({ v }: { v: number }) {
-  const up = v >= 0;
+function Change({ v, since = "May" }: { v: number; since?: string }) {
+  const up = v > -0.05;
   return (
     <span className={`inline-flex items-center gap-1 text-[13px] font-medium ${up ? "text-rise" : "text-fall"}`}>
       <svg width="9" height="9" viewBox="0 0 10 10" aria-hidden="true">
         <polygon points={up ? "5,1 9.5,9 0.5,9" : "0.5,1 9.5,1 5,9"} fill="currentColor" />
       </svg>
       {pts(v)}
-      <span className="sr-only"> since May</span>
+      <span className="sr-only"> since {since}</span>
     </span>
   );
 }
@@ -95,6 +96,19 @@ export default async function GenresPage() {
     .filter((g) => g.ranked >= 10 && (playerShare.get(g.genre) ?? 0) > 0)
     .map((g) => ({ genre: g.genre, ratio: g.share / playerShare.get(g.genre)! }))
     .sort((a, b) => b.ratio - a.ratio)[0];
+  const subsBy = new Map<string, typeof trends.subgenres>();
+  // One- and two-game subgenres that barely register are mostly odd labels; they would bury the real ones.
+  const tiny = (s: (typeof trends.subgenres)[number]) => s.games < 3 && s.inGenre < 0.01;
+  for (const s of trends.subgenres) if (!tiny(s)) subsBy.set(s.genre, [...(subsBy.get(s.genre) ?? []), s]);
+  const hidden = trends.subgenres.filter(tiny).length;
+  const noSub = trends.subgenres.filter((s) => s.subgenre === null);
+  const noSubGames = noSub.reduce((a, s) => a + s.games, 0);
+  const subGames = trends.subgenres.reduce((a, s) => a + s.games, 0);
+  const firstWeekEnd = trends.subgenres[0]?.weeks[0]?.endMs;
+  const movers = trends.subgenres
+    .filter((s) => s.subgenre && s.firstShare !== null && s.games >= 5)
+    .map((s) => ({ ...s, d: s.share - s.firstShare! }))
+    .sort((a, b) => b.d - a.d);
   const outlier = (g: GenreBenchmark) => !!(g.session && all.session && g.session.p50 >= 1.5 * all.session.p50);
 
   return (
@@ -147,6 +161,92 @@ export default async function GenresPage() {
           ))}
         </div>
       </section>
+
+      {trends.subgenres.length > 0 ? (
+        <section aria-labelledby="subgenres" className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="subgenres" className="font-heading text-2xl font-bold">
+              Subgenres within each genre
+            </h2>
+            <span className="text-[13px] text-muted-foreground">
+              Week to {fmtDay(latestMs)}{firstWeekEnd ? `; change and trend since the week to ${fmtDay(firstWeekEnd)}` : ""}
+            </span>
+          </div>
+          {movers.length > 1 ? (
+            <p className="text-text-2">
+              Growing fastest since late October: <strong className="text-foreground">{movers[0].subgenre}</strong> ({movers[0].genre}, {pts(movers[0].d * 100)}).
+              Shrinking most: <strong className="text-foreground">{movers[movers.length - 1].subgenre}</strong> ({movers[movers.length - 1].genre},{" "}
+              {pts(movers[movers.length - 1].d * 100)}).
+            </p>
+          ) : null}
+          <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
+            <table className="pin w-full min-w-[820px] border-collapse text-sm tabular-nums">
+              <thead>
+                <tr className="text-right text-xs text-muted-foreground">
+                  <th data-pin="" scope="col" className="px-4 py-3 text-left font-medium">Subgenre</th>
+                  <th scope="col" className="px-2 py-3 font-medium">Games</th>
+                  <th scope="col" className="px-2 py-3 font-medium">Average players</th>
+                  <th scope="col" className="px-2 py-3 text-left font-medium">Share of its genre</th>
+                  <th scope="col" className="px-2 py-3 font-medium">Share of all</th>
+                  <th scope="col" className="px-2 py-3 font-medium">Change</th>
+                  <th scope="col" className="px-4 py-3 text-left font-medium">Weekly share</th>
+                </tr>
+              </thead>
+              {trends.shares
+                .filter((g) => subsBy.has(g.genre))
+                .map((g) => (
+                  <tbody key={g.genre} className="whitespace-nowrap text-right">
+                    <tr className="border-t border-border bg-surface-2/50">
+                      <th data-pin="" scope="rowgroup" colSpan={7} className="px-4 py-2 text-left font-semibold">
+                        <Link href={genreHref(g.genre)} className="inline-flex items-center gap-2 hover:text-link">
+                          <span aria-hidden="true" className="inline-block size-2.5 rounded-full" style={{ background: genreColor(g.genre) }} />
+                          {g.genre}
+                          <span className="font-normal text-muted-foreground">{pct(g.share)} of players</span>
+                        </Link>
+                      </th>
+                    </tr>
+                    {subsBy.get(g.genre)!.map((s) => {
+                      const d = s.firstShare === null ? null : (s.share - s.firstShare) * 100;
+                      return (
+                        <tr key={s.subgenre ?? ""} className="border-t border-rule">
+                          <th scope="row" className="px-4 py-2 pl-8 text-left font-medium">
+                            {s.subgenre ?? <span className="font-normal italic text-muted-foreground">No subgenre</span>}
+                          </th>
+                          <td className="px-2 py-2">{fmtInt(s.games)}</td>
+                          <td className="px-2 py-2">{fmtInt(s.players)}</td>
+                          <td className="w-[180px] px-2 py-2 text-left">
+                            <span className="flex items-center gap-2">
+                              <span className="h-2.5 rounded-sm bg-mark" style={{ width: `${Math.max(s.inGenre * 110, 1)}px` }} aria-hidden="true" />
+                              <span className="text-xs text-text-2">{pct(s.inGenre)}</span>
+                            </span>
+                          </td>
+                          <td className="px-2 py-2">{pct(s.share)}</td>
+                          <td className="px-2 py-2">{d === null ? <span className="text-muted-foreground">—</span> : <Change v={d} since="late October" />}</td>
+                          <td className="px-4 py-2 text-left">
+                            <Sparkline
+                              values={s.weeks.map((w) => w.share)}
+                              tone={d !== null && d < 0 ? "fall" : "rise"}
+                              width={80}
+                              height={22}
+                              label={`${s.subgenre ?? "No subgenre"} weekly share of players, ${pct(s.weeks[0]?.share ?? 0)} to ${pct(s.share)}`}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                ))}
+            </table>
+          </div>
+          <p className="text-[13px] text-muted-foreground">
+            Subgenres are Roblox&apos;s own labels. {fmtInt(noSubGames)} of {fmtInt(subGames)} games this week ({pct(noSubGames / Math.max(subGames, 1))}) have none and
+            are shown as &quot;No subgenre&quot;. The trend starts at 25 October, when every known game began to be counted, so earlier weeks would
+            not compare like for like. Games first found through the country lists added on 3 November count only from then, so part of a
+            subgenre&apos;s rise can be those games being found rather than new players. Change is in points of the share of all players.
+            {hidden ? ` ${fmtInt(hidden)} rows with fewer than 3 games and under 1% of their genre are left out.` : ""}
+          </p>
+        </section>
+      ) : null}
 
       <section aria-labelledby="conc" className="flex flex-col gap-3 rounded-2xl border border-border bg-card px-6 pb-5 pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">

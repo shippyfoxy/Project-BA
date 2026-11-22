@@ -8,6 +8,8 @@ import { getActiveGames, getTrendsHome } from "@/lib/trends/home";
 import { getGameHistory, loadWeekAggregates } from "@/lib/trends/game";
 import { DEFAULT_FILTERS, filtersToQuery, parseFilters, screenGames } from "@/lib/trends/screener";
 import { genreBenchmarks, getGenreTrends } from "@/lib/trends/genreTrends";
+import { perPlayerRange } from "@/lib/trends/studio";
+import type { RankedGame } from "@/lib/trends/revenuePage";
 import { daysSince, getCompareGames, parseIds } from "@/lib/trends/compare";
 import { getEarningRanks } from "@/lib/trends/earnings";
 import { estMonthlyDevEx, fmtUsdEstimate } from "@/lib/trends/revenue";
@@ -120,6 +122,23 @@ describe("genre trends and compare", () => {
     expect(sim.weeks[sim.weeks.length - 1].share).toBeCloseTo(sim.share, 9);
     expect(t!.concentration.weeks.at(-1)!.top10).toBeCloseTo(1, 6);
     expect(t!.concentration.weeks.at(-1)!.topName).toBe("Rocket");
+    const simSubs = t!.subgenres.filter((s) => s.genre === "Simulation");
+    expect(simSubs.reduce((a, s) => a + s.share, 0)).toBeCloseTo(sim.share, 9);
+    expect(simSubs.reduce((a, s) => a + s.inGenre, 0)).toBeCloseTo(1, 9);
+    // The fixture is all before 25 Oct, so no subgenre week is like for like yet.
+    expect(t!.subgenres.every((s) => s.weeks.length === 0 && s.firstShare === null)).toBe(true);
+  });
+
+  it("takes per-player revenue from the subgenre, then the genre, then every listed game", () => {
+    const g = (subgenre: string, genre: string, perPlayer: number) => ({ subgenre, genre, cur7: 1_000, estMonthly: perPlayer * 1_000 }) as RankedGame;
+    const listed = [
+      ...Array.from({ length: 10 }, (_, i) => g("Tycoon", "Simulation", 10 + i)),
+      ...Array.from({ length: 3 }, () => g("Idle", "Simulation", 100)),
+      g("Action RPG", "RPG", 1),
+    ];
+    expect(perPlayerRange(listed, "Tycoon", "Simulation")).toMatchObject({ basis: "Tycoon", n: 10, p50: 14.5 });
+    expect(perPlayerRange(listed, "Idle", "Simulation")).toMatchObject({ basis: "Simulation", n: 13 });
+    expect(perPlayerRange(listed, null, "RPG")).toMatchObject({ basis: "every listed game", n: 14 });
   });
 
   it("benchmarks genres from the week aggregates", async () => {

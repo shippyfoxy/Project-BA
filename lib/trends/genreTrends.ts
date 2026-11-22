@@ -4,6 +4,8 @@ import type { AggRow } from "./game";
 import { EARNING_WEEK, estMonthlyDevEx } from "./revenue";
 
 const DAY_MS = 86_400_000;
+// From this day every known game is re-read each refresh, not just that day's discovery lists.
+const ALL_GAMES_FROM_MS = Date.UTC(2026, 9, 25);
 
 // Weeks are the 7-day windows ending on the latest day, so the newest point
 // matches the "this week" figures everywhere else on the site.
@@ -18,6 +20,18 @@ export interface GenreShare {
   players: number; // average concurrent players across the genre this week
   share: number;
   mayShare: number | null;
+  weeks: WeekPoint[];
+}
+
+// Since 25 Oct only: before then games were read only while in the discovery lists.
+export interface SubgenreShare {
+  genre: string;
+  subgenre: string | null; // null: Roblox gives the game no subgenre
+  games: number;
+  players: number;
+  share: number; // of all players
+  inGenre: number; // of its genre's players
+  firstShare: number | null; // in the first full week counting every game
   weeks: WeekPoint[];
 }
 
@@ -46,6 +60,8 @@ export interface GenreRevenue {
 export interface GenreTrends {
   latestDay: string;
   shares: GenreShare[];
+  subgenres: SubgenreShare[];
+  allGamesFromMs: number;
   concentration: Concentration;
   revenue: { listDay: string | null; genres: GenreRevenue[] };
 }
@@ -58,12 +74,12 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
   const endMs = (wk: number) => Date.parse(day) - wk * 7 * DAY_MS;
 
   const [weekly, may, games, conc, ranks] = await Promise.all([
-    db.query<{ wk: number; genre: string; s: number; days: number }>(
-      `select ($1::date - d.day) / 7 as wk, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre,
+    db.query<{ wk: number; genre: string; sub: string | null; s: number; days: number }>(
+      `select ($1::date - d.day) / 7 as wk, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre, nullif(g.genre_l2, '') as sub,
               sum(d.playing_avg)::float8 as s, count(distinct d.day)::int as days
        from game_daily d join games g using (universe_id)
        where d.day <= $1::date
-       group by 1, 2`,
+       group by 1, 2, 3`,
       [day],
     ),
     db.query<{ genre: string; s: number }>(
@@ -72,11 +88,11 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
        where d.day >= '2026-05-01' and d.day < '2026-06-01'
        group by 1`,
     ),
-    db.query<{ genre: string; n: number }>(
-      `select coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre, count(distinct d.universe_id)::int as n
+    db.query<{ genre: string; sub: string | null; n: number }>(
+      `select coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre, nullif(g.genre_l2, '') as sub, count(distinct d.universe_id)::int as n
        from game_daily d join games g using (universe_id)
        where d.day > $1::date - 7 and d.day <= $1::date
-       group by 1`,
+       group by 1, 2`,
       [day],
     ),
     db.query<{ wk: number; top10: number; top1: number; top_id: number; top_name: string }>(
@@ -118,14 +134,20 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
   for (const r of weekly) if ((weekDays.get(r.wk) ?? 0) >= 4) totals.set(r.wk, (totals.get(r.wk) ?? 0) + r.s);
   const mayTotal = may.reduce((a, r) => a + r.s, 0);
   const mayBy = new Map(may.map((r) => [r.genre, r.s]));
-  const gamesBy = new Map(games.map((r) => [r.genre, r.n]));
+  const gamesBy = new Map<string, number>();
+  for (const r of games) gamesBy.set(r.genre, (gamesBy.get(r.genre) ?? 0) + r.n);
 
   const byGenre = new Map<string, Map<number, number>>();
+  const bySub = new Map<string, { genre: string; sub: string | null; m: Map<number, number> }>();
   for (const r of weekly) {
     if (!totals.has(r.wk)) continue;
     const m = byGenre.get(r.genre) ?? new Map<number, number>();
-    m.set(r.wk, r.s);
+    m.set(r.wk, (m.get(r.wk) ?? 0) + r.s);
     byGenre.set(r.genre, m);
+    const key = `${r.genre}|${r.sub ?? ""}`;
+    const sub = bySub.get(key) ?? { genre: r.genre, sub: r.sub, m: new Map<number, number>() };
+    sub.m.set(r.wk, r.s);
+    bySub.set(key, sub);
   }
   const wks = [...totals.keys()].sort((a, b) => b - a);
   const shares: GenreShare[] = [...byGenre].map(([genre, m]) => {
@@ -140,6 +162,28 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
     };
   });
   shares.sort((a, b) => b.share - a.share);
+
+  // Whole weeks starting on or after the day every known game began to be counted.
+  const fullWks = wks.filter((wk) => endMs(wk) - 6 * DAY_MS >= ALL_GAMES_FROM_MS);
+  const genreNow = new Map([...byGenre].map(([g, m]) => [g, m.get(0) ?? 0]));
+  const subGames = new Map(games.map((r) => [`${r.genre}|${r.sub ?? ""}`, r.n]));
+  const subgenres: SubgenreShare[] = [...bySub]
+    .map(([key, { genre, sub, m }]) => {
+      const now = m.get(0) ?? 0;
+      const first = fullWks[0];
+      return {
+        genre,
+        subgenre: sub,
+        games: subGames.get(key) ?? 0,
+        players: now / Math.max(weekDays.get(0) ?? 7, 1),
+        share: now / (totals.get(0) || 1),
+        inGenre: now / (genreNow.get(genre) || 1),
+        firstShare: first !== undefined && first !== 0 ? (m.get(first) ?? 0) / totals.get(first)! : null,
+        weeks: fullWks.map((wk) => ({ endMs: endMs(wk), share: (m.get(wk) ?? 0) / totals.get(wk)! })),
+      };
+    })
+    .filter((s) => s.share > 0)
+    .sort((a, b) => b.share - a.share);
 
   const revBy = new Map<string, { ranked: number; ranks: number[]; est: number }>();
   for (const r of ranks) {
@@ -160,6 +204,8 @@ export async function getGenreTrends(db: Db): Promise<GenreTrends | null> {
   return {
     latestDay: day,
     shares,
+    subgenres,
+    allGamesFromMs: ALL_GAMES_FROM_MS,
     revenue,
     concentration: {
       weeks: conc.map((r) => ({ endMs: endMs(r.wk), top10: r.top10, top1: r.top1, topId: r.top_id, topName: r.top_name })),

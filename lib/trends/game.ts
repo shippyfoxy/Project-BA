@@ -38,6 +38,7 @@ export interface GameHistory {
   rootPlaceId: number;
   name: string;
   creatorName: string;
+  studioHref: string | null; // the studio page, once the creator id is known
   genre: string;
   genreL2: string | null;
   createdMs: number | null;
@@ -132,6 +133,8 @@ export async function getGameHistory(
     root_place_id: number;
     name: string;
     creator_name: string | null;
+    creator_id: number | null;
+    creator_type: string | null;
     genre: string;
     genre_l2: string | null;
     created_ms: number | null;
@@ -140,6 +143,7 @@ export async function getGameHistory(
     age_recommendation: string | null;
   }>(
     `select universe_id::float8 as universe_id, root_place_id::float8 as root_place_id, name, creator_name,
+            creator_id::float8 as creator_id, creator_type,
             coalesce(nullif(genre_l1, 'All'), 'Other') as genre, genre_l2,
             extract(epoch from created_at)::float8 * 1000 as created_ms,
             extract(epoch from first_seen)::float8 * 1000 as first_seen_ms,
@@ -355,6 +359,7 @@ export async function getGameHistory(
     rootPlaceId: game.root_place_id,
     name: game.name,
     creatorName: game.creator_name ?? "Unknown",
+    studioHref: game.creator_id ? `/studios/${game.creator_type === "User" ? "user" : "group"}/${game.creator_id}` : null,
     genre: game.genre,
     genreL2: game.genre_l2,
     createdMs: game.created_ms,

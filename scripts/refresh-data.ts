@@ -187,6 +187,8 @@ async function main() {
       rootPlaceId: g.rootPlaceId,
       name: g.name,
       creatorName: g.creator?.name ?? "Unknown",
+      creatorId: g.creator?.id,
+      creatorType: g.creator?.type,
       genreL1: g.genre_l1 || g.genre || "Other",
       genreL2: g.genre_l2 || "",
       visits: g.visits,

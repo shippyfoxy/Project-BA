@@ -211,7 +211,14 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
               </div>
               <h1 className="font-heading text-4xl font-extrabold leading-none tracking-[-0.03em] md:text-[56px]">{name}</h1>
               <p className="text-sm text-text-soft">
-                by {g.creatorName}
+                by{" "}
+                {g.studioHref ? (
+                  <Link href={g.studioHref} className="underline decoration-text-soft/40 underline-offset-2 hover:text-foreground">
+                    {g.creatorName}
+                  </Link>
+                ) : (
+                  g.creatorName
+                )}
                 {g.createdMs ? ` · Created ${fmtDay(g.createdMs)} ${new Date(g.createdMs).getUTCFullYear()}` : ""}
                 {g.ageRecommendation ? ` · ${g.ageRecommendation}` : ""}
               </p>

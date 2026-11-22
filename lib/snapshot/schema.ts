@@ -13,6 +13,8 @@ export interface SnapshotGame {
   rootPlaceId: number;
   name: string;
   creatorName: string;
+  creatorId?: number; // Roblox group or user id
+  creatorType?: string; // "Group" or "User"
   genreL1: string;
   genreL2: string;
   visits: number;

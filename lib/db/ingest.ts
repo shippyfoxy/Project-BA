@@ -15,6 +15,8 @@ export interface IngestGame {
   rootPlaceId: number;
   name: string;
   creatorName?: string | null;
+  creatorId?: number | null;
+  creatorType?: string | null; // "Group" or "User"
   genreL1?: string | null;
   genreL2?: string | null;
   created?: string | null;
@@ -97,6 +99,8 @@ const GAME_COLS = [
   ["root_place_id", false],
   ["name", false],
   ["creator_name", true],
+  ["creator_id", true],
+  ["creator_type", true],
   ["genre_l1", true],
   ["genre_l2", true],
   ["created_at", true],
@@ -109,7 +113,7 @@ const GAME_UPSERT = `
   insert into games (universe_id, ${GAME_COLS.map(([c]) => c).join(", ")}, first_seen, last_seen)
   select universe_id, ${GAME_COLS.map(([c]) => c).join(", ")}, $2::timestamptz, $2::timestamptz
   from jsonb_to_recordset($1::text::jsonb) as x(
-    universe_id bigint, root_place_id bigint, name text, creator_name text,
+    universe_id bigint, root_place_id bigint, name text, creator_name text, creator_id bigint, creator_type text,
     genre_l1 text, genre_l2 text, created_at timestamptz, canonical_url_path text,
     minimum_age smallint, age_recommendation text
   )
@@ -263,6 +267,8 @@ export async function ingestSnapshot(
     root_place_id: g.rootPlaceId,
     name: g.name,
     creator_name: g.creatorName ?? null,
+    creator_id: g.creatorId ?? null,
+    creator_type: g.creatorType ?? null,
     genre_l1: g.genreL1 || null,
     genre_l2: g.genreL2 || null,
     created_at: g.created && Number.isFinite(Date.parse(g.created)) ? g.created : null,
