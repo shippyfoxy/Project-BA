@@ -197,6 +197,9 @@ function Filters({ f, result }: { f: ScreenerFilters; result: ScreenerResult }) 
   // Keep picked genres visible even when the other filters leave none of them.
   const genres = [...result.genreCounts];
   for (const g of f.genres) if (!genres.some(([name]) => name === g)) genres.push([g, 0]);
+  // Without a genre picked, the 12 biggest subgenres; picked ones always stay.
+  const subs = f.genres.length ? [...result.subCounts] : result.subCounts.slice(0, 12);
+  for (const s of f.subs) if (!subs.some(([name]) => name === s)) subs.push([s, 0]);
 
   return (
     <AutoSubmitForm
@@ -252,6 +255,13 @@ function Filters({ f, result }: { f: ScreenerFilters; result: ScreenerResult }) 
         ))}
       </FieldSet>
 
+      <FieldSet legend={f.genres.length ? "Subgenre" : "Subgenre (pick a genre to narrow)"}>
+        {subs.length === 0 ? <p className="text-sm text-muted-foreground">No subgenres in these results.</p> : null}
+        {subs.map(([s, n]) => (
+          <Option key={s} type="checkbox" name="sub" value={s} checked={f.subs.includes(s)} label={s} count={n} />
+        ))}
+      </FieldSet>
+
       <FieldSet legend="Popular in">
         <label htmlFor="f-country" className="sr-only">
           Country
@@ -294,11 +304,12 @@ function Filters({ f, result }: { f: ScreenerFilters; result: ScreenerResult }) 
 }
 
 const activeCount = (f: ScreenerFilters) =>
-  (f.launched !== "any" ? 1 : 0) + (f.min ? 1 : 0) + f.genres.length + f.stages.length + (f.country ? 1 : 0) + (f.device ? 1 : 0) + (f.earning ? 1 : 0);
+  (f.launched !== "any" ? 1 : 0) + (f.min ? 1 : 0) + f.genres.length + f.subs.length + f.stages.length + (f.country ? 1 : 0) + (f.device ? 1 : 0) + (f.earning ? 1 : 0);
 
 function describe(f: ScreenerFilters): string {
   const parts = [f.launched === "any" ? "launched any time" : `launched in the ${LAUNCHED_LABELS[f.launched].toLowerCase()}`];
   if (f.min) parts.push(`${fmtInt(f.min)}+ players`);
+  if (f.subs.length) parts.push(f.subs.join(" or "));
   if (f.country) parts.push(`popular in ${COUNTRY_NAMES[f.country] ?? f.country}`);
   if (f.device) parts.push(`popular on ${(DEVICE_LABELS[f.device] ?? f.device).toLowerCase()}`);
   if (f.earning) parts.push("in Top Earning");
@@ -401,6 +412,7 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
                           <span className="block max-w-[260px] truncate">{name}</span>
                           <span className="mt-0.5 flex items-center gap-2 text-xs font-normal text-muted-foreground">
                             <GenreChip genre={g.genre} />
+                            {g.subgenre ? <span className="max-w-[140px] truncate">{g.subgenre}</span> : null}
                             <span className="max-w-[140px] truncate">{g.creatorName}</span>
                           </span>
                         </span>

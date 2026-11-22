@@ -20,7 +20,7 @@ const START = Date.parse("2026-06-01T12:00:00Z");
 function gamesOn(d: number): IngestGame[] {
   const base = { creatorName: "Studio", genreL1: "Simulation", created: "2025-01-01T00:00:00Z", favoritedCount: 5_000, upVotes: 900, downVotes: 100 };
   return [
-    { ...base, universeId: 1, rootPlaceId: 11, name: "Rocket", playing: 2_000 * 1.2 ** d, visits: 1_000_000 + d * 50_000 },
+    { ...base, universeId: 1, rootPlaceId: 11, name: "Rocket", genreL2: "Tycoon", playing: 2_000 * 1.2 ** d, visits: 1_000_000 + d * 50_000 },
     { ...base, universeId: 2, rootPlaceId: 22, name: "Sunset", playing: Math.max(100, 60_000 - d * 2_800), visits: 5_000_000 + d * 20_000 },
     { ...base, universeId: 3, rootPlaceId: 33, name: "Plateau", genreL1: "Action", playing: 8_000, visits: 2_000_000 + d * 30_000 },
   ];
@@ -93,6 +93,10 @@ describe("trends queries", () => {
     expect(action?.stageCounts.peaking).toBe(1);
     // Genre counts ignore the genre filter itself.
     expect(action?.genreCounts).toEqual([["Simulation", 2], ["Action", 1]]);
+    // Subgenres: counted within the picked genres, and games without one never match.
+    expect(all?.subCounts).toEqual([["Tycoon", 1]]);
+    expect((await screenGames(db, { ...any, subs: ["Tycoon"] }))?.matches.map((g) => g.name)).toEqual(["Rocket"]);
+    expect(action?.subCounts).toEqual([]);
     const fading = await screenGames(db, { ...any, stages: ["fading"] });
     expect(fading?.matches.map((g) => g.name)).toEqual(["Sunset"]);
     expect((await screenGames(db, { ...any, min: 10_000 }))?.matches.map((g) => g.name)).toEqual(["Rocket", "Sunset"]);
@@ -218,6 +222,8 @@ describe("explore filters", () => {
     expect(f).toMatchObject({ launched: "60", min: 10_000, genres: ["Action", "RPG"], stages: ["rising"], sort: "wow", country: null });
     expect(parseFilters(Object.fromEntries(new URLSearchParams(filtersToQuery(f)).entries()))).toMatchObject({ launched: "60", sort: "wow" });
     expect(filtersToQuery(DEFAULT_FILTERS)).toBe("");
+    expect(parseFilters({ sub: ["Tycoon", "Tycoon", "Action RPG"] }).subs).toEqual(["Tycoon", "Action RPG"]);
+    expect(filtersToQuery({ ...DEFAULT_FILTERS, subs: ["Action RPG"] })).toBe("?sub=Action+RPG");
     expect(parseFilters({ min: "123", n: "99999" })).toMatchObject({ min: 0, limit: 500 });
   });
 

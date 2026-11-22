@@ -1,10 +1,10 @@
 import type { Db } from "./client";
 
-// Raw 30-minute readings older than this are pruned once rolled up into
-// game_daily. Only the last two days are ever re-rolled and the classic
-// dashboard reads the last 24 hours, so 7 days leaves a wide margin: about
-// 125 MB at hourly readings of ~6,000 games.
-export const RAW_RETENTION_DAYS = 7;
+// Raw hourly readings older than this are pruned once rolled up into
+// game_daily. Only the last two days are ever re-rolled and nothing else reads
+// back more than 36 hours, so 3 days keeps a margin: about 90 MB at hourly
+// readings of ~8,000 games.
+export const RAW_RETENTION_DAYS = 3;
 
 const DAY_MS = 86_400_000;
 const BATCH = 5_000;

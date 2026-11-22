@@ -66,7 +66,7 @@ export const getCachedRevenuePage = unstable_cache(
     const db = getSiteDb();
     return db ? getRevenuePage(db) : null;
   },
-  ["revenue-page-v1"],
+  ["revenue-page-v2"],
   { revalidate: 3600 },
 );
 

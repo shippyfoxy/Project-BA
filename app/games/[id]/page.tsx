@@ -162,6 +162,17 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
         <Link href={`/explore?launched=any&genre=${encodeURIComponent(g.genre)}`} className="text-text-2 hover:text-foreground">
           {g.genre}
         </Link>
+        {g.genreL2 ? (
+          <>
+            <span aria-hidden="true">/</span>
+            <Link
+              href={`/explore?launched=any&genre=${encodeURIComponent(g.genre)}&sub=${encodeURIComponent(g.genreL2)}`}
+              className="text-text-2 hover:text-foreground"
+            >
+              {g.genreL2}
+            </Link>
+          </>
+        ) : null}
         <span aria-hidden="true">/</span>
         <span>{name}</span>
       </nav>

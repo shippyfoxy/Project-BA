@@ -73,7 +73,7 @@ export default function MethodologyPage() {
             dashed line, and figures that compare weeks only use weeks after it.
           </p>
           <p>
-            Raw readings are kept for 7 days and rolled up into one row per game per day (average, lowest and highest players, visits,
+            Raw readings are kept for 3 days and rolled up into one row per game per day (average, lowest and highest players, visits,
             favourites and votes), which is what history, exports and the API serve.
           </p>
         </Section>

@@ -23,6 +23,7 @@ export interface ScreenerFilters {
   launched: Launched;
   min: number;
   genres: string[];
+  subs: string[]; // Roblox's subgenres, e.g. "Action RPG"
   stages: Stage[];
   country: string | null;
   device: string | null;
@@ -37,6 +38,7 @@ export const DEFAULT_FILTERS: ScreenerFilters = {
   launched: "30",
   min: 0,
   genres: [],
+  subs: [],
   stages: [],
   country: null,
   device: null,
@@ -51,6 +53,7 @@ export interface ScreenerRow {
   name: string;
   creatorName: string;
   genre: string;
+  subgenre: string | null; // Roblox's own; about 1 game in 5 has none
   createdMs: number | null;
   cur7: number;
   prev7: number | null;
@@ -70,6 +73,7 @@ export interface ScreenerResult {
   matches: ScreenerRow[];
   // Counts across the other filters, so each option shows what picking it adds.
   genreCounts: [string, number][];
+  subCounts: [string, number][]; // within the picked genres
   stageCounts: Record<Stage, number>;
 }
 
@@ -94,6 +98,7 @@ export function parseFilters(sp: Params): ScreenerFilters {
     launched: pick(LAUNCHED, first(sp.launched), defaultLaunched(q)),
     min: (MIN_PLAYERS as readonly number[]).includes(min) ? min : 0,
     genres: [...new Set(list(sp.genre))].slice(0, 30),
+    subs: [...new Set(list(sp.sub))].slice(0, 30),
     stages: [...new Set(list(sp.stage))].filter((s): s is Stage => (STAGES as string[]).includes(s)),
     country: (COUNTRIES as readonly string[]).includes(country ?? "") ? country! : null,
     device: (DEVICES as readonly string[]).includes(device ?? "") ? device! : null,
@@ -112,6 +117,7 @@ export function filtersToQuery(f: ScreenerFilters, overrides: Partial<ScreenerFi
   if (v.launched !== defaultLaunched(v.q)) p.set("launched", v.launched);
   if (v.min) p.set("min", String(v.min));
   for (const g of v.genres) p.append("genre", g);
+  for (const s of v.subs) p.append("sub", s);
   for (const s of v.stages) p.append("stage", s);
   if (v.country) p.set("country", v.country);
   if (v.device) p.set("device", v.device);
@@ -149,16 +155,21 @@ function sorter(f: ScreenerFilters) {
 // can be worked out from the same rows.
 export function applyFilters(rows: ScreenerRow[], f: ScreenerFilters): Omit<ScreenerResult, "asOfMs" | "day"> {
   const genreOk = (r: ScreenerRow) => f.genres.length === 0 || f.genres.includes(r.genre);
+  const subOk = (r: ScreenerRow) => f.subs.length === 0 || (r.subgenre !== null && f.subs.includes(r.subgenre));
   const stageOk = (r: ScreenerRow) => f.stages.length === 0 || (r.stage !== null && f.stages.includes(r.stage));
 
   const genreCounts = new Map<string, number>();
-  for (const r of rows) if (stageOk(r)) genreCounts.set(r.genre, (genreCounts.get(r.genre) ?? 0) + 1);
+  for (const r of rows) if (stageOk(r) && subOk(r)) genreCounts.set(r.genre, (genreCounts.get(r.genre) ?? 0) + 1);
+  const subCounts = new Map<string, number>();
+  for (const r of rows) if (stageOk(r) && genreOk(r) && r.subgenre) subCounts.set(r.subgenre, (subCounts.get(r.subgenre) ?? 0) + 1);
   const stageCounts = Object.fromEntries(STAGES.map((s) => [s, 0])) as Record<Stage, number>;
-  for (const r of rows) if (genreOk(r) && r.stage) stageCounts[r.stage]++;
+  for (const r of rows) if (genreOk(r) && subOk(r) && r.stage) stageCounts[r.stage]++;
 
+  const byCount = (m: Map<string, number>) => [...m].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
   return {
-    matches: rows.filter((r) => genreOk(r) && stageOk(r)).sort(sorter(f)),
-    genreCounts: [...genreCounts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])),
+    matches: rows.filter((r) => genreOk(r) && subOk(r) && stageOk(r)).sort(sorter(f)),
+    genreCounts: byCount(genreCounts),
+    subCounts: byCount(subCounts),
     stageCounts,
   };
 }
@@ -168,6 +179,7 @@ interface Row {
   name: string;
   creator_name: string | null;
   genre: string;
+  subgenre: string | null;
   created_ms: number | null;
   cur7: number;
   prev7: number | null;
@@ -238,7 +250,7 @@ export async function screenGames(db: Db, f: ScreenerFilters): Promise<ScreenerR
        select universe_id, rank, w.eff_rank from earning_ranks join earning_week w using (universe_id)
        where day = (select max(day) from earning_ranks)
      )
-     select g.universe_id::float8 as universe_id, g.name, g.creator_name, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre,
+     select g.universe_id::float8 as universe_id, g.name, g.creator_name, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre, nullif(g.genre_l2, '') as subgenre,
             extract(epoch from g.created_at)::float8 * 1000 as created_ms,
             a.cur7::float8 as cur7, a.prev7::float8 as prev7,
             coalesce(p.peak7, a.cur7)::float8 as peak7, coalesce(p.days_tracked, 1) as days_tracked,
@@ -260,6 +272,7 @@ export async function screenGames(db: Db, f: ScreenerFilters): Promise<ScreenerR
       name: r.name,
       creatorName: r.creator_name ?? "Unknown",
       genre: r.genre,
+      subgenre: r.subgenre,
       createdMs: r.created_ms,
       cur7: r.cur7,
       prev7: r.prev7,

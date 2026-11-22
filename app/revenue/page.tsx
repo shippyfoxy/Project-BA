@@ -11,6 +11,7 @@ import { GameIcon } from "@/components/v2/GameIcon";
 import { GenreChip } from "@/components/v2/GenreChip";
 import { ProLock, ProStar } from "@/components/pro/Pro";
 import { isProSession } from "@/lib/pro";
+import { ApplyButton, AutoSubmitForm } from "@/components/v2/AutoSubmitForm";
 
 // Rendered per visitor (Pro or not); the data underneath is cached hourly.
 export const dynamic = "force-dynamic";
@@ -33,7 +34,7 @@ function Upgrade() {
       </h2>
       <ul className="flex list-disc flex-col gap-1 pl-5 text-text-2">
         <li>Estimated monthly payouts for all ~460 games in Roblox&apos;s Top Earning list, with ranges</li>
-        <li>Daily climbers and fallers, revenue per player and revenue by genre</li>
+        <li>Weekly climbers and fallers, revenue per player and revenue by genre</li>
         <li>Dollar figures across the site, CSV exports, 30 and 90-day windows and the full API</li>
       </ul>
       <div className="flex flex-wrap items-center gap-3">
@@ -108,7 +109,9 @@ function MoverCard({ title, games, icons }: { title: string; games: RankedGame[]
   );
 }
 
-export default async function RevenuePage() {
+export default async function RevenuePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const sp = await searchParams;
+  const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || null;
   const [data, trends] = await Promise.all([getCachedRevenuePage(), getCachedGenreTrends()]);
   if (!data || data.games.length === 0) {
     return (
@@ -120,9 +123,16 @@ export default async function RevenuePage() {
   }
 
   const pro = await isProSession();
-  const { games, listDay, prevDay, totalEst, medianEst } = data;
+  const { games: allGames, listDay, prevDay, totalEst, medianEst } = data;
+  const top10 = allGames.slice(0, 10).reduce((a, g) => a + g.estMonthly, 0);
+  // Genre and subgenre narrow the list and its moves; the totals stay whole-list.
+  const genreNames = [...new Set(allGames.map((g) => g.genre))].sort();
+  const genre = genreNames.includes(one(sp.genre) ?? "") ? one(sp.genre) : null;
+  const subNames = [...new Set(allGames.filter((g) => !genre || g.genre === genre).flatMap((g) => g.subgenre ?? []))].sort();
+  const sub = subNames.includes(one(sp.sub) ?? "") ? one(sp.sub) : null;
+  const games = allGames.filter((g) => (!genre || g.genre === genre) && (!sub || g.subgenre === sub));
   const shown = games.slice(0, pro ? SHOWN : PREVIEW);
-  const top10 = games.slice(0, 10).reduce((a, g) => a + g.estMonthly, 0);
+  const filterQuery = `${genre ? `&genre=${encodeURIComponent(genre)}` : ""}${sub ? `&sub=${encodeURIComponent(sub)}` : ""}`;
   const climbers = prevDay
     ? games
         .filter((g) => g.prevRank !== null && g.prevRank - g.rank >= 5)
@@ -209,7 +219,7 @@ export default async function RevenuePage() {
             </>
           ) : (
             <p className="rounded-2xl border border-border bg-card p-5 text-sm text-text-2">
-              Ranks have been recorded since {fmtDay(Date.parse(listDay))}. Daily climbers and fallers appear here once there is a second
+              Ranks have been recorded since {fmtDay(Date.parse(listDay))}. Climbers and fallers appear here once there is a second
               day to compare.
             </p>
           )}
@@ -222,16 +232,46 @@ export default async function RevenuePage() {
             Top Earning, {fmtDay(Date.parse(listDay))}
           </h2>
           <span className="flex flex-wrap gap-3 text-sm">
-            <Link href="/explore?launched=any&earning=1&sort=earnings" className="text-link hover:underline">
+            <Link href={`/explore?launched=any&earning=1&sort=earnings${filterQuery}`} className="text-link hover:underline">
               All {fmtInt(games.length)} in Explore
             </Link>
             {pro ? (
-              <a href="/api/v1/explore?launched=any&earning=1&sort=earnings&format=csv" className="text-link hover:underline">
+              <a href={`/api/v1/explore?launched=any&earning=1&sort=earnings${filterQuery}&format=csv`} className="text-link hover:underline">
                 Download CSV
               </a>
             ) : null}
           </span>
         </div>
+        <AutoSubmitForm action="/revenue" className="flex flex-wrap items-end gap-2">
+          <label className="flex flex-col gap-1 text-[13px] text-muted-foreground">
+            Genre
+            <select name="genre" defaultValue={genre ?? ""} className="select">
+              <option value="">Every genre</option>
+              {genreNames.map((g) => (
+                <option key={g} value={g}>
+                  {g}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-[13px] text-muted-foreground">
+            Subgenre
+            <select name="sub" defaultValue={sub ?? ""} className="select">
+              <option value="">{genre ? `Every ${genre} subgenre` : "Every subgenre"}</option>
+              {subNames.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </label>
+          <ApplyButton />
+          {genre || sub ? (
+            <span className="pb-2.5 text-[13px] text-muted-foreground">
+              {fmtInt(games.length)} of {fmtInt(allGames.length)} games; ranks are across the whole list
+            </span>
+          ) : null}
+        </AutoSubmitForm>
         <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
           <table className="pin w-full min-w-[880px] border-collapse text-sm tabular-nums">
             <thead>
@@ -280,6 +320,7 @@ export default async function RevenuePage() {
                           <span className="block max-w-[300px] truncate">{name}</span>
                           <span className="mt-0.5 flex items-center gap-2 text-xs font-normal text-muted-foreground">
                             <GenreChip genre={g.genre} />
+                            {g.subgenre ? <span className="max-w-[140px] truncate">{g.subgenre}</span> : null}
                             <span className="max-w-[160px] truncate">{g.creatorName}</span>
                           </span>
                         </span>

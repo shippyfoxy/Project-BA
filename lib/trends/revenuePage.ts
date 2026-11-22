@@ -6,16 +6,17 @@ export interface RankedGame {
   name: string;
   creatorName: string;
   genre: string;
+  subgenre: string | null;
   rank: number;
   effRank: number; // over the last 7 lists; the estimate comes from this
-  prevRank: number | null; // on the previous recorded day; null if not listed then
+  prevRank: number | null; // a week earlier; null if not listed then
   estMonthly: number; // MODELLED, from effRank
   cur7: number | null; // 7-day average players
 }
 
 export interface RevenuePage {
   listDay: string;
-  prevDay: string | null;
+  prevDay: string | null; // the list a week earlier, or the oldest one until a week exists
   firstDay: string; // when recording began
   lists: number; // lists behind each estimate: up to 7
   games: RankedGame[];
@@ -24,11 +25,14 @@ export interface RevenuePage {
 }
 
 // Roblox's Top Earning list on the latest recorded day, with each game's rank
-// the day before and its 7-day average players.
+// a week earlier and its 7-day average players. The list ranks 7-day spend,
+// so it barely moves from one day to the next: hundreds of games shift a
+// place or two daily, but over a week many move five or more.
 export async function getRevenuePage(db: Db): Promise<RevenuePage | null> {
   const [days] = await db.query<{ latest: string | null; prev: string | null; first: string; n: number }>(
     `select max(day)::text as latest, min(day)::text as first, least(count(distinct day), 7)::int as n,
-            (select max(day) from earning_ranks where day < (select max(day) from earning_ranks))::text as prev
+            coalesce((select max(day) from earning_ranks where day <= (select max(day) from earning_ranks) - 7),
+                     (select min(day) from earning_ranks where day < (select max(day) from earning_ranks)))::text as prev
      from earning_ranks`,
   );
   if (!days?.latest) return null;
@@ -38,13 +42,14 @@ export async function getRevenuePage(db: Db): Promise<RevenuePage | null> {
     name: string;
     creator_name: string | null;
     genre: string;
+    subgenre: string | null;
     rank: number;
     eff_rank: number;
     prev_rank: number | null;
     cur7: number | null;
   }>(
     `with ${EARNING_WEEK}
-     select e.universe_id::float8 as universe_id, g.name, g.creator_name, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre,
+     select e.universe_id::float8 as universe_id, g.name, g.creator_name, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre, nullif(g.genre_l2, '') as subgenre,
             e.rank, w.eff_rank, p.rank as prev_rank,
             (select avg(d.playing_avg) from game_daily d
               where d.universe_id = e.universe_id
@@ -64,6 +69,7 @@ export async function getRevenuePage(db: Db): Promise<RevenuePage | null> {
     name: r.name,
     creatorName: r.creator_name ?? "Unknown",
     genre: r.genre,
+    subgenre: r.subgenre,
     rank: r.rank,
     effRank: r.eff_rank,
     prevRank: r.prev_rank,

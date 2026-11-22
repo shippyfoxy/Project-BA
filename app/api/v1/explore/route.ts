@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
     roblox_name: g.name,
     creator: g.creatorName,
     genre: g.genre,
+    subgenre: g.subgenre,
     stage: g.stage,
     created: g.createdMs === null ? null : new Date(g.createdMs).toISOString().slice(0, 10),
     age_days: ageDays(g.createdMs, result.asOfMs),

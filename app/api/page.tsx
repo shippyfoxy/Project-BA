@@ -93,6 +93,12 @@ const EXPLORE_PARAMS: Row[] = [
     </>,
   ],
   [
+    "sub",
+    <>
+      Roblox&apos;s subgenre name exactly as returned, e.g. <C>Action RPG</C> or <C>Tower Obby</C>. Repeat it to match any of several.
+    </>,
+  ],
+  [
     "country",
     <>
       In that country&apos;s discovery lists in the last 7 days, by two-letter code:{" "}
@@ -147,6 +153,7 @@ const EXPLORE_FIELDS: Row[] = [
   ["roblox_name", "The title exactly as Roblox returns it."],
   ["creator", "The owning user or group."],
   ["genre", "Roblox's top-level genre, or “Other” when Roblox gives none."],
+  ["subgenre", "Roblox's subgenre, such as “Action RPG” or “Tower Obby”. Null when Roblox gives none (about 1 game in 5)."],
   ["stage", "Lifecycle stage, in lower case (see Definitions). Blank for games averaging under 1,000 players."],
   ["created, age_days", "Roblox's creation date and days since, as of the latest refresh."],
   ["players_7d_avg, players_prev_7d_avg", "Average concurrent players over the last 7 days and the 7 before."],
@@ -372,7 +379,7 @@ export default function ApiPage() {
 
         <Section id="coverage" title="Coverage">
           <ul className="flex list-disc flex-col gap-2 pl-5 text-text-2">
-            <li>Daily history starts on 7 May 2026. Raw readings are kept for 7 days and rolled up into the daily figures above.</li>
+            <li>Daily history starts on 7 May 2026. Raw readings are kept for 3 days and rolled up into the daily figures above.</li>
             <li>
               The refresh runs hourly. Each run reads Roblox&apos;s discovery lists for 24 countries and 5 device types, then
               re-reads every game it has ever found there, so a game stays tracked after it drops out of the lists (since 25 October 2026;
