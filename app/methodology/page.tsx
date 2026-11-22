@@ -168,8 +168,8 @@ new visits per minute = visits gained between the last readings of
                  − the change for every tracked game
 rising    10+ points ahead of the market
 fading    10+ points behind it
-crowding  half as many new games again as the month before,
-          with players not rising`}</Formula>
+crowding  new games arriving 1.5× faster than across every
+          game, against the month before, with players not rising`}</Formula>
           <p>
             New games are those that first reached the lists in the last 30 days within {MAX_START_AGE_DAYS} days of being created; a hit
             averages 1,000+ players this week.

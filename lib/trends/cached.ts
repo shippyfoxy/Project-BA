@@ -97,7 +97,7 @@ export const getCachedIdeas = unstable_cache(
     const db = getSiteDb();
     return db ? getIdeas(db, genre) : null;
   },
-  ["ideas-v3"],
+  ["ideas-v5"],
   { revalidate: 3600 },
 );
 

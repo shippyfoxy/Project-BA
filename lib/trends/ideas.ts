@@ -18,6 +18,7 @@ export interface IdeaGame {
   universeId: number;
   name: string;
   genre: string;
+  subgenre: string | null; // Roblox's own, e.g. "Action RPG"; about 1 game in 5 has none
   cur7: number;
   prev7: number | null;
   launched: boolean; // reached the lists in the last 30 days, as a new game
@@ -57,13 +58,17 @@ export interface GenreIdea {
   revenue: number;
   earners: number;
   earnerRanks: number[];
+  momentum: Momentum;
+  parent?: string; // for a subgenre, the genre most of its games are in
 }
 
 export interface Ideas {
   day: string;
   marketGrowth: number | null; // every tracked game, this week against last
+  launchRatio: number; // new games this month over the month before, across every game
   patterns: Pattern[];
   genres: GenreIdea[];
+  subgenres: GenreIdea[];
 }
 
 // Words that say nothing about the game itself.
@@ -97,12 +102,14 @@ export function nameTerms(raw: string): string[] {
 }
 
 // Against the market, so a quiet week for every game doesn't mark everything
-// as fading. "Crowding" is many more new games arriving than the month before
-// while players are not rising: studios piling in after a hit.
-export function momentumOf(vsMarket: number | null, launches: number, launchesBefore: number): Momentum {
+// as fading. "Crowding" is new games arriving at least 1.5 times faster than
+// across every game while players are not rising: studios piling in after a
+// hit. marketLaunchRatio (every game's launches over the month before's) keeps
+// a wider net, like the 24 country lists from 3 November, from reading as a rush.
+export function momentumOf(vsMarket: number | null, launches: number, launchesBefore: number, marketLaunchRatio = 1): Momentum {
   if (vsMarket !== null && vsMarket >= 0.1) return "rising";
   if (vsMarket !== null && vsMarket <= -0.1) return "fading";
-  if (launches >= 5 && launches >= launchesBefore * 1.5) return "crowding";
+  if (launches >= 5 && launches >= launchesBefore * 1.5 * Math.max(marketLaunchRatio, 1)) return "crowding";
   return "steady";
 }
 
@@ -138,7 +145,7 @@ function summarise(games: IdeaGame[]) {
   };
 }
 
-export function buildPatterns(games: IdeaGame[], marketGrowth: number | null): Pattern[] {
+export function buildPatterns(games: IdeaGame[], marketGrowth: number | null, marketLaunchRatio = 1): Pattern[] {
   const byTerm = new Map<string, Acc>();
   for (const g of games) {
     for (const t of nameTerms(g.name)) {
@@ -189,7 +196,7 @@ export function buildPatterns(games: IdeaGame[], marketGrowth: number | null): P
       ...s,
       vsMarket,
       topShare: s.players > 0 ? top[0].cur7 / s.players : 0,
-      momentum: momentumOf(vsMarket, s.launches, s.launchesBefore),
+      momentum: momentumOf(vsMarket, s.launches, s.launchesBefore, marketLaunchRatio),
       top: top
         .slice(0, 3)
         .map((g) => ({ universeId: g.universeId, name: g.name, cur7: g.cur7 })),
@@ -199,14 +206,22 @@ export function buildPatterns(games: IdeaGame[], marketGrowth: number | null): P
   return patterns.sort((a, b) => b.players - a.players);
 }
 
-export function buildGenres(games: IdeaGame[], marketGrowth: number | null): GenreIdea[] {
+// Genres, or with `sub`, Roblox's subgenres; each needs 10+ games with 100+ players.
+export function buildGenres(games: IdeaGame[], marketGrowth: number | null, sub = false, marketLaunchRatio = 1): GenreIdea[] {
   const by = new Map<string, IdeaGame[]>();
-  for (const g of games) by.set(g.genre, [...(by.get(g.genre) ?? []), g]);
+  for (const g of games) {
+    const key = sub ? g.subgenre : g.genre;
+    if (key) by.set(key, [...(by.get(key) ?? []), g]);
+  }
   return [...by]
     .filter(([genre]) => genre !== "All" && genre !== "Other")
     .map(([genre, gs]) => {
       const s = summarise(gs);
-      return { genre, ...s, vsMarket: s.growth !== null && marketGrowth !== null ? s.growth - marketGrowth : null };
+      const vsMarket = s.growth !== null && marketGrowth !== null ? s.growth - marketGrowth : null;
+      const parents = new Map<string, number>();
+      for (const g of gs) parents.set(g.genre, (parents.get(g.genre) ?? 0) + 1);
+      const parent = sub ? [...parents].sort((a, b) => b[1] - a[1])[0][0] : undefined;
+      return { genre, ...s, vsMarket, momentum: momentumOf(vsMarket, s.launches, s.launchesBefore, marketLaunchRatio), parent };
     })
     .filter((g) => g.games >= 10)
     .sort((a, b) => b.players - a.players);
@@ -220,6 +235,7 @@ export async function getIdeas(db: Db, genre: string | null = null): Promise<Ide
     universe_id: number;
     name: string;
     genre: string;
+    subgenre: string | null;
     cur7: number;
     prev7: number | null;
     launched: boolean;
@@ -235,7 +251,7 @@ export async function getIdeas(db: Db, genre: string | null = null): Promise<Ide
        where day > $1::date - 14 and day <= $1::date
        group by universe_id)
      select g.universe_id::float8 as universe_id, g.name, coalesce(nullif(g.genre_l1, 'All'), 'Other') as genre,
-            r.cur7::float8 as cur7, r.prev7::float8 as prev7,
+            nullif(g.genre_l2, '') as subgenre, r.cur7::float8 as cur7, r.prev7::float8 as prev7,
             (g.first_seen::date > $1::date - ${LAUNCH_DAYS}
               and g.first_seen::date - g.created_at::date <= ${MAX_START_AGE_DAYS}) as launched,
             (g.first_seen::date > $1::date - ${2 * LAUNCH_DAYS} and g.first_seen::date <= $1::date - ${LAUNCH_DAYS}
@@ -251,17 +267,22 @@ export async function getIdeas(db: Db, genre: string | null = null): Promise<Ide
     universeId: r.universe_id,
     name: r.name,
     genre: r.genre,
+    subgenre: r.subgenre,
     cur7: r.cur7,
     prev7: r.prev7,
     launched: r.launched,
     launchedBefore: r.launched_before,
     effRank: r.eff_rank,
   }));
-  const marketGrowth = summarise(games).growth;
+  const market = summarise(games);
+  const marketGrowth = market.growth;
+  const launchRatio = market.launchesBefore ? market.launches / market.launchesBefore : 1;
   return {
     day: latest.day,
     marketGrowth,
-    patterns: buildPatterns(genre ? games.filter((g) => g.genre === genre) : games, marketGrowth),
-    genres: buildGenres(games, marketGrowth),
+    launchRatio,
+    patterns: buildPatterns(genre ? games.filter((g) => g.genre === genre) : games, marketGrowth, launchRatio),
+    genres: buildGenres(games, marketGrowth, false, launchRatio),
+    subgenres: buildGenres(games, marketGrowth, true, launchRatio),
   };
 }

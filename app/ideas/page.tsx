@@ -318,14 +318,75 @@ export default async function IdeasPage({ searchParams }: { searchParams: Promis
         </div>
       </section>
 
+      <section aria-labelledby="subgenres" className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 id="subgenres" className="font-heading text-[28px] font-bold tracking-[-0.02em]">
+            Subgenres{genre ? ` in ${genre}` : ""}
+          </h2>
+          <span className="text-[13px] text-muted-foreground">Roblox&apos;s own subgenres, with 10+ games of 100+ players</span>
+        </div>
+        <div className="overflow-x-auto rounded-2xl border border-border bg-card">
+          <table className="pin w-full min-w-[960px] border-collapse text-sm tabular-nums">
+            <caption className="sr-only">Subgenres by players, momentum, new games and modelled revenue</caption>
+            <thead>
+              <tr className="text-right text-xs text-muted-foreground">
+                <th data-pin="" scope="col" className="px-4 py-3 text-left font-medium">
+                  Subgenre
+                </th>
+                <th scope="col" className="px-2 py-3 text-left font-medium">
+                  Momentum
+                </th>
+                <th scope="col" className="px-2 py-3 font-medium">Games</th>
+                <th scope="col" className="px-2 py-3 font-medium">Players</th>
+                <th scope="col" className="px-2 py-3 font-medium">Against market</th>
+                <th scope="col" className="px-2 py-3 font-medium">Per game</th>
+                <th scope="col" className="px-2 py-3 text-left font-medium">New games, hit {fmtCompact(HIT_MIN)}</th>
+                <th scope="col" className="px-4 py-3 font-medium">Est. revenue</th>
+              </tr>
+            </thead>
+            <tbody className="text-right">
+              {ideas.subgenres
+                .filter((s) => !genre || s.parent === genre)
+                .map((s) => (
+                  <tr key={s.genre} className="border-t border-rule hover:bg-surface-2">
+                    <th scope="row" className="px-4 py-2.5 text-left font-medium">
+                      <Link href={`/explore?launched=any&sub=${encodeURIComponent(s.genre)}`} className="hover:text-link">
+                        {s.genre}
+                      </Link>
+                      {s.parent ? (
+                        <span className="mt-1 block font-normal">
+                          <GenreChip genre={s.parent} />
+                        </span>
+                      ) : null}
+                    </th>
+                    <td className="px-2 py-2.5 text-left">
+                      <MomentumChip m={s.momentum} />
+                    </td>
+                    <td className="px-2 py-2.5">{fmtInt(s.games)}</td>
+                    <td className="px-2 py-2.5">{fmtCompact(s.players, 1)}</td>
+                    <td className={`px-2 py-2.5 font-semibold ${s.vsMarket === null ? "" : s.vsMarket >= 0 ? "text-rise" : "text-fall"}`}>
+                      {s.vsMarket === null ? "—" : pts(s.vsMarket)}
+                    </td>
+                    <td className="px-2 py-2.5">{fmtInt(s.median)}</td>
+                    <td className="whitespace-nowrap px-2 py-2.5 text-left">
+                      <HitBar hits={s.hits} launches={s.launches} />
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-2.5">{s.earners ? <UsdSum ranks={s.earnerRanks} suffix="/mo" /> : "—"}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <section className="flex max-w-[860px] flex-col gap-2 text-[13px] text-muted-foreground">
         <p>
           <strong className="text-text-2">How to read this.</strong> A pattern is a word or pair of words in game names, with tags and emoji
           removed, found in at least {MIN_TERM_GAMES} games averaging {fmtInt(COUNTED_MIN)}+ players. Games and per game count those games;
           players add up the 7-day averages of every game using it. Against market is its players&apos; change on last week minus the change
           for every game ({ideas.marketGrowth === null ? "unknown" : pct(ideas.marketGrowth)}), so a quiet week everywhere doesn&apos;t mark
-          everything as fading. Rising and fading mean 10 points or more either way; crowding in means at least half as many new games again
-          as the month before while players are not rising.
+          everything as fading. Rising and fading mean 10 points or more either way; crowding in means new games arriving at least 1.5 times
+          faster than across every game, compared with the month before, while players are not rising.
         </p>
         <p>
           New games are those that first reached Roblox&apos;s discovery lists in the last 30 days within 60 days of being created; a hit
