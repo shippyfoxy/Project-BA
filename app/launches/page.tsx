@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { genreHref } from "@/components/v2/GenreChip";
 import { getSiteDb } from "@/lib/db/site";
 import { getCachedLaunchCurves } from "@/lib/trends/cached";
 import { getLaunchGame, MAX_START_AGE_DAYS, Q, standing, type LaunchDay, type LaunchGame } from "@/lib/trends/launches";
@@ -168,10 +169,10 @@ export default async function LaunchesPage({ searchParams }: { searchParams: Pro
             First 90 days
           </h2>
           {genre ? (
-            <span className="inline-flex items-center gap-2 text-[13px] text-muted-foreground">
+            <Link href={genreHref(genre)} className="inline-flex items-center gap-2 text-[13px] text-muted-foreground hover:text-foreground">
               <span className="size-2 rounded-full" style={{ background: genreColor(genre) }} aria-hidden="true" />
               {genre} launches
-            </span>
+            </Link>
           ) : (
             <span className="text-[13px] text-muted-foreground">Every genre</span>
           )}

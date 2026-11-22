@@ -72,7 +72,7 @@ function EarnerList({ title, games, icons, perPlayer }: { title: string; games: 
                   {name}
                 </Link>
                 <span className="mt-0.5 block">
-                  <GenreChip genre={g.genre} />
+                  <GenreChip genre={g.genre} link />
                 </span>
               </span>
               <span className="text-right text-sm tabular-nums">

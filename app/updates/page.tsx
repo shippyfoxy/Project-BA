@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { genreHref } from "@/components/v2/GenreChip";
 import { getCachedUpdateImpact } from "@/lib/trends/cached";
 import type { LiftSummary } from "@/lib/trends/updates";
 import { MIN_PLAYERS } from "@/lib/trends/updates";
@@ -175,7 +176,7 @@ export default async function UpdatesPage() {
           rows={u.byGenre.map((g) => ({
             key: g.genre,
             label: (
-              <Link href={`/explore?launched=any&genre=${encodeURIComponent(g.genre)}`} className="inline-flex items-center gap-2 hover:text-link">
+              <Link href={genreHref(g.genre)} className="inline-flex items-center gap-2 hover:text-link">
                 <span aria-hidden="true" className="inline-block size-2 rounded-full" style={{ background: genreColor(g.genre) }} />
                 {g.genre}
               </Link>

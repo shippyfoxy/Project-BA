@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
-import { MainNav } from "@/components/v2/MainNav";
+import { MainNav, SectionNav } from "@/components/v2/MainNav";
 import { ProProvider } from "@/components/pro/Pro";
 import { ThemeToggle } from "@/components/v2/ThemeToggle";
 import { THEME_SCRIPT } from "@/lib/theme";
@@ -99,6 +99,7 @@ export default async function RootLayout({
             </span>
             <MainNav />
           </div>
+          <SectionNav />
         </header>
         {children}
         <footer className="border-t border-border">

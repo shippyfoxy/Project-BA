@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { genreHref } from "@/components/v2/GenreChip";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { getSiteDb } from "@/lib/db/site";
@@ -159,7 +160,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
           Trends
         </Link>
         <span aria-hidden="true">/</span>
-        <Link href={`/explore?launched=any&genre=${encodeURIComponent(g.genre)}`} className="text-text-2 hover:text-foreground">
+        <Link href={genreHref(g.genre)} className="text-text-2 hover:text-foreground">
           {g.genre}
         </Link>
         {g.genreL2 ? (
@@ -193,11 +194,15 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
             <div className="flex min-w-0 flex-col gap-2">
               <div className="flex flex-wrap gap-1.5">
                 {g.stage ? <StageBadge stage={g.stage} /> : null}
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[rgba(11,13,16,0.75)] px-2.5 py-0.5 text-xs font-medium" style={{ boxShadow: `inset 0 0 0 1px ${genreHue}99` }}>
+                <Link
+                  href={genreHref(g.genre)}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-[rgba(11,13,16,0.75)] px-2.5 py-0.5 text-xs font-medium hover:underline"
+                  style={{ boxShadow: `inset 0 0 0 1px ${genreHue}99` }}
+                >
                   <span aria-hidden="true" className="inline-block size-2 rounded-full" style={{ background: genreHue }} />
                   {g.genre}
                   {g.genreL2 ? ` › ${g.genreL2}` : ""}
-                </span>
+                </Link>
                 {g.rank !== null && g.rank <= 10 ? (
                   <span className="inline-flex items-center rounded-full bg-[rgba(11,13,16,0.75)] px-2.5 py-0.5 text-xs font-medium shadow-[inset_0_0_0_1px_var(--input)]">
                     #{g.rank} most played

@@ -301,7 +301,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                           </span>
                         </th>
                         <td className="px-2 py-3 text-left">
-                          <GenreChip genre={g.genre} />
+                          <GenreChip genre={g.genre} link />
                         </td>
                         <td className="px-2 py-3">{g.createdMs === null ? "—" : fmtDay(g.createdMs)}</td>
                         <td className="px-2 py-3">{day(g.firstDayMs)}</td>

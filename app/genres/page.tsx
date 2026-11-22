@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { genreHref } from "@/components/v2/GenreChip";
 import { getCachedGenreTrends, getCachedWeekAggregates } from "@/lib/trends/cached";
 import { genreBenchmarks, type GenreBenchmark } from "@/lib/trends/genreTrends";
 import { genreColor } from "@/lib/trends/genres";
@@ -120,7 +121,7 @@ export default async function GenresPage() {
               <div className="flex items-center justify-between gap-2">
                 <h3 className="flex items-center gap-2 font-semibold">
                   <span aria-hidden="true" className="inline-block size-2.5 rounded-full" style={{ background: genreColor(g.genre) }} />
-                  <Link href={`/explore?launched=any&genre=${encodeURIComponent(g.genre)}`} className="hover:text-link">
+                  <Link href={genreHref(g.genre)} className="hover:text-link">
                     {g.genre}
                   </Link>
                 </h3>
@@ -231,7 +232,7 @@ export default async function GenresPage() {
                   return (
                     <tr key={g.genre} className="border-t border-rule">
                       <th scope="row" className="px-4 py-2.5 text-left font-medium">
-                        <Link href={`/explore?launched=any&earning=1&genre=${encodeURIComponent(g.genre)}&sort=earnings`} className="inline-flex items-center gap-2 hover:text-link">
+                        <Link href={genreHref(g.genre)} className="inline-flex items-center gap-2 hover:text-link">
                           <span aria-hidden="true" className="inline-block size-2 rounded-full" style={{ background: genreColor(g.genre) }} />
                           {g.genre}
                         </Link>
@@ -310,7 +311,7 @@ export default async function GenresPage() {
                     {i === 0 ? (
                       g.genre
                     ) : (
-                      <Link href={`/explore?launched=any&min=1000&genre=${encodeURIComponent(g.genre)}`} className="inline-flex items-center gap-2 hover:text-link">
+                      <Link href={genreHref(g.genre)} className="inline-flex items-center gap-2 hover:text-link">
                         <span aria-hidden="true" className="inline-block size-2 rounded-full" style={{ background: genreColor(g.genre) }} />
                         {g.genre}
                       </Link>
@@ -395,7 +396,7 @@ export default async function GenresPage() {
                 .map((g) => (
                   <tr key={g.genre} className="border-t border-rule">
                     <th scope="row" className="px-4 py-2.5 text-left font-medium">
-                      <Link href={`/explore?launched=any&genre=${encodeURIComponent(g.genre)}`} className="inline-flex items-center gap-2 hover:text-link">
+                      <Link href={genreHref(g.genre)} className="inline-flex items-center gap-2 hover:text-link">
                         <span aria-hidden="true" className="inline-block size-2 rounded-full" style={{ background: genreColor(g.genre) }} />
                         {g.genre}
                       </Link>
