@@ -9,6 +9,8 @@ import { getLaunchCurves, type LaunchCurves } from "./launches";
 import { getIdeas, type Ideas } from "./ideas";
 import { getWidgetGame, type WidgetGame } from "./widget";
 import { EARNING_WEEK } from "./revenue";
+import { getStudios, type StudioRow } from "./studios";
+import { cadenceLives, getHitLives, type HitLife, type LifeSummary } from "./lifespan";
 
 // Shared across every game page and refreshed at most hourly, so opening a
 // game for the first time doesn't recompute every game's week.
@@ -42,6 +44,24 @@ export const getCachedGenreTrends = unstable_cache(
   { revalidate: 3600 },
 );
 
+// Every hit's fall from its best week, for the lifespan benchmarks.
+export const getCachedHitLives = unstable_cache(
+  async (): Promise<HitLife[]> => {
+    const db = getSiteDb();
+    return db ? getHitLives(db) : [];
+  },
+  ["hit-lives-v2"],
+  { revalidate: 3600 },
+);
+// Hits grouped by how often they published before their best week.
+export const getCachedCadence = unstable_cache(
+  async (): Promise<(LifeSummary & { lo: number; hi: number })[]> => {
+    const db = getSiteDb();
+    return db ? cadenceLives(db, await getHitLives(db)) : [];
+  },
+  ["cadence-v2"],
+  { revalidate: 3600 },
+);
 
 // The latest Top Earning list as [universeId, rank, effective rank] rows, for
 // pages that add a rank column to games they already have.
@@ -70,13 +90,25 @@ export const getCachedRevenuePage = unstable_cache(
   { revalidate: 3600 },
 );
 
+// Every studio with a tracked game, ranked by modelled revenue.
+export const getCachedStudios = unstable_cache(
+  async (): Promise<StudioRow[]> => {
+    const db = getSiteDb();
+    if (!db) return [];
+    const revenue = await getRevenuePage(db).catch(() => null);
+    return getStudios(db, revenue?.games ?? []);
+  },
+  ["studios-v1"],
+  { revalidate: 3600 },
+);
+
 // Update impact across every game since May: a heavy query, refreshed hourly.
 export const getCachedUpdateImpact = unstable_cache(
   async (): Promise<UpdateImpact | null> => {
     const db = getSiteDb();
     return db ? getUpdateImpact(db) : null;
   },
-  ["update-impact-v2"],
+  ["update-impact-v3"],
   { revalidate: 3600 },
 );
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CsvButton } from "@/components/v2/CsvButton";
 import { getCachedGenreTrends, getCachedRevenuePage } from "@/lib/trends/cached";
 import { estMonthlyDevEx, fmtUsdEstimate } from "@/lib/trends/revenue";
 import type { RankedGame } from "@/lib/trends/revenuePage";
@@ -272,8 +273,11 @@ export default async function RevenuePage({ searchParams }: { searchParams: Prom
             </span>
           ) : null}
         </AutoSubmitForm>
+        <div className="flex justify-end">
+          <CsvButton table="top-earning" file="roblox-top-earning" />
+        </div>
         <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
-          <table className="pin w-full min-w-[880px] border-collapse text-sm tabular-nums">
+          <table id="top-earning" className="pin w-full min-w-[880px] border-collapse text-sm tabular-nums">
             <thead>
               <tr className="text-right text-xs text-muted-foreground">
                 <th scope="col" className="w-14 px-4 py-3 text-left font-medium">

@@ -27,6 +27,8 @@ const NAV: Item[] = [
       { href: "/launches", label: "Launches" },
       { href: "/updates", label: "Updates" },
       { href: "/compare", label: "Compare" },
+      { href: "/studios", label: "Studios" },
+      { href: "/watch", label: "Watchlist" },
     ],
   },
   {

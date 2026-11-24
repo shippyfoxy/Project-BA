@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { genreHref } from "@/components/v2/GenreChip";
-import { getCachedGenreTrends, getCachedWeekAggregates } from "@/lib/trends/cached";
+import { getCachedGenreTrends, getCachedHitLives, getCachedWeekAggregates } from "@/lib/trends/cached";
+import { fmtDays, HIT_PLAYERS, summarise, type HitLife } from "@/lib/trends/lifespan";
 import { genreBenchmarks, type GenreBenchmark } from "@/lib/trends/genreTrends";
 import { genreColor } from "@/lib/trends/genres";
 import { fmtDay, fmtInt } from "@/lib/format";
@@ -9,6 +10,8 @@ import { niceMax } from "@/lib/stats";
 import { LineChart } from "@/components/v2/LineChart";
 import { UsdSum } from "@/components/pro/Pro";
 import { Sparkline } from "@/components/v2/Sparkline";
+import { FollowButton } from "@/components/v2/FollowButton";
+import { CsvButton } from "@/components/v2/CsvButton";
 
 export const revalidate = 3600;
 export const maxDuration = 30;
@@ -68,7 +71,15 @@ export default async function GenresPage() {
       </main>
     );
   }
-  const aggs = await getCachedWeekAggregates(trends.latestDay);
+  const [aggs, hitLives] = await Promise.all([getCachedWeekAggregates(trends.latestDay), getCachedHitLives().catch(() => [] as HitLife[])]);
+  const freshHits = hitLives.filter((h) => h.fresh);
+  const hitsBySub = new Map<string, HitLife[]>();
+  for (const h of freshHits) if (h.subgenre) hitsBySub.set(h.subgenre, [...(hitsBySub.get(h.subgenre) ?? []), h]);
+  const lives = [...hitsBySub]
+    .filter(([, hs]) => hs.length >= 8)
+    .map(([sub, hs]) => ({ ...summarise(sub, hs), genre: hs[0].genre }))
+    .sort((a, b) => (b.halfMedian ?? 999) - (a.halfMedian ?? 999));
+  const allLife = freshHits.length ? summarise("Every hit", freshHits) : null;
   const { all, genres } = genreBenchmarks(aggs);
 
   const top6 = trends.shares.slice(0, 6);
@@ -168,8 +179,9 @@ export default async function GenresPage() {
             <h2 id="subgenres" className="font-heading text-2xl font-bold">
               Subgenres within each genre
             </h2>
-            <span className="text-[13px] text-muted-foreground">
+            <span className="flex items-center gap-3 text-[13px] text-muted-foreground">
               Week to {fmtDay(latestMs)}{firstWeekEnd ? `; change and trend since the week to ${fmtDay(firstWeekEnd)}` : ""}
+              <CsvButton table="subgenre-table" file="roblox-subgenres" />
             </span>
           </div>
           {movers.length > 1 ? (
@@ -180,7 +192,7 @@ export default async function GenresPage() {
             </p>
           ) : null}
           <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
-            <table className="pin w-full min-w-[820px] border-collapse text-sm tabular-nums">
+            <table id="subgenre-table" className="pin w-full min-w-[820px] border-collapse text-sm tabular-nums">
               <thead>
                 <tr className="text-right text-xs text-muted-foreground">
                   <th data-pin="" scope="col" className="px-4 py-3 text-left font-medium">Subgenre</th>
@@ -210,7 +222,14 @@ export default async function GenresPage() {
                       return (
                         <tr key={s.subgenre ?? ""} className="border-t border-rule">
                           <th scope="row" className="px-4 py-2 pl-8 text-left font-medium">
-                            {s.subgenre ?? <span className="font-normal italic text-muted-foreground">No subgenre</span>}
+                            {s.subgenre ? (
+                              <span className="inline-flex items-center gap-2">
+                                <FollowButton kind="sub" value={`${s.genre}|${s.subgenre}`} label={`${s.subgenre} (${s.genre})`} compact />
+                                {s.subgenre}
+                              </span>
+                            ) : (
+                              <span className="font-normal italic text-muted-foreground">No subgenre</span>
+                            )}
                           </th>
                           <td className="px-2 py-2">{fmtInt(s.games)}</td>
                           <td className="px-2 py-2">{fmtInt(s.players)}</td>
@@ -244,6 +263,68 @@ export default async function GenresPage() {
             not compare like for like. Games first found through the country lists added on 3 November count only from then, so part of a
             subgenre&apos;s rise can be those games being found rather than new players. Change is in points of the share of all players.
             {hidden ? ` ${fmtInt(hidden)} rows with fewer than 3 games and under 1% of their genre are left out.` : ""}
+          </p>
+        </section>
+      ) : null}
+
+      {allLife && lives.length ? (
+        <section aria-labelledby="lifespan" className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="lifespan" className="font-heading text-2xl font-bold">
+              How long hits last
+            </h2>
+            <span className="flex items-center gap-3 text-[13px] text-muted-foreground">
+              {fmtInt(allLife.n)} games made since mid-April that reached {fmtInt(HIT_PLAYERS)} players
+              <CsvButton table="lifespan-table" file="roblox-hit-lifespans" />
+            </span>
+          </div>
+          <p className="text-text-2">
+            Half the hits fall below half their best week within{" "}
+            <strong className="text-foreground">{fmtDays(allLife.halfEarly, allLife.halfMedian)} days</strong>
+            {allLife.tenthMedian !== null ? (
+              <>
+                {" "}and below a tenth within <strong className="text-foreground">{fmtDays(allLife.tenthEarly, allLife.tenthMedian)} days</strong>
+              </>
+            ) : null}
+            . {lives[0].group} holds on longest; {lives[lives.length - 1].group} fades fastest.
+          </p>
+          <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
+            <table id="lifespan-table" className="pin w-full min-w-[680px] border-collapse text-sm tabular-nums">
+              <thead>
+                <tr className="text-right text-xs text-muted-foreground">
+                  <th data-pin="" scope="col" className="px-4 py-3 text-left font-medium">Subgenre</th>
+                  <th scope="col" className="px-2 py-3 font-medium">Hits</th>
+                  <th scope="col" className="px-2 py-3 font-medium">Days to half</th>
+                  <th scope="col" className="px-2 py-3 font-medium">Days to a tenth</th>
+                  <th scope="col" className="px-4 py-3 font-medium">Still above half</th>
+                </tr>
+              </thead>
+              <tbody className="whitespace-nowrap text-right">
+                {[{ ...allLife, genre: null as string | null }, ...lives].map((l, i) => (
+                  <tr key={l.group} className={`border-t border-rule ${i === 0 ? "bg-surface-2/50 font-medium" : ""}`}>
+                    <th scope="row" className="px-4 py-2.5 text-left font-medium">
+                      <span className="inline-flex items-center gap-2">
+                        {l.genre ? <span aria-hidden="true" className="inline-block size-2 rounded-full" style={{ background: genreColor(l.genre) }} /> : null}
+                        {l.group}
+                        {l.genre ? <span className="font-normal text-muted-foreground">{l.genre}</span> : null}
+                      </span>
+                    </th>
+                    <td className="px-2 py-2.5">{fmtInt(l.n)}</td>
+                    <td className="px-2 py-2.5">{fmtDays(l.halfEarly, l.halfMedian) ?? <span className="text-muted-foreground">not yet</span>}</td>
+                    <td className="px-2 py-2.5">{fmtDays(l.tenthEarly, l.tenthMedian) ?? <span className="text-muted-foreground">not yet</span>}</td>
+                    <td className="px-4 py-2.5">{pct(l.stillAboveHalf)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-[13px] text-muted-foreground">
+            Days from the end of a game&apos;s best week to the first day its 7-day average was below half, or a tenth, of that week. Medians count
+            games still above the line for as long as we have followed them, so recent hits don&apos;t make the figures look shorter
+            (&quot;not yet&quot;: fewer than half have fallen that far). Until 25 October games were read only while in the discovery lists, so a fall
+            while a game was out of them is known only to lie between two readings: a range such as &quot;11 to 15&quot; puts every such fall at
+            the earliest and the latest day it could have been. Only games with a full best week count. Subgenres with fewer than 8 hits are
+            left out.
           </p>
         </section>
       ) : null}

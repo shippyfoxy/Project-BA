@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { CsvButton } from "@/components/v2/CsvButton";
 import { getSiteDb } from "@/lib/db/site";
 import { getSparklines } from "@/lib/trends/home";
 import { displayName } from "@/lib/trends/names";
@@ -380,8 +381,12 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-          <table className="pin w-full min-w-[1060px] border-collapse text-sm tabular-nums">
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-end">
+            <CsvButton table="explore" file="roblox-explore" />
+          </div>
+          <div className="overflow-x-auto rounded-2xl border border-border bg-card">
+          <table id="explore" className="pin w-full min-w-[1060px] border-collapse text-sm tabular-nums">
             <thead>
               <tr className="text-right text-xs text-muted-foreground">
                 <th scope="col" className="w-10 px-4 py-3 text-left font-medium">#</th>
@@ -454,6 +459,7 @@ async function Results({ f, result }: { f: ScreenerFilters; result: ScreenerResu
               })}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

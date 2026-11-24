@@ -9,6 +9,13 @@ import { getGameHistory, loadWeekAggregates } from "@/lib/trends/game";
 import { DEFAULT_FILTERS, filtersToQuery, parseFilters, screenGames } from "@/lib/trends/screener";
 import { genreBenchmarks, getGenreTrends } from "@/lib/trends/genreTrends";
 import { perPlayerRange } from "@/lib/trends/studio";
+import { getRelatedGames, nameScore } from "@/lib/trends/related";
+import { cadenceLives, fmtDays, getHitLives, kmMedian } from "@/lib/trends/lifespan";
+import { getStudios } from "@/lib/trends/studios";
+import { getWatch } from "@/lib/trends/watch";
+import { isRenamed } from "@/lib/trends/updates";
+import { parseWatch, watchQuery } from "@/lib/trends/watch";
+import { distinctWords } from "@/lib/trends/ideas";
 import type { RankedGame } from "@/lib/trends/revenuePage";
 import { daysSince, getCompareGames, parseIds } from "@/lib/trends/compare";
 import { getEarningRanks } from "@/lib/trends/earnings";
@@ -20,7 +27,7 @@ const START = Date.parse("2026-06-01T12:00:00Z");
 // 21 days of one refresh a day for three games: one growing fast, one fading,
 // one steady. Recorded through the same path the live refresh uses.
 function gamesOn(d: number): IngestGame[] {
-  const base = { creatorName: "Studio", genreL1: "Simulation", created: "2025-01-01T00:00:00Z", favoritedCount: 5_000, upVotes: 900, downVotes: 100 };
+  const base = { creatorName: "Studio", creatorId: 7, creatorType: "Group", genreL1: "Simulation", created: "2025-01-01T00:00:00Z", favoritedCount: 5_000, upVotes: 900, downVotes: 100 };
   return [
     { ...base, universeId: 1, rootPlaceId: 11, name: "Rocket", genreL2: "Tycoon", playing: 2_000 * 1.2 ** d, visits: 1_000_000 + d * 50_000 },
     { ...base, universeId: 2, rootPlaceId: 22, name: "Sunset", playing: Math.max(100, 60_000 - d * 2_800), visits: 5_000_000 + d * 20_000 },
@@ -127,6 +134,53 @@ describe("genre trends and compare", () => {
     expect(simSubs.reduce((a, s) => a + s.inGenre, 0)).toBeCloseTo(1, 9);
     // The fixture is all before 25 Oct, so no subgenre week is like for like yet.
     expect(t!.subgenres.every((s) => s.weeks.length === 0 && s.firstShare === null)).toBe(true);
+  });
+
+  it("reads a watchlist from its address and drops anything malformed", () => {
+    const w = parseWatch({ g: "5,abc,5,-1,9007199254740993,7", s: "group:12,team:3,user:x,user:4,group:12", sub: "Simulation|Tycoon,bad,|x" });
+    expect(w).toEqual({ games: [5, 7], studios: [{ kind: "group", id: 12 }, { kind: "user", id: 4 }], subgenres: [{ genre: "Simulation", subgenre: "Tycoon" }] });
+    expect(parseWatch({ g: watchQuery(w).match(/g=([^&]*)/)![1].replace(/%2C/g, ",") }).games).toEqual([5, 7]);
+    expect(parseWatch({ g: Array.from({ length: 80 }, (_, i) => i + 1).join(",") }).games).toHaveLength(50);
+  });
+
+  it("takes lifespan medians that count games still above the line", () => {
+    // Two fell at days 5 and 10; two are still above after 3 and 20 days.
+    expect(kmMedian([{ t: 5, event: true }, { t: 3, event: false }, { t: 10, event: true }, { t: 20, event: false }])).toBe(10);
+    expect(kmMedian([{ t: 5, event: false }])).toBeNull();
+    expect(fmtDays(9, 12)).toBe("9 to 12");
+    expect(fmtDays(12, 12)).toBe("12");
+    expect(fmtDays(null, null)).toBeNull();
+  });
+
+  it("tells a new name from a new tag or an update number", () => {
+    expect(isRenamed("Pet Catchers", "Pet Catchers 2 [NEW]")).toBe(false); // a bare number is an update tag here
+    expect(isRenamed("Pet Catchers", "Pet Hunters")).toBe(true);
+    expect(isRenamed("Vox Seas", "Vox Seas Update 0.5")).toBe(false);
+    expect(isRenamed("[🎃] RIVALS", "[UPD] RIVALS")).toBe(false);
+  });
+
+  it("runs the lifespan, namesake, studio and watchlist queries", async () => {
+    const lives = await getHitLives(db);
+    const sunset = lives.find((h) => h.universeId === 2)!;
+    expect(sunset.fresh).toBe(false); // made in 2025, before tracking
+    expect(sunset.half).not.toBeNull();
+    expect(sunset.halfEarly).toBeLessThanOrEqual(sunset.half!);
+    expect(await cadenceLives(db, lives)).toEqual([]);
+    expect((await getRelatedGames(db, 1))?.games).toEqual([]);
+    const [studio] = await getStudios(db, []);
+    expect(studio).toMatchObject({ kind: "group", id: 7, games: 3 });
+    const w = await getWatch(db, { games: [1, 2], studios: [], subgenres: [] }, { hitLives: lives, subgenres: [] });
+    expect(w.games).toHaveLength(2);
+    expect(w.events.some((e) => e.title.startsWith("Rocket up"))).toBe(true);
+  });
+
+  it("matches names on their rare words", () => {
+    const idf = (w: string) => ({ sailor: 5, piece: 1 })[w] ?? 1;
+    const me = distinctWords("[UPD] Sailor Piece");
+    expect(me).toEqual(["sailor", "piece"]);
+    expect(nameScore(me, distinctWords("Sailor Piece 2"), idf)).toBe(1);
+    expect(nameScore(me, distinctWords("Sailors Piece"), idf)).toBe(1); // plural still matches
+    expect(nameScore(me, distinctWords("Grand Piece Online"), idf)).toBeCloseTo(1 / 6, 9);
   });
 
   it("takes per-player revenue from the subgenre, then the genre, then every listed game", () => {

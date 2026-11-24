@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { genreHref } from "@/components/v2/GenreChip";
-import { getCachedUpdateImpact } from "@/lib/trends/cached";
-import type { LiftSummary } from "@/lib/trends/updates";
+import { getCachedCadence, getCachedUpdateImpact } from "@/lib/trends/cached";
+import { fmtDays } from "@/lib/trends/lifespan";
+import type { LiftSummary, UpdateImpact } from "@/lib/trends/updates";
 import { MIN_PLAYERS } from "@/lib/trends/updates";
 import { displayName } from "@/lib/trends/names";
 import { genreColor } from "@/lib/trends/genres";
@@ -35,6 +36,47 @@ function Tile({ label, value, hint }: { label: string; value: string; hint: stri
 
 function Change({ x }: { x: number }) {
   return <span className={x >= 0 ? "text-rise" : "text-fall"}>{pct(x)}</span>;
+}
+
+// Title changes with the change in players two days after, against a week earlier.
+function ChangeTable({ rows }: { rows: UpdateImpact["recent"] }) {
+  return (
+  <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
+    <table className="pin w-full min-w-[860px] border-collapse text-sm tabular-nums">
+      <thead>
+        <tr className="text-right text-xs text-muted-foreground">
+          <th data-pin="" scope="col" className="px-4 py-3 text-left font-medium">Game</th>
+          <th scope="col" className="px-2 py-3 text-left font-medium">Title change</th>
+          <th scope="col" className="px-2 py-3 font-medium">Seen</th>
+          <th scope="col" className="px-2 py-3 font-medium">Players a week before</th>
+          <th scope="col" className="px-4 py-3 font-medium">Change</th>
+        </tr>
+      </thead>
+      <tbody className="text-right">
+        {rows.map((r) => (
+          <tr key={`${r.universeId}-${r.dayMs}`} className="border-t border-rule">
+            <th scope="row" className="px-4 py-2.5 text-left font-medium">
+              <Link href={`/games/${r.universeId}`} className="hover:text-link">
+                {displayName(r.name)}
+              </Link>
+            </th>
+            <td className="max-w-[360px] px-2 py-2.5 text-left text-xs text-text-2">
+              <span className="line-through decoration-muted-foreground/60">{r.prevName}</span>
+              <span aria-hidden="true"> → </span>
+              <span className="sr-only"> became </span>
+              <span className="text-foreground">{r.name}</span>
+            </td>
+            <td className="whitespace-nowrap px-2 py-2.5 text-text-2">{fmtDay(r.dayMs)}</td>
+            <td className="px-2 py-2.5">{fmtInt(r.before)}</td>
+            <td className="px-4 py-2.5 font-semibold">
+              <Change x={r.lift} />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  );
 }
 
 // One labelled row: the bar, its median and how often players rose.
@@ -85,7 +127,7 @@ function RangeTable({ rows, caption }: { rows: { key: string; label: ReactNode; 
 }
 
 export default async function UpdatesPage() {
-  const u = await getCachedUpdateImpact();
+  const [u, cadence] = await Promise.all([getCachedUpdateImpact(), getCachedCadence().catch(() => [])]);
   if (!u || u.announced.events === 0) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-16 md:px-6">
@@ -145,6 +187,7 @@ export default async function UpdatesPage() {
           rows={[
             { key: "announced", label: "Announced updates", s: u.announced },
             { key: "publishes", label: "Routine publishes", s: u.publishes },
+            ...(u.renames.events >= 10 ? [{ key: "renames", label: "Renames", s: u.renames }] : []),
           ]}
         />
       </section>
@@ -166,6 +209,54 @@ export default async function UpdatesPage() {
           </p>
         ) : null}
       </section>
+
+      {cadence.length && cadence.every((c) => c.n >= 10) ? (
+        <section aria-labelledby="cadence" className="flex flex-col gap-3">
+          <h2 id="cadence" className="font-heading text-[28px] font-bold tracking-tight">
+            Do hits that ship often last longer?
+          </h2>
+          <p className="max-w-3xl text-text-2">
+            Hits made since mid-April, grouped by how many of the 14 days before their best week they published on, and how long they then
+            took to fall below half, and a tenth, of that week.
+            {cadence[0].halfMedian !== null && cadence[cadence.length - 1].halfMedian !== null
+              ? ` Hits that published on ${cadence[cadence.length - 1].group} of those days took ${fmtDays(cadence[cadence.length - 1].halfEarly, cadence[cadence.length - 1].halfMedian)} days to fall below half, against ${fmtDays(cadence[0].halfEarly, cadence[0].halfMedian)} for ${cadence[0].group}.`
+              : ""}
+          </p>
+          <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
+            <table className="w-full min-w-[620px] border-collapse text-sm tabular-nums">
+              <thead>
+                <tr className="text-right text-xs text-muted-foreground">
+                  <th scope="col" className="px-4 py-3 text-left font-medium">Days with a publish, 14 before the peak</th>
+                  <th scope="col" className="px-2 py-3 font-medium">Hits</th>
+                  <th scope="col" className="px-2 py-3 font-medium">Days to half</th>
+                  <th scope="col" className="px-2 py-3 font-medium">Days to a tenth</th>
+                  <th scope="col" className="px-4 py-3 font-medium">Still above half</th>
+                </tr>
+              </thead>
+              <tbody className="text-right">
+                {cadence.map((c) => (
+                  <tr key={c.group} className="border-t border-rule">
+                    <th scope="row" className="px-4 py-2.5 text-left font-medium">{c.group}</th>
+                    <td className="px-2 py-2.5">{fmtInt(c.n)}</td>
+                    <td className="px-2 py-2.5">{fmtDays(c.halfEarly, c.halfMedian) ?? <span className="text-muted-foreground">not yet</span>}</td>
+                    <td className="px-2 py-2.5">{fmtDays(c.tenthEarly, c.tenthMedian) ?? <span className="text-muted-foreground">not yet</span>}</td>
+                    <td className="px-4 py-2.5">{(c.stillAboveHalf * 100).toFixed(0)}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-[13px] text-muted-foreground">
+            Publishes are counted before the peak because every game is then in the discovery lists and read hourly; after it, a fading game drops
+            out of the lists and its publishes go unseen, which would flatter frequent updaters. Only best weeks from 21 May count, two weeks after
+            publishes began to be recorded; ranges are explained under How long hits last. A publish is any new version, routine fixes included.
+            This shows what goes together, not what causes what.{" "}
+            <Link href="/genres#lifespan" className="text-link underline">
+              How long hits last, by subgenre
+            </Link>
+          </p>
+        </section>
+      ) : null}
 
       <section aria-labelledby="genre" className="flex flex-col gap-3">
         <h2 id="genre" className="font-heading text-[28px] font-bold tracking-tight">
@@ -244,42 +335,23 @@ export default async function UpdatesPage() {
           Titles were not recorded between 24 October and 3 November, so updates announced in that stretch are missing; everything since
           is recorded hourly.
         </p>
-        <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
-          <table className="pin w-full min-w-[860px] border-collapse text-sm tabular-nums">
-            <thead>
-              <tr className="text-right text-xs text-muted-foreground">
-                <th data-pin="" scope="col" className="px-4 py-3 text-left font-medium">Game</th>
-                <th scope="col" className="px-2 py-3 text-left font-medium">Title change</th>
-                <th scope="col" className="px-2 py-3 font-medium">Seen</th>
-                <th scope="col" className="px-2 py-3 font-medium">Players a week before</th>
-                <th scope="col" className="px-4 py-3 font-medium">Change</th>
-              </tr>
-            </thead>
-            <tbody className="text-right">
-              {u.recent.slice(0, 25).map((r) => (
-                <tr key={`${r.universeId}-${r.dayMs}`} className="border-t border-rule">
-                  <th scope="row" className="px-4 py-2.5 text-left font-medium">
-                    <Link href={`/games/${r.universeId}`} className="hover:text-link">
-                      {displayName(r.name)}
-                    </Link>
-                  </th>
-                  <td className="max-w-[360px] px-2 py-2.5 text-left text-xs text-text-2">
-                    <span className="line-through decoration-muted-foreground/60">{r.prevName}</span>
-                    <span aria-hidden="true"> → </span>
-                    <span className="sr-only"> became </span>
-                    <span className="text-foreground">{r.name}</span>
-                  </td>
-                  <td className="whitespace-nowrap px-2 py-2.5 text-text-2">{fmtDay(r.dayMs)}</td>
-                  <td className="px-2 py-2.5">{fmtInt(r.before)}</td>
-                  <td className="px-4 py-2.5 font-semibold">
-                    <Change x={r.lift} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ChangeTable rows={u.recent.slice(0, 25)} />
       </section>
+
+      {u.recentRenames.length ? (
+        <section aria-labelledby="renames" className="flex flex-col gap-3">
+          <h2 id="renames" className="font-heading text-[28px] font-bold tracking-tight">
+            Renames
+          </h2>
+          <p className="max-w-3xl text-text-2">
+            The name itself changed, not just a tag or an update number: a rebrand or a new hook word.
+            {u.renames.events >= 10
+              ? ` Across ${fmtInt(u.renames.events)} renames the median change two days after is ${pct(u.renames.median)}, and ${Math.round(u.renames.shareUp * 100)}% rose.`
+              : ""}
+          </p>
+          <ChangeTable rows={u.recentRenames} />
+        </section>
+      ) : null}
 
       <aside aria-label="Note on calculation" className="rounded-2xl border border-border bg-card p-5 text-[13px] text-text-2">
         <h2 className="font-heading text-lg font-bold text-foreground">Note on calculation</h2>

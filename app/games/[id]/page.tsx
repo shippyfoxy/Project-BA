@@ -6,7 +6,8 @@ import { genreHref } from "@/components/v2/GenreChip";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { getSiteDb } from "@/lib/db/site";
-import { getCachedWeekAggregates } from "@/lib/trends/cached";
+import { getCachedHitLives, getCachedWeekAggregates } from "@/lib/trends/cached";
+import { fmtDays, HIT_PLAYERS, lifeFor } from "@/lib/trends/lifespan";
 import { getGameHistory, type GameHistory } from "@/lib/trends/game";
 import { displayName } from "@/lib/trends/names";
 import { DEVICE_LABELS } from "@/lib/trends/labels";
@@ -14,6 +15,8 @@ import { genreColor } from "@/lib/trends/genres";
 import { getEarningRanks, type EarningRanks } from "@/lib/trends/earnings";
 import { getGameUpdates, type GameUpdates } from "@/lib/trends/updates";
 import { getGameWelcome, type GameWelcome } from "@/lib/trends/welcome";
+import { getRelatedGames, type Related } from "@/lib/trends/related";
+import { FollowButton } from "@/components/v2/FollowButton";
 import { ProOnly, Usd } from "@/components/pro/Pro";
 import { getGameIcons, getGameScreenshots } from "@/lib/roblox/thumbnails";
 import { fmtCompact, fmtDay, fmtInt, fmtPct, fmtWeekdayDay } from "@/lib/format";
@@ -53,6 +56,18 @@ const loadWelcome = cache(async (id: number, genre: string): Promise<GameWelcome
   const db = getSiteDb();
   return db ? getGameWelcome(db, id, genre).catch(() => null) : null;
 });
+
+const loadRelated = cache(async (id: number): Promise<Related | null> => {
+  const db = getSiteDb();
+  return db ? getRelatedGames(db, id).catch(() => null) : null;
+});
+
+const DAY_MS = 86_400_000;
+// "34 days after its peak" / "120 days before": where a namesake sits against this game's best week.
+function vsPeak(ms: number, peakMs: number): string {
+  const d = Math.round((ms - peakMs) / DAY_MS);
+  return d === 0 ? "in its peak week" : `${fmtInt(Math.abs(d))} days ${d > 0 ? "after" : "before"} its peak`;
+}
 
 function parseId(raw: string): number | null {
   if (!/^\d{1,20}$/.test(raw)) return null;
@@ -127,13 +142,17 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
   const g = await loadGame(id);
   if (!g) notFound();
 
-  const [icons, shots, earning, updates, welcome] = await Promise.all([
+  const [icons, shots, earning, updates, welcome, related, hitLives] = await Promise.all([
     getGameIcons([g.universeId]),
     getGameScreenshots(g.universeId),
     loadEarning(g.universeId),
     loadUpdates(g.universeId),
     loadWelcome(g.universeId, g.genre),
+    loadRelated(g.universeId),
+    getCachedHitLives().catch(() => []),
   ]);
+  const life = hitLives.find((h) => h.universeId === g.universeId) ?? null;
+  const lifeBench = hitLives.length ? lifeFor(hitLives, g.genre, g.genreL2) : null;
   const welcomeLast = welcome?.days[welcome.days.length - 1];
   const name = displayName(g.name);
   const robloxHref = g.canonicalUrlPath ? `https://www.roblox.com${g.canonicalUrlPath}` : null;
@@ -225,6 +244,9 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
+            <span className="inline-flex h-11 items-center">
+              <FollowButton kind="g" value={String(g.universeId)} label={name} />
+            </span>
             {robloxHref ? (
               <a href={robloxHref} target="_blank" rel="noopener noreferrer" className="inline-flex h-11 items-center rounded-xl bg-[rgba(11,13,16,0.8)] px-4 text-sm font-medium shadow-[inset_0_0_0_1px_#3a4250] hover:bg-secondary">
                 Open on Roblox<span className="sr-only"> (opens Roblox)</span>
@@ -669,6 +691,127 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
             Most games give a Welcome badge on a player&apos;s first visit, so its awards in a day count new players. Visits count every join, so
             this is a share of joins, not of people: a returning player who joins three times counts three times. Read once a day for games
             averaging 1,000+ players that have such a badge.
+          </p>
+        </section>
+      ) : null}
+
+      {life && lifeBench ? (
+        <section aria-labelledby="lifespan" className="flex flex-col gap-2 rounded-2xl border border-border bg-card px-6 py-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="lifespan" className="font-heading text-[22px] font-bold">
+              How long it held
+            </h2>
+            <Link href="/genres#lifespan" className="text-sm text-link hover:underline">
+              How long hits last, by subgenre
+            </Link>
+          </div>
+          <p className="text-text-2">
+            Its best week we saw ended {fmtDay(life.peakDayMs)} {new Date(life.peakDayMs).getUTCFullYear()} at {fmtInt(life.peak7)} players.{" "}
+            {life.half === null
+              ? `${fmtInt(life.followed)} days on, it is still above half that.`
+              : `It fell below half ${fmtDays(life.halfEarly, life.half)} days later${
+                  life.tenth === null ? ", and is still above a tenth." : ` and below a tenth ${fmtDays(life.tenthEarly, life.tenth)} days later.`
+                }`}
+          </p>
+          <p className="text-text-2">
+            A typical {lifeBench.group === "Every hit" ? "" : `${lifeBench.group} `}hit ({fmtInt(lifeBench.n)} made since mid-April that reached {fmtInt(HIT_PLAYERS)}{" "}
+            players){" "}
+            {lifeBench.halfMedian === null
+              ? "has mostly not yet fallen below half"
+              : `falls below half in ${fmtDays(lifeBench.halfEarly, lifeBench.halfMedian)} days`}
+            {lifeBench.tenthMedian === null ? "" : ` and below a tenth in ${fmtDays(lifeBench.tenthEarly, lifeBench.tenthMedian)}`}.
+            {life.half !== null && life.halfEarly !== null && lifeBench.halfMedian !== null && lifeBench.halfEarly !== null
+              ? life.half < lifeBench.halfEarly * 0.75
+                ? " This one fell faster than most."
+                : life.halfEarly > lifeBench.halfMedian * 1.33
+                  ? " This one held on longer than most."
+                  : life.half <= lifeBench.halfMedian * 1.33 && life.halfEarly >= lifeBench.halfEarly * 0.75
+                    ? " This one fell at about the usual pace."
+                    : ""
+              : ""}
+          </p>
+          <p className="text-[13px] text-muted-foreground">
+            Measured on the 7-day average. {life.fresh ? "" : "It was made before tracking began, so its real peak may have come earlier. "}Until 25 October a game was only
+            read while in the discovery lists, so a fall while a game was out of them is given as a range between two readings.
+          </p>
+        </section>
+      ) : null}
+
+      {related ? (
+        <section aria-labelledby="related" className="flex flex-col gap-3 rounded-2xl border border-border bg-card px-6 py-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="related" className="font-heading text-[22px] font-bold">
+              Sequels and copies
+            </h2>
+            {g.studioHref ? (
+              <Link href={g.studioHref} className="text-sm text-link hover:underline">
+                Studio page: {g.creatorName ?? "this studio"}
+              </Link>
+            ) : null}
+          </div>
+          {related.games.length ? (
+            <>
+              <p className="text-sm text-text-2">
+                {fmtInt(related.total)} other {related.total === 1 ? "game is" : "games are"} named like this one
+                {related.afterPeak ? `, ${fmtInt(related.afterPeak)} of them made after its peak week` : ""}.
+                {related.total > related.games.length ? ` The ${related.games.length} biggest:` : ""}
+              </p>
+              <div className="relative overflow-x-auto">
+                <table className="w-full min-w-[720px] border-collapse text-sm tabular-nums">
+                  <thead>
+                    <tr className="text-right text-xs text-muted-foreground">
+                      <th scope="col" className="py-2 pr-2 text-left font-medium">Game</th>
+                      <th scope="col" className="px-2 py-2 text-left font-medium">By</th>
+                      <th scope="col" className="px-2 py-2 text-left font-medium">Created</th>
+                      <th scope="col" className="px-2 py-2 font-medium">Best week</th>
+                      <th scope="col" className="py-2 pl-2 font-medium">Now</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-right">
+                    {related.games.map((r) => (
+                      <tr key={r.universeId} className="border-t border-rule">
+                        <th scope="row" className="max-w-[260px] truncate py-2 pr-2 text-left font-medium">
+                          <Link href={`/games/${r.universeId}`} className="hover:text-link">
+                            {displayName(r.name)}
+                          </Link>
+                        </th>
+                        <td className="max-w-[180px] truncate px-2 py-2 text-left text-text-2">
+                          {r.studioHref ? (
+                            <Link href={r.studioHref} className="hover:text-link">
+                              {r.creatorName ?? "Unknown"}
+                            </Link>
+                          ) : (
+                            (r.creatorName ?? "Unknown")
+                          )}
+                          {r.sameCreator ? <span className="ml-2 rounded-full bg-rise/15 px-2 py-0.5 text-[11px] text-rise">Same studio</span> : null}
+                        </td>
+                        <td className="whitespace-nowrap px-2 py-2 text-left">
+                          {r.createdMs === null ? (
+                            "—"
+                          ) : (
+                            <>
+                              {fmtDay(r.createdMs)} {new Date(r.createdMs).getUTCFullYear()}
+                              <span className="block text-xs text-muted-foreground">
+                                {g.createdMs && r.createdMs < g.createdMs ? "older than this game" : g.peak7DayMs ? vsPeak(r.createdMs, g.peak7DayMs) : null}
+                              </span>
+                            </>
+                          )}
+                        </td>
+                        <td className="px-2 py-2">{r.peak7 === null ? "—" : fmtInt(r.peak7)}</td>
+                        <td className="py-2 pl-2">{r.cur7 === null ? <span className="text-muted-foreground">—</span> : fmtInt(r.cur7)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          ) : (
+            <p className="text-sm text-text-2">No other game we track is named like this one: no sequel or copy under its name.</p>
+          )}
+          <p className="text-[13px] text-muted-foreground">
+            Matched on the words of the name, with rare words counting for more{related.words.length ? ` (${related.words.join(", ")})` : ""}, across
+            every game that has reached the discovery lists. A sequel under a new name won&apos;t show here. Best week is the highest 7-day average of
+            players.
           </p>
         </section>
       ) : null}

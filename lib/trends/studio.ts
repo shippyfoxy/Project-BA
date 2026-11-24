@@ -8,7 +8,7 @@ const MIN_PEERS = 10;
 // What games like this one earn per concurrent player, from the games in the
 // Top Earning list with 1,000+ players: its subgenre if 10 or more qualify,
 // else its genre, else every listed game. Listed games are the top earners,
-// so this reads high for a game outside the list.
+// so this can read high for a game outside the list (though it read low for Bloxburg; see /methodology#revenue-checks).
 export interface PerPlayer {
   basis: string; // the group the figures come from
   n: number;

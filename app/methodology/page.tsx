@@ -182,7 +182,7 @@ crowding  new games arriving 1.5× faster than across every
             <a href="https://www.roblox.com/charts/top-earning" className="text-link underline">
               Top Earning
             </a>{" "}
-            list (computer, all locations), which Roblox sorts by Robux spent in the last 7 days. About 460 games are listed. Recording
+            list (computer, all locations), which Roblox sorts by Robux spent in the last 7 days. About 460 to 560 games are listed, depending on the day. Recording
             started on 3 November 2026.
           </p>
           <p>
@@ -220,6 +220,47 @@ range shown         = 0.7× the rank below to 1.5× the rank above`}</Formula>
             </a>
             .
           </p>
+          <h3 id="revenue-checks" className="mt-2 font-heading text-lg font-bold text-foreground">
+            Checks against published numbers
+          </h3>
+          <p>
+            Almost no Roblox game publishes its earnings, so there is little to check the model against. As of November 2026 the formula is
+            unchanged; this is what the few public figures say:
+          </p>
+          <ul className="flex list-disc flex-col gap-2 pl-5">
+            <li>
+              <strong className="text-foreground">Welcome to Bloxburg, the one company-reported figure.</strong> Its owner Coffee Stain reported
+              about SEK 20M ($2.1M) of Bloxburg sales for April to June 2026, about $0.7M a month (
+              <a href="https://wnhub.io/news/finance/item-51670" className="text-link underline">
+                WN Hub
+              </a>
+              ). For May and June the players-based estimate gives $140k to $470k a month, and its Top Earning rank today would give about
+              $0.45M at those months&apos; players: the model reads low for Bloxburg, by 1.5 to 5 times. Bloxburg charges to enter, which may
+              earn more per player than most games. One game is too few to recalibrate on, so read every estimate as possibly low by that much.
+            </li>
+            <li>
+              <strong className="text-foreground">Blue Lock: Rivals.</strong> Its creator told Bloomberg it took about $5M a month in player
+              purchases in 2024 with over a million players at its peak: about $1 of payout per peak player, or roughly $2 to $4 per average
+              player. The model gives it about $3.40 per average player now, at a much smaller size (
+              <a href="https://www.thestar.com.my/tech/tech-news/2025/07/14/roblox-game-buying-frenzy-is-turning-teens-into-millionaires" className="text-link underline">
+                Bloomberg via The Star
+              </a>
+              ).
+            </li>
+            <li>
+              <strong className="text-foreground">The whole platform, a consistency check only.</strong> Roblox paid creators $403M through
+              DevEx in Q3 2026, about $134M a month, for every experience and avatar item (
+              <a href="https://www.sec.gov/Archives/edgar/data/0001315098/000162828026068253/rblx-20260930.htm" className="text-link underline">
+                Q3 2026 10-Q
+              </a>
+              ). The model puts the games in the Top Earning list, about 560 by November, at about $82M a month. That fits, but it is not an
+              independent test: the curve was fitted to Roblox&apos;s own creator payout totals.
+            </li>
+            <li>
+              <strong className="text-foreground">Per player.</strong> Across the platform creators earn about $9 a month per average concurrent
+              player; listed games earn a median of about $12 under the model, as expected of the top earners.
+            </li>
+          </ul>
         </Section>
 
         <Section id="limits" title="What this can't tell you">

@@ -1,5 +1,6 @@
 import type { Db } from "@/lib/db/client";
 import { quantile } from "@/lib/stats";
+import { displayName } from "./names";
 
 // Two kinds of event:
 // - a publish: Roblox's "updated" time changed. Studios publish small fixes
@@ -50,7 +51,23 @@ export interface UpdateImpact {
   recent: { universeId: number; name: string; prevName: string; genre: string; dayMs: number; lift: number; before: number }[];
   // Announced in the last few days: the result needs two complete days after.
   pending: { universeId: number; name: string; prevName: string; genre: string; dayMs: number; before: number; resultMs: number }[];
+  // A new name, not just a new tag: "Pet Catchers" to "Pet Catchers 2" or a whole rebrand.
+  renames: LiftSummary;
+  recentRenames: { universeId: number; name: string; prevName: string; genre: string; dayMs: number; lift: number; before: number }[];
 }
+
+// The name itself changed, ignoring tags, emoji, case and punctuation.
+export const isRenamed = (prev: string, next: string) => {
+  const NOISE = /^(update|upd|v?\d+(\.\d+)*|new|event|beta|alpha|release|released|out|now|soon|part)$/;
+  const core = (n: string) =>
+    displayName(n)
+      .replace(/[[(][^\])]*[\])]/g, " ")
+      .toLowerCase()
+      .split(/[^\p{L}\p{N}.]+/u)
+      .filter((w) => w && !NOISE.test(w))
+      .join(" ");
+  return core(prev) !== core(next) && core(next).length > 0;
+};
 
 interface EventLift {
   universe_id: number;
@@ -146,6 +163,11 @@ export async function getUpdateImpact(db: Db): Promise<UpdateImpact | null> {
     ? await db.query<EventLift>(LIFT_SQL, [JSON.stringify(announced.map((t) => ({ universe_id: t.universe_id, day: evDay(t.first_ms) })))])
     : [];
 
+  const renamed = titles.filter((t) => isRenamed(t.prev_name, t.name));
+  const renameLifts = renamed.length
+    ? await db.query<EventLift>(LIFT_SQL, [JSON.stringify(renamed.map((t) => ({ universe_id: t.universe_id, day: evDay(t.first_ms) })))])
+    : [];
+
   const withLift = (rows: EventLift[]) => rows.map((r) => ({ ...r, lift: r.after / r.before - 1 }));
   const pubLifts = withLift(publishes);
   const annLifts = withLift(announcedLifts);
@@ -190,8 +212,22 @@ export async function getUpdateImpact(db: Db): Promise<UpdateImpact | null> {
     pending.push({ universeId: t.universe_id, name: t.name, prevName: t.prev_name, genre: t.genre, dayMs, before, resultMs: dayMs + 3 * DAY_MS });
   }
 
+  const renameBy = new Map(withLift(renameLifts).map((r) => [`${r.universe_id}|${r.day}`, r]));
+  const renameSeen = new Set<string>();
+  const recentRenames: UpdateImpact["recentRenames"] = [];
+  for (const t of renamed) {
+    const day = evDay(t.first_ms);
+    const key = `${t.universe_id}|${day}`;
+    const r = renameBy.get(key);
+    if (!r || renameSeen.has(key)) continue;
+    renameSeen.add(key);
+    recentRenames.push({ universeId: t.universe_id, name: t.name, prevName: t.prev_name, genre: t.genre, dayMs: Date.parse(day), lift: r.lift, before: r.before });
+  }
+
   return {
     since: range.first!,
+    renames: summarise(recentRenames.map((r) => ({ universe_id: r.universeId, lift: r.lift }))),
+    recentRenames: recentRenames.sort((a, b) => b.dayMs - a.dayMs).slice(0, 25),
     publishes: summarise(pubLifts),
     announced: summarise(annLifts),
     byWeekday: [...weekday].map(([dow, xs]) => ({ dow, ...stats(xs) })).sort((a, b) => a.dow - b.dow),

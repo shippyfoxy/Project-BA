@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { CsvButton } from "@/components/v2/CsvButton";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { getSiteDb } from "@/lib/db/site";
-import { getCachedRevenuePage } from "@/lib/trends/cached";
+import { getCachedHitLives, getCachedRevenuePage } from "@/lib/trends/cached";
+import { fmtDays, lifeFor } from "@/lib/trends/lifespan";
+import { getRelatedGames } from "@/lib/trends/related";
 import { getStudio, type TrackedGame } from "@/lib/trends/studio";
 import { fmtUsdEstimate } from "@/lib/trends/revenue";
 import { displayName } from "@/lib/trends/names";
@@ -13,6 +16,7 @@ import { fmtCompact, fmtDay, fmtInt } from "@/lib/format";
 import { niceMax } from "@/lib/stats";
 import { LineChart } from "@/components/v2/LineChart";
 import { GenreChip } from "@/components/v2/GenreChip";
+import { FollowButton } from "@/components/v2/FollowButton";
 
 // shortcut: revenue here is shown to everyone, not behind the Pro paywall (which is off); gate it before switching the paywall on.
 export const revalidate = 3600;
@@ -64,7 +68,7 @@ function MonthTable({ g }: { g: TrackedGame }) {
   const sourceNote = { rank: "from its Top Earning rank", players: "from its players", capped: "off the list: below its lowest rank" };
   return (
     <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-      <table className="pin w-full min-w-[760px] border-collapse text-sm tabular-nums">
+      <table id={`months-${g.universeId}`} className="pin w-full min-w-[760px] border-collapse text-sm tabular-nums">
         <caption className="sr-only">{displayName(g.name)} by month: players and modelled revenue</caption>
         <thead>
           <tr className="text-right text-xs text-muted-foreground">
@@ -129,6 +133,10 @@ export default async function StudioPage({ params }: { params: Promise<{ kind: s
 
   // Facts for the cross-pattern question: did anything follow the biggest game?
   const lead = tracked[0];
+  const db = getSiteDb();
+  const [hitLives, related] = lead
+    ? await Promise.all([getCachedHitLives().catch(() => []), db ? getRelatedGames(db, lead.universeId).catch(() => null) : null])
+    : [[], null];
   const notes: string[] = [];
   if (lead) {
     const drop = lead.cur7 !== null && lead.peak > 0 ? 1 - lead.cur7 / lead.peak : null;
@@ -145,7 +153,18 @@ export default async function StudioPage({ params }: { params: Promise<{ kind: s
           `${after[0].playing !== null ? ` (${fmtInt(after[0].playing)} playing now)` : ""}.`,
       );
     else notes.push("None of its other public games was created after that peak.");
-    notes.push("A sequel published under a different group or account can't be linked from public data.");
+    const life = hitLives.find((h) => h.universeId === lead.universeId);
+    const bench = hitLives.length ? lifeFor(hitLives, lead.genre, lead.subgenre) : null;
+    if (life?.half != null && bench?.halfMedian != null)
+      notes.push(
+        `It fell below half its best week in ${fmtDays(life.halfEarly, life.half)} days; a typical ${bench.group === "Every hit" ? "" : `${bench.group} `}hit takes ${fmtDays(bench.halfEarly, bench.halfMedian)}.`,
+      );
+    const elsewhere = related?.games.filter((r) => !r.sameCreator) ?? [];
+    notes.push(
+      elsewhere.length
+        ? `${elsewhere.length === related!.games.length ? fmtInt(related!.total) : fmtInt(elsewhere.length)} games by other studios are named like it, the biggest ${displayName(elsewhere[0].name)} by ${elsewhere[0].creatorName ?? "an unknown creator"}: see its game page for the list. A sequel under a new name can't be linked.`
+        : "No game by another studio is named like it, so no sequel under its name elsewhere; one under a new name can't be linked.",
+    );
   }
   const yTop = niceMax(Math.max(1, ...(studio?.series ?? []).flatMap((s) => s.points.map((p) => p[1]))));
   const allPoints = (studio?.series ?? []).flatMap((s) => s.points.map((p) => p[0]));
@@ -154,7 +173,10 @@ export default async function StudioPage({ params }: { params: Promise<{ kind: s
     <main className="mx-auto flex max-w-6xl flex-col gap-9 px-4 pb-16 pt-6 md:px-6">
       <header className="flex flex-col gap-3">
         <span className="text-[13px] text-muted-foreground">{ok.kind === "group" ? "Group" : "Developer"}</span>
-        <h1 className="font-heading text-[clamp(36px,6vw,52px)] font-extrabold leading-[1.05] tracking-[-0.03em]">{name}</h1>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <h1 className="font-heading text-[clamp(36px,6vw,52px)] font-extrabold leading-[1.05] tracking-[-0.03em]">{name}</h1>
+          <FollowButton kind="s" value={`${ok.kind}:${ok.id}`} label={name} />
+        </div>
         <p className="max-w-[760px] text-base text-text-2">
           Every public game {name} has on Roblox, the ones we track with their player history, and what they are estimated to have earned month by
           month.{" "}
@@ -267,6 +289,7 @@ export default async function StudioPage({ params }: { params: Promise<{ kind: s
             <span className="flex items-center gap-2 text-[13px] text-muted-foreground">
               <GenreChip genre={g.genre} link />
               {g.subgenre ?? ""}
+              <CsvButton table={`months-${g.universeId}`} file={`${displayName(g.name)} by month`} />
             </span>
           </div>
           <MonthTable g={g} />
@@ -274,8 +297,9 @@ export default async function StudioPage({ params }: { params: Promise<{ kind: s
             Months with few days of data (amber) rest on the days the game was in the discovery lists, so read them loosely. Without a Top Earning
             rank, a month is estimated from players: {displayName(g.name)}&apos;s average players times what {g.perPlayer.basis} games in the Top
             Earning list earn per player (${Math.round(g.perPlayer.p25)} to ${Math.round(g.perPlayer.p75)} a month, the middle half of{" "}
-            {g.perPlayer.n} games). Tested on listed games, this lands within about a factor of two half the time, and listed games are the top
-            earners, so it reads high for a game outside the list.
+            {g.perPlayer.n} games). Tested on listed games, this lands within about a factor of two half the time. Listed games are the top
+            earners, so it can read high for a game outside the list, but against Welcome to Bloxburg&apos;s reported sales it read low:
+            take it as a factor of two either way.
             {studio?.earningFrom ? ` Ranks are recorded from ${fullDate(Date.parse(studio.earningFrom))}.` : ""}
           </p>
         </section>

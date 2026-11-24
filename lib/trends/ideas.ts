@@ -87,6 +87,9 @@ export function nameWords(raw: string): string[] {
   return clean.match(/\+\d+|[\p{L}\p{N}']+/gu)?.map((w) => w.replace(/^'+|'+$/g, "")).filter(Boolean) ?? [];
 }
 
+// The words of a name that say something about the game.
+export const distinctWords = (raw: string): string[] => [...new Set(nameWords(raw).filter((w) => !STOP.has(w) && !/^\d+$/.test(w) && w.length > 1))];
+
 // One-word and two-word patterns in a name. A pair may include a small word
 // ("steal a"), but not only small words or bare numbers.
 export function nameTerms(raw: string): string[] {
