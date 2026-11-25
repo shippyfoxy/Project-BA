@@ -8,7 +8,7 @@ import { getActiveGames, getTrendsHome } from "@/lib/trends/home";
 import { getGameHistory, loadWeekAggregates } from "@/lib/trends/game";
 import { DEFAULT_FILTERS, filtersToQuery, parseFilters, screenGames } from "@/lib/trends/screener";
 import { genreBenchmarks, getGenreTrends } from "@/lib/trends/genreTrends";
-import { perPlayerRange } from "@/lib/trends/studio";
+import { getGameTotals, getStudio, lifetimeEstimate, lifetimeNote, perPlayerRange } from "@/lib/trends/studio";
 import { getRelatedGames, nameScore } from "@/lib/trends/related";
 import { cadenceLives, fmtDays, getHitLives, kmMedian } from "@/lib/trends/lifespan";
 import { getStudios } from "@/lib/trends/studios";
@@ -167,6 +167,11 @@ describe("genre trends and compare", () => {
     expect(sunset.halfEarly).toBeLessThanOrEqual(sunset.half!);
     expect(await cadenceLives(db, lives)).toEqual([]);
     expect((await getRelatedGames(db, 1))?.games).toEqual([]);
+    const totals = await getGameTotals(db, [1, 2], []);
+    expect(totals.map((t) => t.universeId).sort()).toEqual([1, 2]);
+    const one = await getStudio(db, "group", 7, [], 2);
+    expect(one.tracked.map((t) => t.universeId)).toEqual([2]);
+    expect(totals.find((t) => t.universeId === 2)!.total).toEqual(one.tracked[0].total); // NaN in the fixture: no listed peers
     const [studio] = await getStudios(db, []);
     expect(studio).toMatchObject({ kind: "group", id: 7, games: 3 });
     const w = await getWatch(db, { games: [1, 2], studios: [], subgenres: [] }, { hitLives: lives, subgenres: [] });
@@ -193,6 +198,16 @@ describe("genre trends and compare", () => {
     expect(perPlayerRange(listed, "Tycoon", "Simulation")).toMatchObject({ basis: "Tycoon", n: 10, p50: 14.5 });
     expect(perPlayerRange(listed, "Idle", "Simulation")).toMatchObject({ basis: "Simulation", n: 13 });
     expect(perPlayerRange(listed, null, "RPG")).toMatchObject({ basis: "every listed game", n: 14 });
+  });
+
+  it("scales tracked revenue to lifetime by the share of visits tracked", () => {
+    // 1M visits before tracking, 1M while tracked: half the visits, so double the tracked total.
+    const l = lifetimeEstimate({ low: 10, mid: 20, high: 40 }, 1_000_000, 2_000_000)!;
+    expect(l.est).toEqual({ low: 20, mid: 40, high: 80 });
+    expect(lifetimeNote(l)).toBe("50% of its 2M visits tracked");
+    expect(lifetimeNote(lifetimeEstimate({ low: 1, mid: 1, high: 1 }, 90, 100)!)).toMatch(/: mostly extrapolated$/);
+    expect(lifetimeEstimate({ low: 1, mid: 1, high: 1 }, 100, 100)).toBeNull(); // no visits while tracked
+    expect(lifetimeEstimate({ low: 1, mid: 1, high: 1 }, null, 100)).toBeNull();
   });
 
   it("benchmarks genres from the week aggregates", async () => {
@@ -254,6 +269,7 @@ describe("top earning ranks and revenue estimates", () => {
     expect(r100.high).toBeCloseTo(estMonthlyDevEx(99)!.mid * 1.5);
     expect(fmtUsdEstimate(r100.mid)).toBe("$110k");
     expect(fmtUsdEstimate(1_234_567)).toBe("$1.2M");
+    expect(fmtUsdEstimate(1_234_567_890)).toBe("$1.2B");
     expect(fmtUsdEstimate(996_000)).toBe("$1M");
     expect(fmtUsdEstimate(13_260_000)).toBe("$13M");
     expect(fmtUsdEstimate(9_282_000)).toBe("$9.3M");

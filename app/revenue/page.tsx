@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CsvButton } from "@/components/v2/CsvButton";
-import { getCachedGenreTrends, getCachedRevenuePage } from "@/lib/trends/cached";
+import { getCachedGenreTrends, getCachedListedTotals, getCachedRevenuePage } from "@/lib/trends/cached";
 import { estMonthlyDevEx, fmtUsdEstimate } from "@/lib/trends/revenue";
 import type { RankedGame } from "@/lib/trends/revenuePage";
 import { displayName } from "@/lib/trends/names";
@@ -25,6 +25,8 @@ export const metadata: Metadata = {
 
 const SHOWN = 100;
 const PREVIEW = 5;
+const YEAR_MIN = [1, 5, 10, 50]; // $M a year, for the filter
+const SORTS = { rank: "Top Earning rank", tracked: "Since we started tracking", lifetime: "Since launch (rough)" } as const;
 
 function Upgrade() {
   return (
@@ -113,7 +115,8 @@ function MoverCard({ title, games, icons }: { title: string; games: RankedGame[]
 export default async function RevenuePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const sp = await searchParams;
   const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || null;
-  const [data, trends] = await Promise.all([getCachedRevenuePage(), getCachedGenreTrends()]);
+  const [data, trends, totalsList] = await Promise.all([getCachedRevenuePage(), getCachedGenreTrends(), getCachedListedTotals().catch(() => [])]);
+  const totals = new Map(totalsList.map((t) => [t.universeId, t]));
   if (!data || data.games.length === 0) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-16 md:px-6">
@@ -131,9 +134,19 @@ export default async function RevenuePage({ searchParams }: { searchParams: Prom
   const genre = genreNames.includes(one(sp.genre) ?? "") ? one(sp.genre) : null;
   const subNames = [...new Set(allGames.filter((g) => !genre || g.genre === genre).flatMap((g) => g.subgenre ?? []))].sort();
   const sub = subNames.includes(one(sp.sub) ?? "") ? one(sp.sub) : null;
-  const games = allGames.filter((g) => (!genre || g.genre === genre) && (!sub || g.subgenre === sub));
+  const yearMin = YEAR_MIN.find((m) => String(m) === one(sp.year)) ?? null;
+  const sort = (one(sp.sort) ?? "rank") in SORTS ? (one(sp.sort) as keyof typeof SORTS) : "rank";
+  const perYear = (g: RankedGame) => g.estMonthly * 12;
+  const sortValue = (g: RankedGame) => {
+    const t = totals.get(g.universeId);
+    return sort === "tracked" ? (t?.total.mid ?? 0) : (t?.lifetime?.est.mid ?? t?.total.mid ?? 0);
+  };
+  const games = allGames
+    .filter((g) => (!genre || g.genre === genre) && (!sub || g.subgenre === sub) && (!yearMin || perYear(g) >= yearMin * 1e6))
+    .sort((a, b) => (sort === "rank" ? 0 : sortValue(b) - sortValue(a)));
   const shown = games.slice(0, pro ? SHOWN : PREVIEW);
   const filterQuery = `${genre ? `&genre=${encodeURIComponent(genre)}` : ""}${sub ? `&sub=${encodeURIComponent(sub)}` : ""}`;
+  const since = (ms: number) => `${fmtDay(ms)} ${new Date(ms).getUTCFullYear()}`;
   const climbers = prevDay
     ? games
         .filter((g) => g.prevRank !== null && g.prevRank - g.rank >= 5)
@@ -266,8 +279,29 @@ export default async function RevenuePage({ searchParams }: { searchParams: Prom
               ))}
             </select>
           </label>
+          <label className="flex flex-col gap-1 text-[13px] text-muted-foreground">
+            Per year, at least
+            <select name="year" defaultValue={yearMin ? String(yearMin) : ""} className="select">
+              <option value="">Any</option>
+              {YEAR_MIN.map((m) => (
+                <option key={m} value={m}>
+                  ${m}M a year
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-[13px] text-muted-foreground">
+            Sort by
+            <select name="sort" defaultValue={sort} className="select">
+              {Object.entries(SORTS).map(([k, label]) => (
+                <option key={k} value={k}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
           <ApplyButton />
-          {genre || sub ? (
+          {genre || sub || yearMin ? (
             <span className="pb-2.5 text-[13px] text-muted-foreground">
               {fmtInt(games.length)} of {fmtInt(allGames.length)} games; ranks are across the whole list
             </span>
@@ -277,7 +311,7 @@ export default async function RevenuePage({ searchParams }: { searchParams: Prom
           <CsvButton table="top-earning" file="roblox-top-earning" />
         </div>
         <div className="relative overflow-x-auto rounded-2xl border border-border bg-card">
-          <table id="top-earning" className="pin w-full min-w-[880px] border-collapse text-sm tabular-nums">
+          <table id="top-earning" className="pin w-full min-w-[1180px] border-collapse text-sm tabular-nums">
             <thead>
               <tr className="text-right text-xs text-muted-foreground">
                 <th scope="col" className="w-14 px-4 py-3 text-left font-medium">
@@ -298,6 +332,15 @@ export default async function RevenuePage({ searchParams }: { searchParams: Prom
                   Range
                 </th>
                 <th scope="col" className="px-2 py-3 font-medium">
+                  Per year at this pace
+                </th>
+                <th scope="col" className="px-2 py-3 font-medium">
+                  Since tracking
+                </th>
+                <th scope="col" className="px-2 py-3 font-medium">
+                  Since launch, rough
+                </th>
+                <th scope="col" className="px-2 py-3 font-medium">
                   7-day avg players
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium">
@@ -309,6 +352,7 @@ export default async function RevenuePage({ searchParams }: { searchParams: Prom
               {shown.map((g) => {
                 const name = displayName(g.name);
                 const est = estMonthlyDevEx(g.effRank)!;
+                const t = totals.get(g.universeId);
                 return (
                   <tr key={g.universeId} className="border-t border-rule hover:bg-surface-2">
                     <td className="px-4 py-2.5 text-left text-text-2">#{g.rank}</td>
@@ -334,6 +378,33 @@ export default async function RevenuePage({ searchParams }: { searchParams: Prom
                     <td className="px-2 py-2.5 text-text-2">
                       {pro ? `${fmtUsdEstimate(est.low)} to ${fmtUsdEstimate(est.high)}` : <ProLock />}
                     </td>
+                    <td className="px-2 py-2.5">{pro ? fmtUsdEstimate(est.mid * 12) : <ProLock />}</td>
+                    <td className="px-2 py-2.5">
+                      {!pro ? (
+                        <ProLock />
+                      ) : t ? (
+                        <>
+                          {fmtUsdEstimate(t.total.mid)}
+                          <span className="block text-xs text-muted-foreground">since {since(t.firstSeenMs)}</span>
+                        </>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </td>
+                    <td className="px-2 py-2.5">
+                      {!pro ? (
+                        <ProLock />
+                      ) : t?.lifetime ? (
+                        <>
+                          {fmtUsdEstimate(t.lifetime.est.mid)}
+                          <span className={`block text-xs ${t.lifetime.trackedShare < 0.25 ? "text-gold" : "text-muted-foreground"}`}>
+                            {Math.max(1, Math.round(t.lifetime.trackedShare * 100))}% of visits tracked
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </td>
                     <td className="px-2 py-2.5">{g.cur7 === null ? <span className="text-muted-foreground">—</span> : fmtInt(g.cur7)}</td>
                     <td className="px-4 py-2.5">
                       {g.cur7 === null || g.cur7 < 1_000 ? (
@@ -352,7 +423,12 @@ export default async function RevenuePage({ searchParams }: { searchParams: Prom
         </div>
         <p className="text-[13px] text-muted-foreground">
           {pro ? `Showing the top ${SHOWN}.` : `A preview of the top ${PREVIEW}; ranks for every game are free in Explore.`} Per player is
-          the estimated monthly payout divided by average concurrent players, for games averaging 1,000+.
+          the estimated monthly payout divided by average concurrent players, for games averaging 1,000+. Per year at this pace is the
+          monthly estimate times 12, a projection: a game younger than a year has not earned it yet. Since tracking adds up each month from the first reading; since launch scales that by lifetime visits and is
+          rough, most of all where little of a game&apos;s life was tracked (amber).{" "}
+          <Link href="/methodology#lifetime" className="text-link underline">
+            How
+          </Link>
         </p>
       </section>
 

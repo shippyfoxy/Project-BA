@@ -39,6 +39,7 @@ export interface GameHistory {
   name: string;
   creatorName: string;
   studioHref: string | null; // the studio page, once the creator id is known
+  creator: { kind: "group" | "user"; id: number } | null;
   genre: string;
   genreL2: string | null;
   createdMs: number | null;
@@ -360,6 +361,7 @@ export async function getGameHistory(
     name: game.name,
     creatorName: game.creator_name ?? "Unknown",
     studioHref: game.creator_id ? `/studios/${game.creator_type === "User" ? "user" : "group"}/${game.creator_id}` : null,
+    creator: game.creator_id ? { kind: game.creator_type === "User" ? "user" : "group", id: game.creator_id } : null,
     genre: game.genre,
     genreL2: game.genre_l2,
     createdMs: game.created_ms,

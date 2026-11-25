@@ -220,6 +220,71 @@ range shown         = 0.7× the rank below to 1.5× the rank above`}</Formula>
             </a>
             .
           </p>
+          <h3 id="lifetime" className="mt-2 scroll-mt-6 font-heading text-lg font-bold text-foreground">
+            Lifetime revenue
+          </h3>
+          <p>
+            Game and studio pages add up a game&apos;s estimated revenue month by month from its first reading: from its Top Earning rank on
+            days it is listed; before that, from its players times what it earns per player on its ranked days; and for a game never listed,
+            from its players times what similar listed games earn per player. Using a game&apos;s own rate matters: Adopt Me! earns about $7 a
+            month per player by its rank against a listed median near $12, and pricing its earlier months at the median had tripled them.
+            This covers only the time we have tracked it, from May 2026 at the earliest.
+          </p>
+          <p>
+            For the time before, the one public measure that reaches back to launch is lifetime visits. The lifetime figure divides the tracked
+            total by the share of lifetime visits that happened while we tracked the game:
+          </p>
+          <Formula>{`lifetime revenue = tracked revenue ÷ (visits while tracked ÷ lifetime visits)`}</Formula>
+          <ul className="flex list-disc flex-col gap-2 pl-5">
+            <li>
+              It assumes a visit before tracking earned what a visit earns now. Spending habits, Robux prices, the game&apos;s own shop and the
+              DevEx rate (raised from $0.0035 to $0.0038 in September 2025) have all changed over the years, so this is rough. It reads low
+              for a hit that earned more per visit at its height than it does now: Grow a Garden, which trackers put above 20 million players
+              at once in 2025, comes out near $56M because each visit today earns far less than one did then. It reads high for a game that
+              earns more per visit now than it used to.
+            </li>
+            <li>
+              Each page shows the tracked share. For a game made since May 2026 it is close to all of its visits and the figure is as good
+              as the monthly estimates; for an older game such as Adopt Me! it can be a few per cent, and the page marks the figure as mostly
+              extrapolated. Its range carries only the monthly model&apos;s uncertainty, not the extrapolation&apos;s, so the real uncertainty
+              is wider than shown.
+            </li>
+            <li>Visits count every join, so a game played in short sessions earns less per visit than one played in long ones.</li>
+          </ul>
+          <h3 id="payouts-2026" className="mt-2 scroll-mt-6 font-heading text-lg font-bold text-foreground">
+            Changes to how creators are paid
+          </h3>
+          <ul className="flex list-disc flex-col gap-2 pl-5">
+            <li>
+              <strong className="text-foreground">The US 18+ rate.</strong> Since 8 June 2026, Robux spent by age-checked US players aged 18
+              and over pays $0.0054 per Robux instead of $0.0038, in games that use R15 avatars or show no characters. It covers game passes,
+              developer products, subscriptions, private servers and, since 21 September, paid access (
+              <a href="https://devforum.roblox.com/t/introducing-the-us-18-devex-rate-earn-42-more-on-spend-from-18-us-players/4607091" className="text-link underline">
+                Roblox DevForum
+              </a>
+              ). The model uses $0.0038 throughout, so it reads somewhat low for games with many US adult players.
+            </li>
+            <li>
+              <strong className="text-foreground">Creator Rewards.</strong> Payouts based on Premium members&apos; playtime ended in July
+              2025. Creator Rewards replaced them: 5 Robux a day for each player who has spent $9.99 or more in the last 60 days and plays a
+              game for 10 minutes (one of their first three games that day), plus 35% of new or returning players&apos; first $100 of
+              purchases (
+              <a href="https://create.roblox.com/docs/creator-rewards" className="text-link underline">
+                Creator Docs
+              </a>
+              ). Roblox doesn&apos;t say how many of a game&apos;s players qualify. These rewards are not Robux spent in the game, so the Top
+              Earning list probably doesn&apos;t count them, while the payout totals the curve was fitted to do.
+            </li>
+            <li>
+              <strong className="text-foreground">Roblox Wallet.</strong> From December 2026, US creators aged 18+ who are sole traders can opt
+              in to automatic payouts in dollars every business day, after a hold of up to 30 days; Roblox plans to move away from DevEx in the
+              US in mid-2027 (
+              <a href="https://devforum.roblox.com/t/introducing-roblox-wallet-and-card-get-paid-faster/4865505" className="text-link underline">
+                Roblox DevForum
+              </a>
+              ). This changes when creators are paid, not how much, so the estimates are unaffected.
+            </li>
+          </ul>
           <h3 id="revenue-checks" className="mt-2 font-heading text-lg font-bold text-foreground">
             Checks against published numbers
           </h3>
@@ -234,9 +299,14 @@ range shown         = 0.7× the rank below to 1.5× the rank above`}</Formula>
               <a href="https://wnhub.io/news/finance/item-51670" className="text-link underline">
                 WN Hub
               </a>
-              ). For May and June the players-based estimate gives $140k to $470k a month, and its Top Earning rank today would give about
-              $0.45M at those months&apos; players: the model reads low for Bloxburg, by 1.5 to 5 times. Bloxburg charges to enter, which may
-              earn more per player than most games. One game is too few to recalibrate on, so read every estimate as possibly low by that much.
+              ), and SEK 19M (about $2M, $0.67M a month) for July to September 2026, down from SEK 25M a year earlier (
+              <a href="https://coffeestain.com/wp-content/uploads/coffee-stain-group-interim-report-q2-26-27.pdf" className="text-link underline">
+                Coffee Stain Q2 report
+              </a>
+              ). At its Top Earning rank now the model gives about $270k a month: it reads low for Bloxburg by about 2.5 times. Bloxburg
+              charges to enter, which may earn more per player than most games. Since launch the model gives about $100M, while an investor
+              account (not Embracer itself) cites SEK 388.7M, about $37M, of revenue in its 18-month 2021/22 year alone, so its lifetime reads
+              low too. One game is too few to recalibrate on, so read every estimate as possibly low by that much.
             </li>
             <li>
               <strong className="text-foreground">Blue Lock: Rivals.</strong> Its creator told Bloomberg it took about $5M a month in player
@@ -253,8 +323,44 @@ range shown         = 0.7× the rank below to 1.5× the rank above`}</Formula>
               <a href="https://www.sec.gov/Archives/edgar/data/0001315098/000162828026068253/rblx-20260930.htm" className="text-link underline">
                 Q3 2026 10-Q
               </a>
-              ). The model puts the games in the Top Earning list, about 560 by November, at about $82M a month. That fits, but it is not an
+              ). The model puts the games in the Top Earning list, about 460 to 560 depending on the day, at about $80M a month. That fits, but it is not an
               independent test: the curve was fitted to Roblox&apos;s own creator payout totals.
+            </li>
+            <li>
+              <strong className="text-foreground">Adopt Me! over its life.</strong> Uplift Games has never published a dollar figure, only
+              that revenue rose over 400% in 2020 (
+              <a href="https://gamesbeat.com/roblox-virtual-pet-adoption-creators-start-their-own-studio-uplift-games/" className="text-link underline">
+                GamesBeat
+              </a>
+              ). Outside estimates put its payout at its height at $50M to $77M a year (Dubit;{" "}
+              <a href="https://www.gameeconomistconsulting.com/robloxs-battlebit-failure-adopt-me-ripoff/" className="text-link underline">
+                Game Economist Consulting
+              </a>
+              , 2023). The model
+              gives about $13M a year now and $160M to $450M since 2017, which fits a few years near those levels and a long decline since.
+            </li>
+            <li>
+              <strong className="text-foreground">Phone-heavy games.</strong> David Taylor estimated Brookhaven RP at about $18M a year in
+              early 2025 (
+              <a href="https://newsletter.seg3.com/p/voldex-acquires-roblox-s-most-visited-game-brookhaven-ugc-game-marketing-ramdam-klarna-crypto" className="text-link underline">
+                SEG3
+              </a>
+              ); at its rank today the model gives a few million. Some of that is decline, but the Top Earning list we read is the
+              computer one, so games played mostly on phones, like Brookhaven and Adopt Me!, probably read low.
+            </li>
+            <li>
+              <strong className="text-foreground">What developers say they personally make.</strong> Fisch&apos;s developer says he makes
+              about $400k a month including toy licensing; the model gives the game about $1M a month, shared across its team. Neither
+              contradicts the other.
+            </li>
+            <li>
+              <strong className="text-foreground">The top of the list.</strong> Roblox paid creators about $1.7B through DevEx in the year to
+              June 2026 (
+              <a href="https://about.roblox.com/newsroom/2026/09/global-impact-of-creation-on-roblox" className="text-link underline">
+                Roblox
+              </a>
+              ); the top 10 creators averaged a reported $65.7M each, across all their games. The model&apos;s top 10 games average about $43M a year, with RIVALS alone near $160M:
+              high but possible for the single biggest earner.
             </li>
             <li>
               <strong className="text-foreground">Per player.</strong> Across the platform creators earn about $9 a month per average concurrent
@@ -279,7 +385,8 @@ range shown         = 0.7× the rank below to 1.5× the rank above`}</Formula>
             </li>
             <li>
               <strong className="text-foreground">How money is made.</strong> Revenue is one modelled total; game passes and developer
-              products can&apos;t be told apart from public data.
+              products can&apos;t be told apart from public data. Roblox lists each game&apos;s passes and prices but hides their sales, so
+              there is no public way to count how many players buy one.
             </li>
             <li>
               <strong className="text-foreground">Young series.</strong> History starts in May 2026, full tracking on 25 October and revenue

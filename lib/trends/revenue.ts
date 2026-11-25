@@ -63,6 +63,7 @@ export const robuxSpentFor = (devexUsd: number) => devexUsd / REVENUE_MODEL.deve
 export function fmtUsdEstimate(v: number): string {
   // Round first so a value just under a boundary (996k) reads $1M, not $1000k.
   const r = Number(v.toPrecision(2));
+  if (r >= 1e9) return `$${Number((r / 1e9).toPrecision(2))}B`;
   if (r >= 1e6) return `$${Number((r / 1e6).toPrecision(2))}M`;
   if (r >= 1e3) return `$${Number((r / 1e3).toPrecision(2))}k`;
   return `$${r}`;

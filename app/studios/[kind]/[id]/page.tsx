@@ -8,7 +8,7 @@ import { getSiteDb } from "@/lib/db/site";
 import { getCachedHitLives, getCachedRevenuePage } from "@/lib/trends/cached";
 import { fmtDays, lifeFor } from "@/lib/trends/lifespan";
 import { getRelatedGames } from "@/lib/trends/related";
-import { getStudio, type TrackedGame } from "@/lib/trends/studio";
+import { getStudio, lifetimeNote, type TrackedGame } from "@/lib/trends/studio";
 import { fmtUsdEstimate } from "@/lib/trends/revenue";
 import { displayName } from "@/lib/trends/names";
 import { getCreatorGames, type CreatorKind } from "@/lib/roblox/creators";
@@ -65,7 +65,12 @@ function Tile({ label, value, hint }: { label: string; value: ReactNode; hint: R
 }
 
 function MonthTable({ g }: { g: TrackedGame }) {
-  const sourceNote = { rank: "from its Top Earning rank", players: "from its players", capped: "off the list: below its lowest rank" };
+  const sourceNote = {
+    rank: "from its Top Earning rank",
+    own: "from its players, at its own Top Earning rate",
+    players: "from its players, at similar games' rate",
+    capped: "off the list: below its lowest rank",
+  };
   return (
     <div className="overflow-x-auto rounded-2xl border border-border bg-card">
       <table id={`months-${g.universeId}`} className="pin w-full min-w-[760px] border-collapse text-sm tabular-nums">
@@ -110,6 +115,15 @@ function MonthTable({ g }: { g: TrackedGame }) {
             </td>
             <td className="px-4 py-3 text-xs text-muted-foreground">central {fmtUsdEstimate(g.total.mid)}</td>
           </tr>
+          {g.lifetime ? (
+            <tr className="border-t border-rule">
+              <th scope="row" colSpan={4} className="px-4 py-3 text-left font-semibold">
+                Lifetime, rough
+              </th>
+              <td className="whitespace-nowrap px-2 py-3 text-right font-semibold">{range(g.lifetime.est.low, g.lifetime.est.high)}</td>
+              <td className="px-4 py-3 text-xs text-muted-foreground">{lifetimeNote(g.lifetime)}</td>
+            </tr>
+          ) : null}
         </tfoot>
       </table>
     </div>
@@ -129,6 +143,11 @@ export default async function StudioPage({ params }: { params: Promise<{ kind: s
   const trackedIds = new Set(tracked.map((t) => t.universeId));
   const playingNow = publicGames.reduce((a, g) => a + (g.playing ?? 0), 0);
   const total = tracked.reduce((t, g) => ({ low: t.low + g.total.low, high: t.high + g.total.high }), { low: 0, high: 0 });
+  // Games without a lifetime figure (no visit counts) add their tracked total.
+  const lifetime = tracked.reduce(
+    (t, g) => ({ low: t.low + (g.lifetime ?? { est: g.total }).est.low, high: t.high + (g.lifetime ?? { est: g.total }).est.high }),
+    { low: 0, high: 0 },
+  );
   const robloxHref = ok.kind === "group" ? `https://www.roblox.com/communities/${ok.id}` : `https://www.roblox.com/users/${ok.id}/profile`;
 
   // Facts for the cross-pattern question: did anything follow the biggest game?
@@ -195,6 +214,9 @@ export default async function StudioPage({ params }: { params: Promise<{ kind: s
           value={tracked.length ? <>{range(total.low, total.high)}</> : "—"}
           hint="since each was first tracked (modelled)"
         />
+        {tracked.some((g) => g.lifetime) ? (
+          <Tile label="Est. lifetime revenue" value={<>{range(lifetime.low, lifetime.high)}</>} hint="rough: tracked months scaled to every visit since launch" />
+        ) : null}
       </section>
 
       {notes.length ? (
@@ -295,11 +317,25 @@ export default async function StudioPage({ params }: { params: Promise<{ kind: s
           <MonthTable g={g} />
           <p className="text-[12.5px] text-muted-foreground">
             Months with few days of data (amber) rest on the days the game was in the discovery lists, so read them loosely. Without a Top Earning
-            rank, a month is estimated from players: {displayName(g.name)}&apos;s average players times what {g.perPlayer.basis} games in the Top
-            Earning list earn per player (${Math.round(g.perPlayer.p25)} to ${Math.round(g.perPlayer.p75)} a month, the middle half of{" "}
-            {g.perPlayer.n} games). Tested on listed games, this lands within about a factor of two half the time. Listed games are the top
-            earners, so it can read high for a game outside the list, but against Welcome to Bloxburg&apos;s reported sales it read low:
-            take it as a factor of two either way.
+            rank, a month is estimated from players:{" "}
+            {g.ownPerPlayer ? (
+              <>
+                {displayName(g.name)}&apos;s average players times what it earns per player in the months it is ranked (about $
+                {Math.round(g.ownPerPlayer.mid)} a month), which assumes its players spent then as they do now.
+              </>
+            ) : (
+              <>
+                {displayName(g.name)}&apos;s average players times what {g.perPlayer.basis} games in the Top Earning list earn per player ($
+                {Math.round(g.perPlayer.p25)} to ${Math.round(g.perPlayer.p75)} a month, the middle half of {g.perPlayer.n} games). Tested on
+                listed games, this lands within about a factor of two half the time. Listed games are the top earners, so it can read high
+                for a game outside the list, but against Welcome to Bloxburg&apos;s reported sales it read low: take it as a factor of two
+                either way.
+              </>
+            )} The lifetime row scales the tracked total by lifetime visits, assuming earlier visits earned
+            what visits earn now.
+            <Link href="/methodology#lifetime" className="text-link underline">
+              How
+            </Link>
             {studio?.earningFrom ? ` Ranks are recorded from ${fullDate(Date.parse(studio.earningFrom))}.` : ""}
           </p>
         </section>

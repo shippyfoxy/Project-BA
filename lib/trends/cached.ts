@@ -10,6 +10,7 @@ import { getIdeas, type Ideas } from "./ideas";
 import { getWidgetGame, type WidgetGame } from "./widget";
 import { EARNING_WEEK } from "./revenue";
 import { getStudios, type StudioRow } from "./studios";
+import { getGameTotals, type GameTotals } from "./studio";
 import { cadenceLives, getHitLives, type HitLife, type LifeSummary } from "./lifespan";
 
 // Shared across every game page and refreshed at most hourly, so opening a
@@ -87,6 +88,18 @@ export const getCachedRevenuePage = unstable_cache(
     return db ? getRevenuePage(db) : null;
   },
   ["revenue-page-v2"],
+  { revalidate: 3600 },
+);
+
+// Tracked and lifetime revenue for every game in the Top Earning list.
+export const getCachedListedTotals = unstable_cache(
+  async (): Promise<GameTotals[]> => {
+    const db = getSiteDb();
+    if (!db) return [];
+    const revenue = await getRevenuePage(db).catch(() => null);
+    return revenue ? getGameTotals(db, revenue.games.map((g) => g.universeId), revenue.games) : [];
+  },
+  ["listed-totals-v1"],
   { revalidate: 3600 },
 );
 

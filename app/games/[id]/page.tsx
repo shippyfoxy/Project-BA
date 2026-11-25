@@ -6,7 +6,9 @@ import { genreHref } from "@/components/v2/GenreChip";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { getSiteDb } from "@/lib/db/site";
-import { getCachedHitLives, getCachedWeekAggregates } from "@/lib/trends/cached";
+import { getCachedHitLives, getCachedRevenuePage, getCachedWeekAggregates } from "@/lib/trends/cached";
+import { getStudio, lifetimeNote, type TrackedGame } from "@/lib/trends/studio";
+import { estMonthlyDevEx, fmtUsdEstimate, type RevenueEstimate } from "@/lib/trends/revenue";
 import { fmtDays, HIT_PLAYERS, lifeFor } from "@/lib/trends/lifespan";
 import { getGameHistory, type GameHistory } from "@/lib/trends/game";
 import { displayName } from "@/lib/trends/names";
@@ -57,6 +59,15 @@ const loadWelcome = cache(async (id: number, genre: string): Promise<GameWelcome
   return db ? getGameWelcome(db, id, genre).catch(() => null) : null;
 });
 
+// Revenue is shown to everyone while the Pro paywall is off, as on studio pages.
+const loadLifetime = cache(async (g: GameHistory) => {
+  const db = getSiteDb();
+  if (!db || !g.creator) return null;
+  const revenue = await getCachedRevenuePage().catch(() => null);
+  const s = await getStudio(db, g.creator.kind, g.creator.id, revenue?.games ?? [], g.universeId).catch(() => null);
+  return s?.tracked[0] ?? null;
+});
+
 const loadRelated = cache(async (id: number): Promise<Related | null> => {
   const db = getSiteDb();
   return db ? getRelatedGames(db, id).catch(() => null) : null;
@@ -102,6 +113,75 @@ function Tile({ label, value, hint }: { label: string; value: string; hint: Reac
   );
 }
 
+const yearOf = (ms: number) => `${fmtDay(ms)} ${new Date(ms).getUTCFullYear()}`;
+
+// Three modelled figures side by side: the pace now, what we saw, and the rough whole life.
+function RevenueBlock({ m, rank, studioHref }: { m: TrackedGame; rank: number | null; studioHref: string | null }) {
+  const month = rank !== null ? estMonthlyDevEx(rank)! : m.months[m.months.length - 1].est;
+  const range = (e: RevenueEstimate) => `${fmtUsdEstimate(e.low)} to ${fmtUsdEstimate(e.high)}`;
+  const fig = (label: string, value: string, sub: string, hint: ReactNode, amber = false) => (
+    <div className="flex-[1_1_220px] px-5 py-4">
+      <div className="text-[13px] text-muted-foreground">{label}</div>
+      <div className="mt-1 font-heading text-[26px] font-extrabold tracking-tight sm:text-[30px]">{value}</div>
+      <div className="text-[13px] text-text-2">{sub}</div>
+      <div className={`mt-1 text-[12.5px] ${amber ? "text-gold" : "text-muted-foreground"}`}>{hint}</div>
+    </div>
+  );
+  // Tracked from its first days: the two totals are the same figure, so show it once.
+  const fromStart = !m.lifetime || m.lifetime.trackedShare >= 0.95;
+  const launched = m.createdMs ? `launched ${yearOf(m.createdMs)}` : null;
+  return (
+    <section aria-labelledby="revenue" className="flex flex-col gap-2">
+      <h2 id="revenue" className="font-heading text-[22px] font-bold">
+        Estimated revenue <span className="text-base font-normal text-muted-foreground">creator payout, modelled</span>
+      </h2>
+      <div className="flex flex-wrap divide-rule rounded-2xl border border-border bg-card sm:divide-x">
+        {fig(
+          "Earning now",
+          `${fmtUsdEstimate(month.mid)} a month`,
+          `${range(month)} a month`,
+          `about ${fmtUsdEstimate(month.mid * 12)} a year if this pace held; ${rank !== null ? "from its Top Earning rank over the last 7 days" : "from this month so far"}`,
+        )}
+        {fromStart
+          ? fig(
+              m.lifetime ? "Since launch" : "Since we started tracking",
+              fmtUsdEstimate(m.total.mid),
+              range(m.total),
+              m.lifetime ? `tracked from its first days, ${yearOf(m.firstSeenMs)}${launched ? `; ${launched}` : ""}` : `since ${yearOf(m.firstSeenMs)}, month by month`,
+            )
+          : null}
+        {!fromStart && m.lifetime ? (
+          <>
+            {fig("Since we started tracking", fmtUsdEstimate(m.total.mid), range(m.total), `since ${yearOf(m.firstSeenMs)}, month by month`)}
+            {fig(
+              "Since launch, rough",
+              fmtUsdEstimate(m.lifetime.est.mid),
+              range(m.lifetime.est),
+              `${launched ? `${launched}; ` : ""}${lifetimeNote(m.lifetime)}`,
+              m.lifetime.trackedShare < 0.25,
+            )}
+          </>
+        ) : null}
+      </div>
+      <p className="text-[13px] text-muted-foreground">
+        The large figure is the central estimate; the range under it is where the model puts it.{" "}
+        {fromStart
+          ? null
+          : "Since launch assumes every earlier visit earned what a visit earns now, so it reads low for a game that earned more per visit at its height and high for one that earns more now."}{" "}
+        {studioHref ? (
+          <Link href={studioHref} className="text-link underline">
+            Month by month
+          </Link>
+        ) : null}
+        {studioHref ? " · " : null}
+        <Link href="/methodology#lifetime" className="text-link underline">
+          How it is estimated
+        </Link>
+      </p>
+    </section>
+  );
+}
+
 function takeaways(g: GameHistory, genreLabel: string): string[] {
   const out: string[] = [];
   const b = g.bench;
@@ -142,7 +222,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
   const g = await loadGame(id);
   if (!g) notFound();
 
-  const [icons, shots, earning, updates, welcome, related, hitLives] = await Promise.all([
+  const [icons, shots, earning, updates, welcome, related, hitLives, money] = await Promise.all([
     getGameIcons([g.universeId]),
     getGameScreenshots(g.universeId),
     loadEarning(g.universeId),
@@ -150,6 +230,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
     loadWelcome(g.universeId, g.genre),
     loadRelated(g.universeId),
     getCachedHitLives().catch(() => []),
+    loadLifetime(g),
   ]);
   const life = hitLives.find((h) => h.universeId === g.universeId) ?? null;
   const lifeBench = hitLives.length ? lifeFor(hitLives, g.genre, g.genreL2) : null;
@@ -316,6 +397,8 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
           </Link>
         </p>
       ) : null}
+
+      {money && money.months.length ? <RevenueBlock m={money} rank={earning?.latest?.effRank ?? null} studioHref={g.studioHref} /> : null}
 
       <div className="-mt-3 flex flex-wrap items-center gap-2 text-[13px] text-muted-foreground">
         <ProOnly label="Pro: all history as CSV, daily, weekly or monthly">
@@ -626,8 +709,8 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
           </p>
           {updates.announced.length ? (
             <ul className="flex flex-col">
-              {updates.announced.map((a) => (
-                <li key={a.dayMs} className="flex flex-wrap items-baseline justify-between gap-3 border-t border-rule py-2.5 text-sm first:border-t-0">
+              {updates.announced.map((a, i) => (
+                <li key={`${a.dayMs}-${i}`}className="flex flex-wrap items-baseline justify-between gap-3 border-t border-rule py-2.5 text-sm first:border-t-0">
                   <span className="min-w-0">
                     <span className="mr-2 text-muted-foreground">{fmtDay(a.dayMs)}</span>
                     {a.name}
