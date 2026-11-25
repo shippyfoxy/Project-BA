@@ -334,7 +334,7 @@ export default async function GenrePage({ params }: { params: Promise<{ genre: s
         >
           <ol className="grid gap-2 sm:grid-cols-2">
             {earners.map((g) => (
-              <li key={g.universeId} className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-2.5 text-sm">
+              <li key={g.universeId} className="flex min-w-0 items-center gap-3 rounded-xl border border-border bg-card px-4 py-2.5 text-sm">
                 <span className="w-10 text-muted-foreground tabular-nums">#{g.rank}</span>
                 <Link href={`/games/${g.universeId}`} className="min-w-0 flex-1 truncate font-medium hover:text-link">
                   {displayName(g.name)}
@@ -462,7 +462,7 @@ export default async function GenrePage({ params }: { params: Promise<{ genre: s
         >
           <ul className="grid gap-2 sm:grid-cols-2">
             {patterns.map((p) => (
-              <li key={p.term} className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-2.5 text-sm">
+              <li key={p.term} className="flex min-w-0 items-center gap-3 rounded-xl border border-border bg-card px-4 py-2.5 text-sm">
                 <Link href={`/explore?launched=any&q=${encodeURIComponent(p.term)}`} className="min-w-0 flex-1 truncate font-semibold hover:text-link">
                   {p.term}
                 </Link>
