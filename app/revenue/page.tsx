@@ -135,7 +135,8 @@ export default async function RevenuePage({ searchParams }: { searchParams: Prom
   const subNames = [...new Set(allGames.filter((g) => !genre || g.genre === genre).flatMap((g) => g.subgenre ?? []))].sort();
   const sub = subNames.includes(one(sp.sub) ?? "") ? one(sp.sub) : null;
   const yearMin = YEAR_MIN.find((m) => String(m) === one(sp.year)) ?? null;
-  const sort = (one(sp.sort) ?? "rank") in SORTS ? (one(sp.sort) as keyof typeof SORTS) : "rank";
+  const rawSort = one(sp.sort) ?? "rank";
+  const sort: keyof typeof SORTS = Object.hasOwn(SORTS, rawSort) ? (rawSort as keyof typeof SORTS) : "rank";
   const perYear = (g: RankedGame) => g.estMonthly * 12;
   const sortValue = (g: RankedGame) => {
     const t = totals.get(g.universeId);
