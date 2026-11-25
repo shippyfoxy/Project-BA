@@ -118,6 +118,8 @@ const yearOf = (ms: number) => `${fmtDay(ms)} ${new Date(ms).getUTCFullYear()}`;
 // Three modelled figures side by side: the pace now, what we saw, and the rough whole life.
 function RevenueBlock({ m, rank, studioHref }: { m: TrackedGame; rank: number | null; studioHref: string | null }) {
   const month = rank !== null ? estMonthlyDevEx(rank)! : m.months[m.months.length - 1].est;
+  // Off the Top Earning list: all we know is that it earns less than the lowest-ranked game.
+  const capped = rank === null && m.months[m.months.length - 1].source === "capped" && month.low === month.high;
   const range = (e: RevenueEstimate) => `${fmtUsdEstimate(e.low)} to ${fmtUsdEstimate(e.high)}`;
   const fig = (label: string, value: string, sub: string, hint: ReactNode, amber = false) => (
     <div className="flex-[1_1_220px] px-5 py-4">
@@ -138,9 +140,11 @@ function RevenueBlock({ m, rank, studioHref }: { m: TrackedGame; rank: number | 
       <div className="flex flex-wrap divide-rule rounded-2xl border border-border bg-card sm:divide-x">
         {fig(
           "Earning now",
-          `${fmtUsdEstimate(month.mid)} a month`,
-          `${range(month)} a month`,
-          `about ${fmtUsdEstimate(month.mid * 12)} a year if this pace held; ${rank !== null ? "from its Top Earning rank over the last 7 days" : "from this month so far"}`,
+          capped ? `under ${fmtUsdEstimate(month.high)} a month` : `${fmtUsdEstimate(month.mid)} a month`,
+          capped ? "off the Top Earning list" : `${range(month)} a month`,
+          capped
+            ? `under ${fmtUsdEstimate(month.high * 12)} a year at this pace; below the lowest-ranked game`
+            : `about ${fmtUsdEstimate(month.mid * 12)} a year if this pace held; ${rank !== null ? "from its Top Earning rank over the last 7 days" : "from this month so far"}`,
         )}
         {fromStart
           ? fig(
