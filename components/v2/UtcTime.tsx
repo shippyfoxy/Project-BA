@@ -23,9 +23,15 @@ export function UtcTime({ ms, compact = false }: { ms: number; compact?: boolean
   }, [ms]);
 
   return (
-    <time dateTime={new Date(ms).toISOString()} title={local?.full} className="whitespace-nowrap">
-      {fmtTimeUtc(ms)}
-      {local && !compact ? <span className="opacity-75"> ({local.short} your time)</span> : null}
+    <time dateTime={new Date(ms).toISOString()} title={local?.full}>
+      <span className="whitespace-nowrap">{fmtTimeUtc(ms)}</span>
+      {/* The reader's time may wrap to its own line, so a narrow column doesn't overflow a phone. */}
+      {local && !compact ? (
+        <>
+          {" "}
+          <span className="whitespace-nowrap opacity-75">({local.short} your time)</span>
+        </>
+      ) : null}
     </time>
   );
 }
