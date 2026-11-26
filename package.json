@@ -14,7 +14,8 @@
     "db:migrate": "tsx --env-file-if-exists=.env.local scripts/db-migrate.ts",
     "db:backfill": "tsx --env-file-if-exists=.env.local scripts/db-backfill.ts",
     "db:ingest": "tsx --env-file-if-exists=.env.local scripts/db-ingest-latest.ts",
-    "refresh-badges": "tsx --env-file-if-exists=.env.local scripts/refresh-badges.ts"
+    "refresh-badges": "tsx --env-file-if-exists=.env.local scripts/refresh-badges.ts",
+    "refresh-passes": "tsx --env-file-if-exists=.env.local scripts/refresh-passes.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",

@@ -6,7 +6,8 @@ import { genreHref } from "@/components/v2/GenreChip";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { getSiteDb } from "@/lib/db/site";
-import { getCachedHitLives, getCachedRevenuePage, getCachedWeekAggregates } from "@/lib/trends/cached";
+import { getCachedHitLives, getCachedPassPricing, getCachedRevenuePage, getCachedWeekAggregates } from "@/lib/trends/cached";
+import { CREATOR_USD_PER_ROBUX, getGamePasses, type GamePass } from "@/lib/trends/passes";
 import { getStudio, lifetimeNote, type TrackedGame } from "@/lib/trends/studio";
 import { estMonthlyDevEx, fmtUsdEstimate, type RevenueEstimate } from "@/lib/trends/revenue";
 import { fmtDays, HIT_PLAYERS, lifeFor } from "@/lib/trends/lifespan";
@@ -67,6 +68,59 @@ const loadLifetime = cache(async (g: GameHistory) => {
   const s = await getStudio(db, g.creator.kind, g.creator.id, revenue?.games ?? [], g.universeId).catch(() => null);
   return s?.tracked[0] ?? null;
 });
+
+const loadPasses = cache(async (id: number) => {
+  const db = getSiteDb();
+  return db ? getGamePasses(db, id).catch(() => null) : null;
+});
+
+// A game's passes beside what its subgenre (or genre) charges.
+function PassList({ passes, readOn, median, basis }: { passes: GamePass[]; readOn: string; median: number | null; basis: string }) {
+  const onSale = passes.filter((p) => p.price !== null && p.price > 0);
+  const own = onSale.map((p) => p.price!).sort((a, b) => a - b);
+  const ownMedian = own.length ? (own[Math.floor((own.length - 1) / 2)] + own[Math.ceil((own.length - 1) / 2)]) / 2 : null;
+  return (
+    <section aria-labelledby="passes" className="flex flex-col gap-3 rounded-2xl border border-border bg-card px-6 py-5">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 id="passes" className="font-heading text-[22px] font-bold">
+          Game passes
+        </h2>
+        <Link href="/passes" className="text-[13px] text-link hover:underline">
+          Prices by subgenre
+        </Link>
+      </div>
+      <p className="text-sm text-text-2">
+        {onSale.length ? `${onSale.length} on sale${ownMedian !== null ? `, median ${Math.round(ownMedian).toLocaleString("en-GB")} Robux` : ""}` : "None on sale"}
+        {median !== null ? `; ${basis} games charge a median of ${Math.round(median).toLocaleString("en-GB")}.` : "."} Roblox shows prices, not how many
+        sell.
+      </p>
+      {passes.length ? (
+        <ul className="flex flex-col text-sm tabular-nums">
+          {passes.slice(0, 30).map((p) => (
+            <li key={p.id} className="flex items-baseline justify-between gap-3 border-t border-rule py-2 first:border-t-0">
+              <span className="min-w-0 truncate">{p.name}</span>
+              <span className="shrink-0 text-right">
+                {p.price !== null && p.price > 0 ? (
+                  <>
+                    {p.price.toLocaleString("en-GB")} Robux
+                    <span className="ml-2 text-xs text-muted-foreground">
+                      about ${(p.price * CREATOR_USD_PER_ROBUX).toFixed(2)} to the creator
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-muted-foreground">not on sale</span>
+                )}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      <p className="text-[13px] text-muted-foreground">
+        Read {readOn}.{passes.length > 30 ? ` The 30 cheapest of ${passes.length} shown.` : ""}
+      </p>
+    </section>
+  );
+}
 
 const loadRelated = cache(async (id: number): Promise<Related | null> => {
   const db = getSiteDb();
@@ -226,16 +280,21 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
   const g = await loadGame(id);
   if (!g) notFound();
 
-  const [icons, shots, earning, updates, welcome, related, hitLives, money] = await Promise.all([
+  const [icons, shots, earning, updates, welcome, related, hitLives, money, passes, passPricing] = await Promise.all([
     getGameIcons([g.universeId]),
-    getGameScreenshots(g.universeId),
+    // Roblox can list the same screenshot twice.
+    getGameScreenshots(g.universeId).then((urls) => [...new Set(urls)]),
     loadEarning(g.universeId),
     loadUpdates(g.universeId),
     loadWelcome(g.universeId, g.genre),
     loadRelated(g.universeId),
     getCachedHitLives().catch(() => []),
     loadLifetime(g),
+    loadPasses(g.universeId),
+    getCachedPassPricing().catch(() => null),
   ]);
+  const passGroup =
+    passPricing?.subgenres.find((p) => p.genre === g.genre && p.subgenre === g.genreL2) ?? null;
   const life = hitLives.find((h) => h.universeId === g.universeId) ?? null;
   const lifeBench = hitLives.length ? lifeFor(hitLives, g.genre, g.genreL2) : null;
   const welcomeLast = welcome?.days[welcome.days.length - 1];
@@ -403,6 +462,15 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
       ) : null}
 
       {money && money.months.length ? <RevenueBlock m={money} rank={earning?.latest?.effRank ?? null} studioHref={g.studioHref} /> : null}
+
+      {passes ? (
+        <PassList
+          passes={passes.passes}
+          readOn={passes.readOn}
+          median={passGroup?.price?.median ?? passPricing?.all.price?.median ?? null}
+          basis={passGroup ? (passGroup.subgenre ?? g.genre) : "all tracked"}
+        />
+      ) : null}
 
       <div className="-mt-3 flex flex-wrap items-center gap-2 text-[13px] text-muted-foreground">
         <ProOnly label="Pro: all history as CSV, daily, weekly or monthly">

@@ -294,6 +294,30 @@ export async function getBadges(universeId: number, opts?: FetchOpts): Promise<B
   return (await jget<{ data?: BadgeRecord[] }>(url, opts)).data ?? [];
 }
 
+export interface GamePassRecord {
+  id: number;
+  name: string;
+  displayName?: string;
+  isForSale: boolean;
+  price: number | null; // Robux charged now
+  created?: string;
+  updated?: string;
+}
+
+// Every pass a game lists, 100 a page. Roblox shows prices but not sales.
+export async function getGamePasses(universeId: number, opts?: FetchOpts): Promise<GamePassRecord[]> {
+  const out: GamePassRecord[] = [];
+  let token = "";
+  for (let page = 0; page < 5; page++) {
+    const url = `https://apis.roblox.com/game-passes/v1/universes/${universeId}/game-passes?passView=Full&pageSize=100${token ? `&pageToken=${encodeURIComponent(token)}` : ""}`;
+    const r = await jget<{ gamePasses?: GamePassRecord[]; nextPageToken?: string | null }>(url, opts);
+    out.push(...(r.gamePasses ?? []));
+    token = r.nextPageToken ?? "";
+    if (!token) break;
+  }
+  return out;
+}
+
 // Servers endpoint takes placeId, not universeId. Used for live server count.
 export async function getPublicServers(
   placeId: number,

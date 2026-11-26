@@ -64,3 +64,11 @@ jobs:
         timeout-minutes: 6
         env:
           DATABASE_URL_UNPOOLED: ${{ secrets.DATABASE_URL_UNPOOLED }}
+
+      # Game passes and their prices, once a day per game. Also an extra.
+      - name: Read game passes
+        run: pnpm refresh-passes
+        continue-on-error: true
+        timeout-minutes: 5
+        env:
+          DATABASE_URL_UNPOOLED: ${{ secrets.DATABASE_URL_UNPOOLED }}

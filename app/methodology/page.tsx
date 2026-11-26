@@ -20,6 +20,7 @@ const SECTIONS: [string, string][] = [
   ["updates", "Update impact"],
   ["ideas", "Name patterns and momentum"],
   ["revenue", "Estimated revenue"],
+  ["passes", "Game pass prices"],
   ["limits", "What this can't tell you"],
 ];
 
@@ -369,6 +370,36 @@ range shown         = 0.7× the rank below to 1.5× the rank above`}</Formula>
           </ul>
         </Section>
 
+        <Section id="passes" title="Game pass prices">
+          <p>
+            <strong className="text-foreground">Measured:</strong> once a day, every game averaging 1,000+ players over the last 7 days has its
+            game passes read from Roblox&apos;s public game pass list: each pass&apos;s name, whether it is on sale and its price in Robux. Reading
+            began on 25 November 2026, and the whole set is covered within a few hours of each day.
+          </p>
+          <ul className="flex list-disc flex-col gap-2 pl-5">
+            <li>
+              Prices only. Roblox hides how many of each pass sell, so there is no public way to say how many players buy one or what passes
+              earn. Revenue estimates elsewhere already include pass sales.
+            </li>
+            <li>
+              Subgenre figures use games read in the last 7 days, and need at least 5 of them. Passes not on sale or priced at 0 are left out.
+              The price is what Roblox charges now, so a pass on sale counts at its sale price.
+            </li>
+            <li>
+              The kind of pass (VIP, double, speed and so on) is guessed from its name, so a pass can count as two kinds and oddly named ones
+              are missed.
+            </li>
+            <li>
+              The creator&apos;s share shown beside a price is 70% of it at the DevEx rate of $0.0038 a Robux. Spending by age-checked US
+              adults in eligible games pays more; see{" "}
+              <a href="#payouts-2026" className="text-link underline">
+                changes to how creators are paid
+              </a>
+              .
+            </li>
+          </ul>
+        </Section>
+
         <Section id="limits" title="What this can't tell you">
           <ul className="flex list-disc flex-col gap-2 pl-5">
             <li>
@@ -386,7 +417,11 @@ range shown         = 0.7× the rank below to 1.5× the rank above`}</Formula>
             <li>
               <strong className="text-foreground">How money is made.</strong> Revenue is one modelled total; game passes and developer
               products can&apos;t be told apart from public data. Roblox lists each game&apos;s passes and prices but hides their sales, so
-              there is no public way to count how many players buy one.
+              there is no public way to count how many players buy one; the{" "}
+              <Link href="/passes" className="text-link underline">
+                Game passes
+              </Link>{" "}
+              page covers prices.
             </li>
             <li>
               <strong className="text-foreground">Young series.</strong> History starts in May 2026, full tracking on 25 October and revenue

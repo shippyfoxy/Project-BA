@@ -11,6 +11,7 @@ import { getWidgetGame, type WidgetGame } from "./widget";
 import { EARNING_WEEK } from "./revenue";
 import { getStudios, type StudioRow } from "./studios";
 import { getGameTotals, type GameTotals } from "./studio";
+import { getPassPricing, type PassPricing } from "./passes";
 import { cadenceLives, getHitLives, type HitLife, type LifeSummary } from "./lifespan";
 
 // Shared across every game page and refreshed at most hourly, so opening a
@@ -88,6 +89,16 @@ export const getCachedRevenuePage = unstable_cache(
     return db ? getRevenuePage(db) : null;
   },
   ["revenue-page-v2"],
+  { revalidate: 3600 },
+);
+
+// Game pass prices by subgenre, for the Game passes page and game pages.
+export const getCachedPassPricing = unstable_cache(
+  async (): Promise<PassPricing | null> => {
+    const db = getSiteDb();
+    return db ? getPassPricing(db) : null;
+  },
+  ["pass-pricing-v1"],
   { revalidate: 3600 },
 );
 

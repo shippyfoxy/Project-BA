@@ -9,6 +9,7 @@ import { getGameHistory, loadWeekAggregates } from "@/lib/trends/game";
 import { DEFAULT_FILTERS, filtersToQuery, parseFilters, screenGames } from "@/lib/trends/screener";
 import { genreBenchmarks, getGenreTrends } from "@/lib/trends/genreTrends";
 import { getGameTotals, getStudio, lifetimeEstimate, lifetimeNote, perPlayerRange } from "@/lib/trends/studio";
+import { getGamePasses, getPassPricing, passKinds, summarisePrices } from "@/lib/trends/passes";
 import { getRelatedGames, nameScore } from "@/lib/trends/related";
 import { cadenceLives, fmtDays, getHitLives, kmMedian } from "@/lib/trends/lifespan";
 import { getStudios } from "@/lib/trends/studios";
@@ -198,6 +199,30 @@ describe("genre trends and compare", () => {
     expect(perPlayerRange(listed, "Tycoon", "Simulation")).toMatchObject({ basis: "Tycoon", n: 10, p50: 14.5 });
     expect(perPlayerRange(listed, "Idle", "Simulation")).toMatchObject({ basis: "Simulation", n: 13 });
     expect(perPlayerRange(listed, null, "RPG")).toMatchObject({ basis: "every listed game", n: 14 });
+  });
+
+  it("summarises pass prices and guesses what a pass sells", () => {
+    const s = summarisePrices([99, 99, 199, 299, 1500])!;
+    expect(s).toMatchObject({ n: 5, median: 199, p25: 99, p75: 299, under100: 0.4, over1000: 0.2 });
+    expect(s.common[0]).toEqual({ price: 99, share: 0.4 });
+    expect(summarisePrices([])).toBeNull();
+    expect(passKinds("2x Coins")).toEqual(["Double or more"]);
+    expect(passKinds("VIP + Fast Walkspeed")).toEqual(["VIP", "Speed"]);
+    expect(passKinds("Cool Hat")).toEqual([]);
+  });
+
+  it("reads a game's passes as last read and prices them by subgenre", async () => {
+    await db.query(`insert into game_pass_reads (universe_id, read_on, passes) values (1, current_date, 3)`);
+    await db.query(
+      `insert into game_passes (pass_id, universe_id, name, price, for_sale, first_seen, last_seen) values
+       (11, 1, 'VIP', 299, true, current_date, current_date),
+       (12, 1, '2x Cash', 99, true, current_date, current_date),
+       (13, 1, 'Old pass', 50, true, current_date - 3, current_date - 3),
+       (14, 1, 'Retired', null, false, current_date, current_date)`,
+    );
+    const own = await getGamePasses(db, 1);
+    expect(own!.passes.map((p) => p.name)).toEqual(["2x Cash", "VIP", "Retired"]); // the old pass is gone from the game
+    await getPassPricing(db); // runs on the fixture; its games may be too small to count
   });
 
   it("scales tracked revenue to lifetime by the share of visits tracked", () => {
