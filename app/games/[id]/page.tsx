@@ -98,12 +98,12 @@ function PassList({ passes, readOn, median, basis }: { passes: GamePass[]; readO
         <ul className="flex flex-col text-sm tabular-nums">
           {passes.slice(0, 30).map((p) => (
             <li key={p.id} className="flex items-baseline justify-between gap-3 border-t border-rule py-2 first:border-t-0">
-              <span className="min-w-0 truncate">{p.name}</span>
+              <span className="min-w-0 break-words">{p.name}</span>
               <span className="shrink-0 text-right">
                 {p.price !== null && p.price > 0 ? (
                   <>
                     {p.price.toLocaleString("en-GB")} Robux
-                    <span className="ml-2 text-xs text-muted-foreground">
+                    <span className="block text-xs text-muted-foreground sm:ml-2 sm:inline">
                       about ${(p.price * CREATOR_USD_PER_ROBUX).toFixed(2)} to the creator
                     </span>
                   </>
